@@ -23,7 +23,7 @@
     <entity-ids>
       <counter>
         <item-type stereotype="" type="AbstractElementGroup" />
-        <value>210</value>
+        <value>215</value>
       </counter>
       <counter>
         <item-type stereotype="" type="UmlSystemBoundary" />
