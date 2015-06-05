@@ -18,8 +18,6 @@ using namespace cv;
 class HandGesture {
   private:
 
-
-
   public:
     HandGesture(){};
     //public List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
