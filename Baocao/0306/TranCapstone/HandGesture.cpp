@@ -58,150 +58,150 @@ bool HandGesture::detectIsHand(Mat img) {
 //}
 
 //Extract hand features from img
-//string HandGesture::featureExtraction(Mat img, int label) {
-//    string ret = NULL;
-//    if ((detectIsHand(img))) {
+string HandGesture::featureExtraction(Mat &img, int label) {
+    string ret = "";
+    if ((detectIsHand(img))) {
 
-//        Mat(defectPoints).copyTo(defectMat);
-//        // defectMat.fromList(defectPoints);
+        Mat(defectPoints).copyTo(defectMat);
+        // defectMat.fromList(defectPoints);
 
-//        // List<Integer> dList = defects.toList();
-//        //Point contourPts[] = contours.get(cMaxId).toArray();
-//        Point prevDefectVec;
-//        int i;
-//        //        for (i = 0; i < defectIdAfter.size(); i++) {
-//        for (i = 0; i < defects.size(); i++) {
-//            // int curDlistId = defectIdAfter.get(i);
-//            // int curId = dList.get(curDlistId);
-//            int curId = defects[i][2];
-//            Point curDefectPoint = contours[cMaxId][curId];
-//            Point curDefectVec;
-//            curDefectVec.x = curDefectPoint.x - inCircle.x;
-//            curDefectVec.y = curDefectPoint.y - inCircle.y;
+        // List<Integer> dList = defects.toList();
+        //Point contourPts[] = contours.get(cMaxId).toArray();
+        Point prevDefectVec;
+        int i;
+        //        for (i = 0; i < defectIdAfter.size(); i++) {
+        for (i = 0; i < defects.size(); i++) {
+            // int curDlistId = defectIdAfter.get(i);
+            // int curId = dList.get(curDlistId);
+            int curId = defects[i][2];
+            Point curDefectPoint = contours[cMaxId][curId];
+            Point curDefectVec;
+            curDefectVec.x = curDefectPoint.x - inCircle.x;
+            curDefectVec.y = curDefectPoint.y - inCircle.y;
 
-//            //            if (prevDefectVec != NULL) {
-//            double dotProduct = curDefectVec.x * prevDefectVec.x
-//                    + curDefectVec.y * prevDefectVec.y;
-//            double crossProduct = curDefectVec.x * prevDefectVec.y
-//                    - prevDefectVec.x * curDefectVec.y;
+            //            if (prevDefectVec != NULL) {
+            double dotProduct = curDefectVec.x * prevDefectVec.x
+                    + curDefectVec.y * prevDefectVec.y;
+            double crossProduct = curDefectVec.x * prevDefectVec.y
+                    - prevDefectVec.x * curDefectVec.y;
 
-//            if (crossProduct <= 0) {
-//                break;
-//            }
-//            //          }
-
-
-//            prevDefectVec = curDefectVec;
-
-//        }
-
-//        int startId = i;
-//        int countId = 0;
-
-//        //ArrayList<Point> finTipsTemp = new ArrayList<Point>();
-//        vector<Point> finTipsTemp;
-//        //        if (defectIdAfter.size() > 0) {
-//        if (defects.size() > 0) {
-//            bool end = false;
-
-//            for (int j = startId;; j++) {
-//                //     if (j == defectIdAfter.size()) {
-//                if (j == defects.size()) {
-//                    if (end == false) {
-//                        j = 0;
-//                        end = true;
-//                    } else {
-//                        break;
-//                    }
-//                }
+            if (crossProduct <= 0) {
+                break;
+            }
+            //          }
 
 
+            prevDefectVec = curDefectVec;
 
-//                if ((j == startId) && (end == true)) {
-//                    break;
-//                }
+        }
 
-//                //                int curDlistId = defectIdAfter.get(j);
-//                //                int curId = dList.get(curDlistId);
-//                //int curDlistId = defects[j];
-//                int curId = defects[j][2];
+        int startId = i;
+        int countId = 0;
 
-//                //   Point curDefectPoint = contourPts[curId];
-//                Point curDefectPoint = contours[cMaxId][curId];
-//                Point fin0 = contours[cMaxId][defects[j][0]];
-//                Point fin1 = contours[cMaxId][defects[j][1]];
-//                //                Point fin0 = contourPts[dList.get(curDlistId - 2)];
-//                //                Point fin1 = contourPts[dList.get(curDlistId - 1)];
-//                //                finTipsTemp.add(fin0);
-//                //                finTipsTemp.add(fin1);
-//                finTipsTemp.push_back(fin0);
-//                finTipsTemp.push_back(fin1);
-//                //Valid defect point is stored in curDefectPoint
-//                circle(img, curDefectPoint, 2, Scalar(0, 0, 255), -5);
+        //ArrayList<Point> finTipsTemp = new ArrayList<Point>();
+        vector<Point> finTipsTemp;
+        //        if (defectIdAfter.size() > 0) {
+        if (defects.size() > 0) {
+            bool end = false;
 
-//                countId++;
-//            }
-
-//        }
-
-//        int count = 0;
-//        features.clear();
-//        for (int fid = 0; fid < finTipsTemp.size();) {
-//            if (count > 5) {
-//                break;
-//            }
-
-//            Point curFinPoint = finTipsTemp[fid];
-
-//            if ((fid % 2 == 0)) {
-
-//                if (fid != 0) {
-//                    //  Point prevFinPoint = finTipsTemp.get(fid - 1);
-//                    Point prevFinPoint = finTipsTemp[fid - 1];
-//                    curFinPoint.x = (curFinPoint.x + prevFinPoint.x) / 2;
-//                    curFinPoint.y = (curFinPoint.y + prevFinPoint.y) / 2;
-//                }
+            for (int j = startId;; j++) {
+                //     if (j == defectIdAfter.size()) {
+                if (j == defects.size()) {
+                    if (end == false) {
+                        j = 0;
+                        end = true;
+                    } else {
+                        break;
+                    }
+                }
 
 
-//                if (fid == (finTipsTemp.size() - 2)) {
-//                    fid++;
-//                } else {
-//                    fid += 2;
-//                }
-//            } else {
-//                fid++;
-//            }
+
+                if ((j == startId) && (end == true)) {
+                    break;
+                }
+
+                //                int curDlistId = defectIdAfter.get(j);
+                //                int curId = dList.get(curDlistId);
+                //int curDlistId = defects[j];
+                int curId = defects[j][2];
+
+                //   Point curDefectPoint = contourPts[curId];
+                Point curDefectPoint = contours[cMaxId][curId];
+                Point fin0 = contours[cMaxId][defects[j][0]];
+                Point fin1 = contours[cMaxId][defects[j][1]];
+                //                Point fin0 = contourPts[dList.get(curDlistId - 2)];
+                //                Point fin1 = contourPts[dList.get(curDlistId - 1)];
+                //                finTipsTemp.add(fin0);
+                //                finTipsTemp.add(fin1);
+                finTipsTemp.push_back(fin0);
+                finTipsTemp.push_back(fin1);
+                //Valid defect point is stored in curDefectPoint
+                circle(img, curDefectPoint, 2, Scalar(0, 0, 255), -5);
+
+                countId++;
+            }
+
+        }
+
+        int count = 0;
+        features.clear();
+        for (int fid = 0; fid < finTipsTemp.size();) {
+            if (count > 5) {
+                break;
+            }
+
+            Point curFinPoint = finTipsTemp[fid];
+
+            if ((fid % 2 == 0)) {
+
+                if (fid != 0) {
+                    //  Point prevFinPoint = finTipsTemp.get(fid - 1);
+                    Point prevFinPoint = finTipsTemp[fid - 1];
+                    curFinPoint.x = (curFinPoint.x + prevFinPoint.x) / 2;
+                    curFinPoint.y = (curFinPoint.y + prevFinPoint.y) / 2;
+                }
 
 
-//            Point disFinger(curFinPoint.x - inCircle.x, curFinPoint.y - inCircle.y);
-//            double dis = sqrt(disFinger.x * disFinger.x + disFinger.y * disFinger.y);
-//            //            Double f1 = (disFinger.x) / inCircleRadius;
-//            //            Double f2 = (disFinger.y) / inCircleRadius;
-//            double f1 = (disFinger.x) / inCircleRadius;
-//            double f2 = (disFinger.y) / inCircleRadius;
-//            //            features.add(f1);
-//            //            features.add(f2);
-//            features.push_back(f1);
-//            features.push_back(f2);
-
-//            //curFinPoint stores the location of the finger tip
-//            line(img, inCircle, curFinPoint, Scalar(24, 77, 9), 2);
-//            circle(img, curFinPoint, 2, Scalar::all(0), -5);
-
-//            putText(img, NumberToString(count), Point(curFinPoint.x - 10, curFinPoint.y - 10),
-//                    FONT_HERSHEY_SIMPLEX, 0.5, Scalar::all(0));
-
-//            count++;
-
-//        }
-
-//        ret = feature2SVMString(label);
+                if (fid == (finTipsTemp.size() - 2)) {
+                    fid++;
+                } else {
+                    fid += 2;
+                }
+            } else {
+                fid++;
+            }
 
 
-//    }
+            Point disFinger(curFinPoint.x - inCircle.x, curFinPoint.y - inCircle.y);
+            double dis = sqrt(disFinger.x * disFinger.x + disFinger.y * disFinger.y);
+            //            Double f1 = (disFinger.x) / inCircleRadius;
+            //            Double f2 = (disFinger.y) / inCircleRadius;
+            double f1 = (disFinger.x) / inCircleRadius;
+            double f2 = (disFinger.y) / inCircleRadius;
+            //            features.add(f1);
+            //            features.add(f2);
+            features.push_back(f1);
+            features.push_back(f2);
 
-//    return ret;
-//}
+            //curFinPoint stores the location of the finger tip
+            line(img, inCircle, curFinPoint, Scalar(24, 77, 9), 2);
+            circle(img, curFinPoint, 2, Scalar::all(0), -5);
+
+            putText(img, NumberToString(count), Point(curFinPoint.x - 10, curFinPoint.y - 10),
+                    FONT_HERSHEY_SIMPLEX, 0.5, Scalar::all(0));
+
+            count++;
+
+        }
+
+        //ret = feature2SVMString(label);
+
+
+    }
+
+    return ret;
+}
 
 
 

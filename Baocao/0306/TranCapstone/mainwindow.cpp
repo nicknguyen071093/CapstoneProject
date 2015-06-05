@@ -67,12 +67,12 @@ void initCBackLowerUpper(double , double , double , double ,
 Mat preSampleHand(Mat);
 Mat preSampleBack(Mat);
 void boundariesCorrection();
-void produceBinHandImg(Mat , Mat );
-void produceBinBackImg(Mat , Mat );
-Rect makeBoundingBox(Mat );
+void produceBinHandImg(Mat &, Mat &);
+void produceBinBackImg(Mat &, Mat &);
+Rect makeBoundingBox(Mat &);
 void adjustBoundingBox(Rect , Mat );
 Mat makeContours();
-Mat produceBinImg(Mat , Mat );
+Mat produceBinImg(Mat &, Mat &);
 
 inline QImage  cvMatToQImage( const cv::Mat &inMat )
 {
@@ -129,9 +129,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+  //  cout << webSource.get(CV_CAP_PROP_FRAME_WIDTH) << " " <<webSource.get(CV_CAP_PROP_FRAME_WIDTH) ;
     webSource = VideoCapture(0);
     webSource.set(CV_CAP_PROP_FRAME_WIDTH,320);
-    webSource.set(CV_CAP_PROP_FRAME_WIDTH,240);
+    webSource.set(CV_CAP_PROP_FRAME_HEIGHT,240);
     initCLowerUpper(50, 50, 10, 10, 10, 10);
     initCBackLowerUpper(50, 50, 3, 3, 3, 3);
     pthread_t threadCamera;
@@ -176,7 +178,7 @@ void MainWindow::on_pushButton_4_clicked()
 
 
 void *showCamera(void *t) {
-   // Ui::MainWindow *ui = (Ui::MainWindow *)t;
+    // Ui::MainWindow *ui = (Ui::MainWindow *)t;
     QLabel *label = (QLabel *)t;
     QImage imageObject;
     QPixmap pixmapObject;
@@ -185,6 +187,7 @@ void *showCamera(void *t) {
 
             webSource.retrieve(frame);
             flip(frame,frame,1);
+         //   imwrite("/home/flyc/test.png",frame);
             //                            frame = Highgui.imread("E:/CapstoneProject/Test/handBGR.png");
             // Mat mainMat = new Mat();
             //  Imgproc.cvtColor(frame, gray, Imgproc.COLOR_RGBA2RGB);
@@ -217,7 +220,7 @@ void *showCamera(void *t) {
                 produceBinImg(interMat, binMat);
                 showMat = makeContours();
 
-                //String entry = hg.featureExtraction(frame, curLabel);
+                String entry = hg.featureExtraction(frame, curLabel);
 
             }
 
@@ -389,11 +392,11 @@ void boundariesCorrection() {
 }
 
 // Generates binary image thresholded only by sampled hand colors
-void produceBinHandImg(Mat imgIn, Mat imgOut) {
+void produceBinHandImg(Mat &imgIn, Mat &imgOut) {
     for (int i = 0; i < SAMPLE_NUM; i++) {
         lowerBound.val[0] = avgColor[i][0] - cLower[i][0];
         lowerBound.val[1] = avgColor[i][1] - cLower[i][1];
-        lowerBound.val[1] = avgColor[i][2] - cLower[i][2];
+        lowerBound.val[2] = avgColor[i][2] - cLower[i][2];
         //                lowerBound.set(double[3] {avgColor[i][0] - cLower[i][0],
         //                    avgColor[i][1] - cLower[i][1],
         //                    avgColor[i][2] - cLower[i][2]});
@@ -402,7 +405,8 @@ void produceBinHandImg(Mat imgIn, Mat imgOut) {
         //                avgColor[i][2] + cUpper[i][2]);
         upperBound.val[0] = avgColor[i][0] + cUpper[i][0];
         upperBound.val[1] = avgColor[i][1] + cUpper[i][1];
-        upperBound.val[1] = avgColor[i][2] + cUpper[i][2];
+        upperBound.val[2] = avgColor[i][2] + cUpper[i][2];
+        imwrite("/home/flyc/imgIn.png",imgIn);
         inRange(imgIn, lowerBound, upperBound, sampleMats[i]);
 
     }
@@ -418,7 +422,7 @@ void produceBinHandImg(Mat imgIn, Mat imgOut) {
 }
 
 // Generates binary image thresholded only by sampled background colors
-void produceBinBackImg(Mat imgIn, Mat imgOut) {
+void produceBinBackImg(Mat &imgIn, Mat &imgOut) {
     for (int i = 0; i < SAMPLE_NUM; i++) {
         lowerBound.val[0] = avgBackColor[i][0] - cBackLower[i][0];
         lowerBound.val[1] = avgBackColor[i][1] - cBackLower[i][1];
@@ -450,10 +454,13 @@ void produceBinBackImg(Mat imgIn, Mat imgOut) {
 
 }
 
-Rect makeBoundingBox(Mat img) {
+Rect makeBoundingBox(Mat &img) {
     hg.contours.clear();
-    findContours(img, hg.contours, hg.hie, RETR_EXTERNAL,
-                 CHAIN_APPROX_NONE);
+    //cout<<img.type();
+    imwrite("/home/flyc/2.png",img);
+    findContours(img, hg.contours, hg.hie, CV_RETR_TREE,CV_CHAIN_APPROX_SIMPLE);
+
+  //  cout<<"alo 123";
     hg.findBiggestContour();
     if (hg.cMaxId > -1) {
         hg.boundingRect = boundingRect(hg.contours[hg.cMaxId]);
@@ -588,7 +595,6 @@ Mat makeContours() {
                 bool bool2 = isClosedToBoundary(curPoint1, frame);
                 if ((depth > hg.inCircleRadius * 0.7)
                         && (cosTheta >= -0.7) && !bool1 && !bool2) {
-
                     //number++;
                     //                            System.out.println("number: " + number);
                     //                            System.out.println("---Oke----");
@@ -599,37 +605,56 @@ Mat makeContours() {
                     //                            System.out.println("Point 0: " + isClosedToBoundary(curPoint1, frame));
                     //                            System.out.println("---Oke End----");
 
+                 //   hg.defectIdAfter.push_back(i);
+                    Point finVec0(curPoint0.x - hg.inCircle.x, curPoint0.y - hg.inCircle.y);
+                    double finAngle0 = atan2(finVec0.y, finVec0.x);
+                    Point finVec1 (curPoint1.x - hg.inCircle.x, curPoint1.y - hg.inCircle.y);
+                    double finAngle1 = atan2(finVec1.y, finVec1.x);
 
-                } else {
-                    if (((!bool1 && bool2) || (bool1 && !bool2)) && (depth > (hg.inCircleRadius * 0.2)) && (cosTheta <= 0)) {
-                        //                        System.out.println("Current Point: " + curPoint.x + " " + curPoint.y);
-                        //                        System.out.println("Radius: " + hg.inCircleRadius);
-                        //                        System.out.println("dept: " + depth);
-                        //                        System.out.println("cosTheta: " + cosTheta);
-                        //                        System.out.println("Point 0: " + isClosedToBoundary(curPoint0, frame) + " " + curPoint0.x + " " + curPoint0.y);
-                        //                        System.out.println("Point 1: " + isClosedToBoundary(curPoint1, frame) + " " + curPoint1.x + " " + curPoint1.y);
-                        // hg.defectIdAfter.add((i));
-                        hg.defectIdAfter.push_back(i);
-                        Point finVec0(curPoint0.x - hg.inCircle.x, curPoint0.y - hg.inCircle.y);
-                        double finAngle0 = atan2(finVec0.y, finVec0.x);
-                        Point finVec1 (curPoint1.x - hg.inCircle.x, curPoint1.y - hg.inCircle.y);
-                        double finAngle1 = atan2(finVec1.y, finVec1.x);
+                    if (hg.fingerTipsOrdered.size() == 0) {
+                        hg.fingerTipsOrdered.insert(pair<double,Point>(finAngle0, curPoint0));
+                        hg.fingerTipsOrdered.insert(pair<double,Point>(finAngle1, curPoint1));
+                        //  hg.fingerTipsOrdered.put(finAngle1, curPoint1);
 
-                        if (hg.fingerTipsOrdered.size() == 0) {
-                            hg.fingerTipsOrdered.insert(pair<double,Point>(finAngle0, curPoint0));
-                            hg.fingerTipsOrdered.insert(pair<double,Point>(finAngle1, curPoint1));
-                            //  hg.fingerTipsOrdered.put(finAngle1, curPoint1);
+                    } else {
+                        hg.fingerTipsOrdered.insert(pair<double,Point>(finAngle0, curPoint0));
+                        hg.fingerTipsOrdered.insert(pair<double,Point>(finAngle1, curPoint1));
+                        //                            hg.fingerTipsOrdered.put(finAngle0, curPoint0);
 
-                        } else {
-                            hg.fingerTipsOrdered.insert(pair<double,Point>(finAngle0, curPoint0));
-                            hg.fingerTipsOrdered.insert(pair<double,Point>(finAngle1, curPoint1));
-                            //                            hg.fingerTipsOrdered.put(finAngle0, curPoint0);
+                        //                            hg.fingerTipsOrdered.put(finAngle1, curPoint1);
 
-                            //                            hg.fingerTipsOrdered.put(finAngle1, curPoint1);
-
-                        }
                     }
                 }
+//                else {
+//                    if (((!bool1 && bool2) || (bool1 && !bool2)) && (depth > (hg.inCircleRadius * 0.2)) && (cosTheta <= 0)) {
+//                        //                        System.out.println("Current Point: " + curPoint.x + " " + curPoint.y);
+//                        //                        System.out.println("Radius: " + hg.inCircleRadius);
+//                        //                        System.out.println("dept: " + depth);
+//                        //                        System.out.println("cosTheta: " + cosTheta);
+//                        //                        System.out.println("Point 0: " + isClosedToBoundary(curPoint0, frame) + " " + curPoint0.x + " " + curPoint0.y);
+//                        //                        System.out.println("Point 1: " + isClosedToBoundary(curPoint1, frame) + " " + curPoint1.x + " " + curPoint1.y);
+//                        // hg.defectIdAfter.add((i));
+//                        hg.defectIdAfter.push_back(i);
+//                        Point finVec0(curPoint0.x - hg.inCircle.x, curPoint0.y - hg.inCircle.y);
+//                        double finAngle0 = atan2(finVec0.y, finVec0.x);
+//                        Point finVec1 (curPoint1.x - hg.inCircle.x, curPoint1.y - hg.inCircle.y);
+//                        double finAngle1 = atan2(finVec1.y, finVec1.x);
+
+//                        if (hg.fingerTipsOrdered.size() == 0) {
+//                            hg.fingerTipsOrdered.insert(pair<double,Point>(finAngle0, curPoint0));
+//                            hg.fingerTipsOrdered.insert(pair<double,Point>(finAngle1, curPoint1));
+//                            //  hg.fingerTipsOrdered.put(finAngle1, curPoint1);
+
+//                        } else {
+//                            hg.fingerTipsOrdered.insert(pair<double,Point>(finAngle0, curPoint0));
+//                            hg.fingerTipsOrdered.insert(pair<double,Point>(finAngle1, curPoint1));
+//                            //                            hg.fingerTipsOrdered.put(finAngle0, curPoint0);
+
+//                            //                            hg.fingerTipsOrdered.put(finAngle1, curPoint1);
+
+//                        }
+//                    }
+//                }
 
                 // }
             }
@@ -650,7 +675,7 @@ Mat makeContours() {
 }
 
 // Generates binary image containing user's hand
-Mat produceBinImg(Mat imgIn, Mat imgOut) {
+Mat produceBinImg(Mat &imgIn, Mat &imgOut) {
     int colNum = imgIn.cols;
     int rowNum = imgIn.rows;
     int boxExtension = 0;
@@ -658,10 +683,12 @@ Mat produceBinImg(Mat imgIn, Mat imgOut) {
     boundariesCorrection();
 
     produceBinHandImg(imgIn, binTmpMat);
+    imwrite("/home/flyc/bin1.png",binTmpMat);
 
     produceBinBackImg(imgIn, binTmpMat2);
-
+     imwrite("/home/flyc/bin2.png",binTmpMat2);
     bitwise_and(binTmpMat, binTmpMat2, binTmpMat);
+    imwrite("/home/flyc/bin3.png",binTmpMat);
     binTmpMat.copyTo(tmpMat);
     binTmpMat.copyTo(imgOut);
 

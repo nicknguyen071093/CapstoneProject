@@ -80,7 +80,7 @@ class HandGesture {
         //Convert the feature indicated by label to the string used in SVM input file
         String feature2SVMString(int label);
         //Extract hand features from img
-        String featureExtraction(Mat img, int label) ;
+        String featureExtraction(Mat &img, int label) ;
 
 
 
