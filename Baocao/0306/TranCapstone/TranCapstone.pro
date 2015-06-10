@@ -28,10 +28,12 @@ LIBS += -lopencv_nonfree
 
 SOURCES += main.cpp\
         mainwindow.cpp \
+    HandThread.cpp \
     HandGesture.cpp
 
 HEADERS  += mainwindow.h \
-    HandGesture.h
+    HandGesture.h \
+    HandThread.h
 
 FORMS    += mainwindow.ui
 

@@ -8,6 +8,11 @@ string NumberToString(T pNumber)
     return oOStrStream.str();
 }
 
+HandGesture::HandGesture(){
+    cMaxId = -1;
+    isHand = false;
+}
+
 void HandGesture::findBiggestContour() {
     int idx = -1;
     int cNum = 0;
@@ -206,18 +211,11 @@ string HandGesture::featureExtraction(Mat &img, int label) {
 
 
 // Find the location of inscribed circle and return the radius and the center location
-void HandGesture::findInscribedCircle(Mat img) {
+void HandGesture::findInscribedCircle(Mat &img) {
 
 
     Point tl = boundingRect.tl();
     Point br = boundingRect.br();
-
-    double cirx[]{0};
-    double ciry[]{0};
-
-
-
-
     //        inCircleRadius = findInscribedCircleJNI(img.getNativeObjAddr(), tl.x, tl.y, br.x, br.y, cirx, ciry,
     //                approxContour.getNativeObjAddr());
 
