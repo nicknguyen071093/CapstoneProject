@@ -42,8 +42,8 @@ void HandThread::run() {
                 // white color
                 showMat = produceBinImg(interMat, binMat).clone();
             } else if (mode == TRAIN_REC_MODE) {
-                produceBinImg(interMat, binMat);
-                showMat = makeContours();
+                showMat = produceBinImg(interMat, binMat).clone();
+                makeContours();
 
                 //  handGesture->featureExtraction(frame, curLabel);
 
@@ -59,53 +59,6 @@ void HandThread::run() {
 
 void HandThread::releaseAll() {
     webSource.release();
-}
-
-inline QImage HandThread::cvMatToQImage( const cv::Mat &inMat )
-{
-    switch (inMat.type())
-    {
-    // 8-bit, 4 channel
-    case CV_8UC4:
-    {
-        QImage image(inMat.data, inMat.cols, inMat.rows, inMat.step, QImage::Format_RGB32);
-
-        return image;
-    }
-
-        // 8-bit, 3 channel
-    case CV_8UC3:
-    {
-        QImage image( inMat.data, inMat.cols, inMat.rows, inMat.step, QImage::Format_RGB888 );
-
-        return image.rgbSwapped();
-    }
-
-        // 8-bit, 1 channel
-    case CV_8UC1:
-    {
-        static QVector<QRgb>  sColorTable;
-
-        // only create our color table once
-        if (sColorTable.isEmpty())
-        {
-            for ( int i = 0; i < 256; ++i )
-                sColorTable.push_back( qRgb( i, i, i ) );
-        }
-
-        QImage image( inMat.data, inMat.cols, inMat.rows, inMat.step, QImage::Format_Indexed8 );
-
-        image.setColorTable( sColorTable );
-
-        return image;
-    }
-
-    default:
-        //qWarning() << "ASM::cvMatToQImage() - cv::Mat image type not handled in switch:" << inMat.type();
-        break;
-    }
-
-    return QImage();
 }
 
 void HandThread::initCLowerUpper(double cl1, double cu1, double cl2, double cu2,
@@ -352,7 +305,7 @@ bool HandThread::isClosedToBoundary(Point pt, Mat img) {
     return true;
 }
 
-Mat HandThread::makeContours() {
+void HandThread::makeContours() {
     handGesture->contours.clear();
     findContours(binMat, handGesture->contours, handGesture->hie,
                  RETR_EXTERNAL, CHAIN_APPROX_NONE);
@@ -366,8 +319,8 @@ Mat HandThread::makeContours() {
         Mat(handGesture->contours[handGesture->cMaxId]).copyTo(handGesture->approxContour);
         approxPolyDP(handGesture->approxContour, handGesture->approxContour, 2, true);
         Mat(handGesture->approxContour).copyTo(handGesture->contours[handGesture->cMaxId]);
-        drawContours(frame, handGesture->contours, handGesture->cMaxId,
-                     mColorsRGB[0], 1);
+     //   drawContours(frame, handGesture->contours, handGesture->cMaxId,
+       //              mColorsRGB[0], 1);
         // Palm center is stored in handGesture->inCircle, radius of the inscribed
         // circle is stored in handGesture->inCircleRadius
 //        handGesture->findInscribedCircle(frame);
@@ -470,13 +423,15 @@ Mat HandThread::makeContours() {
     }
 
     if (handGesture->detectIsHand(frame)) {
+        cout << "vao day nhi" << endl;
 
         // handGesture->boundingRect represents four coordinates of the bounding box.
-        rectangle(frame, handGesture->boundingRect.tl(), handGesture->boundingRect.br(),
-                  mColorsRGB[1], 2);
+     //   rectangle(frame, handGesture->boundingRect.tl(), handGesture->boundingRect.br(),
+       //           mColorsRGB[1], 2);
         // drawContours(frame, handGesture->hullP, handGesture->cMaxId, mColorsRGB[2]);
+        emit handSubtractingChanged(frame,handGesture->boundingRect);
     }
-    return frame;
+    //return frame;
 }
 
 // Generates binary image containing user's hand
@@ -524,6 +479,6 @@ Mat HandThread::produceBinImg(Mat &imgIn, Mat &imgOut) {
     }
 
     // cropBinImg(imgOut, imgOut);
-    return imgOut;
+     return imgOut;
 }
 

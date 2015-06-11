@@ -3,8 +3,8 @@
 
 #include <QThread>
 #include "HandGesture.h"
+#include "ImageTranslating.h"
 #include "unistd.h"
-#include <QImage>
 
 class HandThread : public QThread
 {
@@ -56,7 +56,7 @@ private:
     QImage imageObject;
     void run();
     //void finished();
-    inline QImage  cvMatToQImage( const cv::Mat &inMat );
+
     void initCLowerUpper(double , double , double , double ,
                          double , double );
     void initCBackLowerUpper(double , double , double , double ,
@@ -69,11 +69,12 @@ private:
     void produceBinBackImg(Mat &, Mat &);
     Rect makeBoundingBox(Mat &);
     void adjustBoundingBox(Rect , Mat );
-    Mat makeContours();
+    void makeContours();
     Mat produceBinImg(Mat &, Mat &);
 
 signals:
     void handTrackingChanged(QImage);
+    void handSubtractingChanged(Mat,Rect);
 
 public slots:
     // void onHandTrackingChanged(QImage);

@@ -30,6 +30,8 @@ private slots:
 
     void onHandTrackingChanged(QImage);
 
+    void onHandSubtracted(Mat,Rect);
+
     void onHandTrackingFinishinished();
 
     void on_pushButton_5_clicked();

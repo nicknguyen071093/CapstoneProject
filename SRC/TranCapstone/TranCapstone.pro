@@ -29,11 +29,13 @@ LIBS += -lopencv_nonfree
 SOURCES += main.cpp\
         mainwindow.cpp \
     HandThread.cpp \
-    HandGesture.cpp
+    HandGesture.cpp \
+    ImageTranslating.cpp
 
 HEADERS  += mainwindow.h \
     HandGesture.h \
-    HandThread.h
+    HandThread.h \
+    ImageTranslating.h
 
 FORMS    += mainwindow.ui
 
