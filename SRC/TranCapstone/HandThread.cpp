@@ -4,10 +4,14 @@
 HandThread::HandThread(QObject *parent) :
     QThread(parent)
 {
+
     handGesture = new HandGesture();
+    cols = 320;
+    rows = 240;
+    squareLen = rows / 20;
     webSource = VideoCapture(0);
-    webSource.set(CV_CAP_PROP_FRAME_WIDTH,320);
-    webSource.set(CV_CAP_PROP_FRAME_HEIGHT,240);
+    webSource.set(CV_CAP_PROP_FRAME_WIDTH,cols);
+    webSource.set(CV_CAP_PROP_FRAME_HEIGHT,rows);
     initCLowerUpper(50, 50, 10, 10, 10, 10);
     initCBackLowerUpper(50, 50, 3, 3, 3, 3);
     this->STOP = false;
@@ -27,31 +31,61 @@ void HandThread::run() {
         if (webSource.grab()) {
             webSource.retrieve(frame);
             flip(frame,frame,1);
-            GaussianBlur(frame, blurMat, Size(5, 5), 5, 5);
+            //            GaussianBlur(frame, blurMat, Size(5, 5), 5, 5);
+            //  imwrite("/home/nickseven/canny.png",frame);
+            GaussianBlur(frame, blurMat, Size(9, 9), 4);
             cvtColor(blurMat, interMat, COLOR_BGR2Lab);
             Mat showMat ;
-            if (mode == SAMPLE_MODE) { // Second mode which presamples the colors of
-                // the hand
-                showMat = preSampleHand(frame).clone();
-            } else if (mode == BACKGROUND_MODE) {// First mode which presamples
-                // background colors
-                showMat = preSampleBack(frame).clone();
-            } else if (mode == DETECTION_MODE) { // Third mode which generates the
+            if (mode == DETECTION_MODE) { // Third mode which generates the
                 // binary image containing the
                 // segmented hand represented by
                 // white color
-                showMat = produceBinImg(interMat, binMat).clone();
+                frame = imread("/home/nickseven/2.png");
+                GaussianBlur(frame, blurMat, Size(7, 7), 3);
+                cvtColor(blurMat, interMat, COLOR_BGR2Lab);
+                showMat = produceBinImg();
+                //                imwrite("/home/nickseven/re-mau.png",showMat);
+                emit binaryImageHandChanged(frame, binMat);
+                //   bitwise_and(frame,frame,showMat,showMat);
+            } else if (mode == BACKGROUND_MODE) {// First mode which presamples
+                // background colors
+                //additionFrame = frame.clone();
+                frame = imread("/home/nickseven/1.png");
+                GaussianBlur(frame, blurMat, Size(7, 7), 3);
+                cvtColor(blurMat, interMat, COLOR_BGR2Lab);
+
+                imwrite("/home/nickseven/bg-mau.png",frame);
+                showMat = preSampleBack(frame.clone());
+            } else if (mode == SAMPLE_MODE) { // Second mode which presamples the colors of
+                // the hand
+                //getSampleBack();
+                frame = imread("/home/nickseven/2.png");
+                GaussianBlur(frame, blurMat, Size(7, 7), 3);
+                cvtColor(blurMat, interMat, COLOR_BGR2Lab);
+                imwrite("/home/nickseven/ha-mau.png",frame);
+                showMat = preSampleHand(frame.clone());
             } else if (mode == TRAIN_REC_MODE) {
-                showMat = produceBinImg(interMat, binMat).clone();
+                frame = imread("/home/nickseven/2.png");
+                GaussianBlur(frame, blurMat, Size(7, 7), 3);
+                cvtColor(blurMat, interMat, COLOR_BGR2Lab);
+                showMat = produceBinImg();
                 makeContours();
-
                 //  handGesture->featureExtraction(frame, curLabel);
-
+            } else if (mode == GET_AVG_BACKGROUND) {
+                frame = imread("/home/nickseven/1.png");
+                GaussianBlur(frame, blurMat, Size(7, 7), 3);
+                cvtColor(blurMat, interMat, COLOR_BGR2Lab);
+                getSampleBack();
+                mode = SAMPLE_MODE;
+            } else {
+                frame = imread("/home/nickseven/2.png");
+                GaussianBlur(frame, blurMat, Size(7, 7), 3);
+                cvtColor(blurMat, interMat, COLOR_BGR2Lab);
+                getSampleHand();
+                mode = DETECTION_MODE;
             }
             imageObject = cvMatToQImage(showMat);
-
             emit handTrackingChanged(imageObject);
-
         }
     }
 }
@@ -63,23 +97,28 @@ void HandThread::releaseAll() {
 
 void HandThread::initCLowerUpper(double cl1, double cu1, double cl2, double cu2,
                                  double cl3, double cu3) {
-    cLower[0][0] = cl1;
-    cUpper[0][0] = cu1;
-    cLower[0][1] = cl2;
-    cUpper[0][1] = cu2;
-    cLower[0][2] = cl3;
-    cUpper[0][2] = cu3;
+    for (int i = 0; i < SAMPLE_NUM; i++) {
+        cLower[i][0] = cl1;
+        cUpper[i][0] = cu1;
+        cLower[i][1] = cl2;
+        cUpper[i][1] = cu2;
+        cLower[i][2] = cl3;
+        cUpper[i][2] = cu3;
+
+    }
 }
 
 void HandThread::initCBackLowerUpper(double cl1, double cu1, double cl2, double cu2,
                                      double cl3, double cu3) {
 
-    cBackLower[0][0] = cl1;
-    cBackUpper[0][0] = cu1;
-    cBackLower[0][1] = cl2;
-    cBackUpper[0][1] = cu2;
-    cBackLower[0][2] = cl3;
-    cBackUpper[0][2] = cu3;
+    for (int i = 0; i < SAMPLE_NUM; i++) {
+        cBackLower[i][0] = cl1;
+        cBackUpper[i][0] = cu1;
+        cBackLower[i][1] = cl2;
+        cBackUpper[i][1] = cu2;
+        cBackLower[i][2] = cl3;
+        cBackUpper[i][2] = cu3;
+    }
 
 }
 
@@ -87,11 +126,7 @@ void HandThread::initCBackLowerUpper(double cl1, double cu1, double cl2, double 
 // Output is avgColor, which is essentially a 7 by 3 matrix storing the
 // colors sampled by seven squares
 Mat HandThread::preSampleHand(Mat img) {
-    int cols = img.cols;
-    int rows = img.rows;
-    squareLen = rows / 20;
     Scalar color = mColorsRGB[1]; // Green Outline
-
     samplePoints[0][0].x = cols / 2;
     samplePoints[0][0].y = rows / 4;
     samplePoints[1][0].x = cols * 5 / 12;
@@ -100,7 +135,7 @@ Mat HandThread::preSampleHand(Mat img) {
     samplePoints[2][0].y = rows * 5 / 12;
     samplePoints[3][0].x = cols / 2;
     samplePoints[3][0].y = rows * 7 / 12;
-    samplePoints[4][0].x = cols / 1.5;
+    samplePoints[4][0].x = cols / 3;
     samplePoints[4][0].y = rows * 7 / 12;
     samplePoints[5][0].x = cols * 4 / 9;
     samplePoints[5][0].y = rows * 3 / 4;
@@ -116,27 +151,29 @@ Mat HandThread::preSampleHand(Mat img) {
         rectangle(img, samplePoints[i][0], samplePoints[i][1], color,
                 1);
     }
+    //    for (int i = 0; i < SAMPLE_NUM; i++) {
+    //        for (int j = 0; j < 3; j++) {
+    //            Vec3b intensity = interMat.at<Vec3b>((int) (samplePoints[i][0].y + squareLen / 2),(int) (samplePoints[i][0].x + squareLen / 2));
+    //            avgColor[i][j] = intensity.val[j];
+    //        }
+    //    }
+    return img;
+}
+
+void HandThread::getSampleHand() {
+    Vec3b intensity;
     for (int i = 0; i < SAMPLE_NUM; i++) {
         for (int j = 0; j < 3; j++) {
-            Vec3b intensity = interMat.at<Vec3b>((int) (samplePoints[i][0].y + squareLen / 2),(int) (samplePoints[i][0].x + squareLen / 2));
+            intensity = interMat.at<Vec3b>((int) (samplePoints[i][0].y + squareLen / 2),(int) (samplePoints[i][0].x + squareLen / 2));
             avgColor[i][j] = intensity.val[j];
-            //            avgColor[i][j] = (interMat.get(
-            //                                  (int) (samplePoints[i][0].y + squareLen / 2),
-            //                              (int) (samplePoints[i][0].x + squareLen / 2)))[j];
-
         }
-
     }
-    return img;
 }
 
 // Presampling background colors.
 // Output is avgBackColor, which is essentially a 7 by 3 matrix storing the
 // colors sampled by seven squares
 Mat HandThread::preSampleBack(Mat img) {
-    int cols = img.cols;
-    int rows = img.rows;
-    squareLen = rows / 20;
     Scalar color = mColorsRGB[0]; // Blue Outline
 
     samplePoints[0][0].x = cols / 6;
@@ -163,30 +200,80 @@ Mat HandThread::preSampleBack(Mat img) {
         rectangle(img, samplePoints[i][0], samplePoints[i][1], color,
                 1);
     }
-    for (int i = 0; i < SAMPLE_NUM; i++) {
-        for (int j = 0; j < 3; j++) {
-            Vec3b intensity = interMat.at<Vec3b>((int) (samplePoints[i][0].y + squareLen / 2),(int) (samplePoints[i][0].x + squareLen / 2));
-            avgBackColor[i][j] = intensity.val[j];
-            //            avgBackColor[i][j] = (interMat.get(
-            //                                      (int) (samplePoints[i][0].y + squareLen / 2),
-            //                                  (int) (samplePoints[i][0].x + squareLen / 2)))[j];
 
+        for (int i = 0; i < SAMPLE_NUM; i++) {
+            for (int j = 0; j < 3; j++) {
+                Vec3b intensity = interMat.at<Vec3b>((int) (samplePoints[i][0].y + squareLen / 2),(int) (samplePoints[i][0].x + squareLen / 2));
+                avgBackColor[i][j] = intensity.val[j];
+            }
         }
-    }
 
     return img;
 }
 
-void HandThread::boundariesCorrection() {
-    for (int i = 1; i < SAMPLE_NUM; i++) {
-        for (int j = 0; j < 3; j++) {
-            cLower[i][j] = cLower[0][j];
-            cUpper[i][j] = cUpper[0][j];
+void HandThread::getSampleBack() {
+    Vec3b intensity;
+//    for (int i = 0; i < SAMPLE_NUM; i++) {
+//        for (int j = 0; j < 3; j++) {
+//            intensity = interMat.at<Vec3b>((int) (samplePoints[i][0].y + squareLen / 2),(int) (samplePoints[i][0].x + squareLen / 2));
+//            avgBackColor[i][j] = intensity.val[j];
+//        }
+//    }
+    Mat src_gray, binary;
+    /// Convert image to gray and blur it
+    cvtColor(frame, src_gray, CV_BGR2GRAY );
+    GaussianBlur(src_gray,src_gray,Size(7,7),3);
 
-            cBackLower[i][j] = cBackLower[0][j];
-            cBackUpper[i][j] = cBackUpper[0][j];
+    adaptiveThreshold(src_gray,binary,255,ADAPTIVE_THRESH_MEAN_C,CV_THRESH_BINARY,15,5);
+    Mat element = getStructuringElement( MORPH_CROSS,
+                                         Size( 1*1 + 1, 1*1+1 ),
+                                         Point( 1, 1 ) );
+    /// Apply the erosion operation
+    erode(binary, binary, element );
+    vector<vector<Point> > contours;
+    vector<Vec4i> hierarchy;
+
+    /// Find contours
+    Mat clone = binary.clone();
+    findContours(clone, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);
+    //vector<Point> additionalPoint;
+    int x,y;
+    Rect rect;
+    for (int i = 0; i < contours.size();i++) {
+        rect = boundingRect(contours[i]);
+        if (rect.width >= 20 || rect.height >= 20) {
+            //  rectangle(frame,rect,Scalar(255,0,0),2);
+            x = rect.x + (rect.width/2);
+            y = rect.y + (rect.height/2);
+            if (pointPolygonTest(contours[i],Point(x,y),false) > 0) {
+                intensity = interMat.at<Vec3b>(x,y);
+                additionAvgBackColor.push_back(intensity);
+                rectangle(frame,rect,Scalar(255,0,0),2);
+            } else if(pointPolygonTest(contours[i],Point(x/2,y),false) > 0) {
+                intensity = interMat.at<Vec3b>(x / 2,y);
+                additionAvgBackColor.push_back(intensity);
+                rectangle(frame,rect,Scalar(255,0,0),2);
+            } else if (pointPolygonTest(contours[i],Point(x+x/2,y),false) > 0){
+                intensity = interMat.at<Vec3b>(x + (x / 2),y);
+                additionAvgBackColor.push_back(intensity);
+                rectangle(frame,rect,Scalar(255,0,0),2);
+            }
         }
     }
+    for (int i = 0; i < additionAvgBackColor.size(); i++) {
+        addBackLower[i][0] = cBackLower[0][0];
+        addBackUpper[i][0] = cBackUpper[0][0];
+        addBackLower[i][1] = cBackLower[0][1];
+        addBackUpper[i][1] = cBackUpper[0][1];
+        addBackLower[i][2] = cBackLower[0][2];
+        addBackUpper[i][2] = cBackUpper[0][2];
+    }
+    imwrite("/home/nickseven/add.png",frame);
+    cout << "size : " << additionAvgBackColor.size() << endl;
+}
+
+void HandThread::boundariesCorrection() {
+
 
     for (int i = 0; i < SAMPLE_NUM; i++) {
         for (int j = 0; j < 3; j++) {
@@ -210,10 +297,25 @@ void HandThread::boundariesCorrection() {
 
         }
     }
+
+    for (int i = 0; i < additionAvgBackColor.size(); i++) {
+        for (int j = 0; j < 3; j++) {
+
+            if (additionAvgBackColor[i].val[j] - addBackLower[i][j] < 0) {
+                addBackLower[i][j] = additionAvgBackColor[i].val[j] ;
+            }
+
+
+            if (additionAvgBackColor[i].val[j]  + addBackUpper[i][j] > 255) {
+                addBackUpper[i][j] = 255 - additionAvgBackColor[i].val[j] ;
+            }
+
+        }
+    }
 }
 
 // Generates binary image thresholded only by sampled hand colors
-void HandThread::produceBinHandImg(Mat &imgIn, Mat &imgOut) {
+void HandThread::produceBinHandImg() {
     for (int i = 0; i < SAMPLE_NUM; i++) {
         lowerBound.val[0] = avgColor[i][0] - cLower[i][0];
         lowerBound.val[1] = avgColor[i][1] - cLower[i][1];
@@ -228,23 +330,25 @@ void HandThread::produceBinHandImg(Mat &imgIn, Mat &imgOut) {
         upperBound.val[1] = avgColor[i][1] + cUpper[i][1];
         upperBound.val[2] = avgColor[i][2] + cUpper[i][2];
         // imwrite("/home/flyc/imgIn.png",imgIn);
-        inRange(imgIn, lowerBound, upperBound, sampleMats[i]);
+        inRange(interMat, lowerBound, upperBound, sampleMats[i]);
 
     }
 
-    imgOut.release();
-    sampleMats[0].copyTo(imgOut);
+    binTmpMat.release();
+    sampleMats[0].copyTo(binTmpMat);
 
     for (int i = 1; i < SAMPLE_NUM; i++) {
-        add(imgOut, sampleMats[i], imgOut);
+        add(binTmpMat, sampleMats[i], binTmpMat);
     }
-
-    medianBlur(imgOut, imgOut, 3);
+    imwrite("/home/nickseven/h1.png",binTmpMat);
+    medianBlur(binTmpMat, binTmpMat, 3);
+    imwrite("/home/nickseven/h2.png",binTmpMat);
 }
 
 // Generates binary image thresholded only by sampled background colors
-void HandThread::produceBinBackImg(Mat &imgIn, Mat &imgOut) {
-    imwrite("/home/nickseven/imgIn.png",imgIn);
+void HandThread::produceBinBackImg() {
+    sampleBackgroundMats.clear();
+    //    imwrite("/home/nickseven/imgIn.png",imgIn);
     for (int i = 0; i < SAMPLE_NUM; i++) {
         lowerBound.val[0] = avgBackColor[i][0] - cBackLower[i][0];
         lowerBound.val[1] = avgBackColor[i][1] - cBackLower[i][1];
@@ -260,19 +364,46 @@ void HandThread::produceBinBackImg(Mat &imgIn, Mat &imgOut) {
         //            avgBackColor[i][0] + cBackUpper[i][0],
         //                    avgBackColor[i][1] + cBackUpper[i][1],
         //                    avgBackColor[i][2] + cBackUpper[i][2]});
-        inRange(imgIn, lowerBound, upperBound, sampleMats[i]);
-
+        //        Mat tmpSampleBackgroundMat;
+        //        inRange(interMat, lowerBound, upperBound, tmpSampleBackgroundMat);
+        //        sampleBackgroundMats.push_back(tmpSampleBackgroundMat);
+        inRange(interMat, lowerBound, upperBound, sampleMats[i]);
+        imwrite("/home/nickseven/sample-"+ QString::number(i).toStdString() +".png",sampleMats[i]);
     }
-
-    imgOut.release();
-    sampleMats[0].copyTo(imgOut);
-
+    //    for (int i = 0; i < additionAvgBackColor.size();i++) {
+    //        lowerBound.val[0] = additionAvgBackColor[i].val[0] - addBackLower[i][0];
+    //        lowerBound.val[1] = additionAvgBackColor[i].val[1] - addBackLower[i][1];
+    //        lowerBound.val[2] = additionAvgBackColor[i].val[2] - addBackLower[i][2];
+    //        //        lowerBound.set(new double[]{
+    //        //            avgBackColor[i][0] - cBackLower[i][0],
+    //        //                    avgBackColor[i][1] - cBackLower[i][1],
+    //        //                    avgBackColor[i][2] - cBackLower[i][2]});
+    //        upperBound.val[0] = additionAvgBackColor[i].val[0] + addBackUpper[i][0];
+    //        upperBound.val[1] = additionAvgBackColor[i].val[1] + addBackUpper[i][1];
+    //        upperBound.val[2] = additionAvgBackColor[i].val[2] + addBackUpper[i][2];
+    //        //        upperBound.set(new double[]{
+    //        //            avgBackColor[i][0] + cBackUpper[i][0],
+    //        //                    avgBackColor[i][1] + cBackUpper[i][1],
+    //        //                    avgBackColor[i][2] + cBackUpper[i][2]});
+    //        Mat tmpSampleBackgroundMat;
+    //        inRange(interMat, lowerBound, upperBound, tmpSampleBackgroundMat);
+    //        sampleBackgroundMats.push_back(tmpSampleBackgroundMat);
+    //    }
+    binTmpMat2.release();
+    //sampleBackgroundMats[0].copyTo(binTmpMat2);
+    sampleMats[0].copyTo(binTmpMat2);
     for (int i = 1; i < SAMPLE_NUM; i++) {
-        add(imgOut, sampleMats[i], imgOut);
+        add(binTmpMat2, sampleMats[i], binTmpMat2);
     }
-    bitwise_not(imgOut, imgOut);
 
-    medianBlur(imgOut, imgOut, 7);
+    //    for (int i = 1; i < sampleBackgroundMats.size(); i++) {
+    //        add(binTmpMat2, sampleBackgroundMats[i], binTmpMat2);
+    //    }
+    imwrite("/home/nickseven/bg-bin.png",binTmpMat2);
+    bitwise_not(binTmpMat2, binTmpMat2);
+    imwrite("/home/nickseven/bg-bin-1.png",binTmpMat2);
+    medianBlur(binTmpMat2, binTmpMat2, 7);
+    imwrite("/home/nickseven/bg-bin-2.png",binTmpMat2);
 
 }
 
@@ -305,9 +436,10 @@ bool HandThread::isClosedToBoundary(Point pt, Mat img) {
     return true;
 }
 
-void HandThread::makeContours() {
+Mat HandThread::makeContours() {
     handGesture->contours.clear();
-    findContours(binMat, handGesture->contours, handGesture->hie,
+    //  Mat cloneBin = binMat.clone();
+    findContours(binMat.clone(), handGesture->contours, handGesture->hie,
                  RETR_EXTERNAL, CHAIN_APPROX_NONE);
 
     // Find biggest contour and return the index of the contour, which is
@@ -316,141 +448,140 @@ void HandThread::makeContours() {
 
     if (handGesture->cMaxId > -1) {
         //biggestContours.
-        Mat(handGesture->contours[handGesture->cMaxId]).copyTo(handGesture->approxContour);
-        approxPolyDP(handGesture->approxContour, handGesture->approxContour, 2, true);
-        Mat(handGesture->approxContour).copyTo(handGesture->contours[handGesture->cMaxId]);
-     //   drawContours(frame, handGesture->contours, handGesture->cMaxId,
-       //              mColorsRGB[0], 1);
+        //  Mat(handGesture->contours[handGesture->cMaxId]).copyTo(handGesture->approxContour);
+        // approxPolyDP(handGesture->approxContour, handGesture->approxContour, 2, true);
+        // Mat(handGesture->approxContour).copyTo(handGesture->contours[handGesture->cMaxId]);
+        drawContours(frame, handGesture->contours, handGesture->cMaxId,
+                     mColorsRGB[0], 1);
         // Palm center is stored in handGesture->inCircle, radius of the inscribed
         // circle is stored in handGesture->inCircleRadius
-//        handGesture->findInscribedCircle(frame);
+        //        handGesture->findInscribedCircle(frame);
         handGesture->boundingRect = boundingRect(handGesture->contours[handGesture->cMaxId]);
-//        convexHull(handGesture->contours[handGesture->cMaxId], handGesture->hullI, false);
-//        handGesture->hullP.clear();
-//        for (int i = 0; i < handGesture->contours.size(); i++) {
-//            handGesture->hullP.push_back(vector<Point>());
-//        }
-//        vector<Point> lp;
-//        for (int i = 0; i < handGesture->hullI.size(); i++) {
-//            lp.push_back(handGesture->contours[handGesture->cMaxId][handGesture->hullI[i]]);
-//        }
+        //        convexHull(handGesture->contours[handGesture->cMaxId], handGesture->hullI, false);
+        //        handGesture->hullP.clear();
+        //        for (int i = 0; i < handGesture->contours.size(); i++) {
+        //            handGesture->hullP.push_back(vector<Point>());
+        //        }
+        //        vector<Point> lp;
+        //        for (int i = 0; i < handGesture->hullI.size(); i++) {
+        //            lp.push_back(handGesture->contours[handGesture->cMaxId][handGesture->hullI[i]]);
+        //        }
 
-//        // handGesture->hullP.get(handGesture->cMaxId) returns the locations of the points in
-//        // the convex hull of the hand
-//        lp.clear();
+        //        // handGesture->hullP.get(handGesture->cMaxId) returns the locations of the points in
+        //        // the convex hull of the hand
+        //        lp.clear();
 
-//        handGesture->fingerTips.clear();
-//        handGesture->defectPoints.clear();
-//        handGesture->defectPointsOrdered.clear();
+        //        handGesture->fingerTips.clear();
+        //        handGesture->defectPoints.clear();
+        //        handGesture->defectPointsOrdered.clear();
 
-//        handGesture->fingerTipsOrdered.clear();
-//        handGesture->defectIdAfter.clear();
+        //        handGesture->fingerTipsOrdered.clear();
+        //        handGesture->defectIdAfter.clear();
 
-//        if ((handGesture->contours[handGesture->cMaxId].size() >= 5) &&
-//                (handGesture->detectIsHand(frame))
-//                && (handGesture->hullI.size() >= 5))
-//        {
-//            convexityDefects(handGesture->contours[handGesture->cMaxId], handGesture->hullI,
-//                    handGesture->defects);
-//            for (int i = 0; i < handGesture->defects.size(); i++) {
-//                Vec4i defect = handGesture->defects[i];
-//                double depth = (double) defect[3] / 256.0;
-//                Point curPoint = handGesture->contours[handGesture->cMaxId][defect[2]];
-//                Point curPoint0 = handGesture->contours[handGesture->cMaxId][defect[0]];
-//                Point curPoint1 = handGesture->contours[handGesture->cMaxId][defect[1]];
-//                Point vec0(curPoint0.x - curPoint.x,curPoint0.y - curPoint.y);
-//                Point vec1(curPoint1.x - curPoint.x,curPoint1.y - curPoint.y);
-//                double dot = vec0.x * vec1.x + vec0.y * vec1.y;
-//                double lenth0 = sqrt(vec0.x * vec0.x + vec0.y
-//                                     * vec0.y);
-//                double lenth1 = sqrt(vec1.x * vec1.x + vec1.y
-//                                     * vec1.y);
-//                double cosTheta = dot / (lenth0 * lenth1);
-//                bool bool1 = isClosedToBoundary(curPoint0, frame);
-//                bool bool2 = isClosedToBoundary(curPoint1, frame);
-//                if ((depth > handGesture->inCircleRadius * 0.7)
-//                        && (cosTheta >= -0.7) && !bool1 && !bool2) {
-//                    Point finVec0(curPoint0.x - handGesture->inCircle.x, curPoint0.y - handGesture->inCircle.y);
-//                    double finAngle0 = atan2(finVec0.y, finVec0.x);
-//                    Point finVec1 (curPoint1.x - handGesture->inCircle.x, curPoint1.y - handGesture->inCircle.y);
-//                    double finAngle1 = atan2(finVec1.y, finVec1.x);
+        //        if ((handGesture->contours[handGesture->cMaxId].size() >= 5) &&
+        //                (handGesture->detectIsHand(frame))
+        //                && (handGesture->hullI.size() >= 5))
+        //        {
+        //            convexityDefects(handGesture->contours[handGesture->cMaxId], handGesture->hullI,
+        //                    handGesture->defects);
+        //            for (int i = 0; i < handGesture->defects.size(); i++) {
+        //                Vec4i defect = handGesture->defects[i];
+        //                double depth = (double) defect[3] / 256.0;
+        //                Point curPoint = handGesture->contours[handGesture->cMaxId][defect[2]];
+        //                Point curPoint0 = handGesture->contours[handGesture->cMaxId][defect[0]];
+        //                Point curPoint1 = handGesture->contours[handGesture->cMaxId][defect[1]];
+        //                Point vec0(curPoint0.x - curPoint.x,curPoint0.y - curPoint.y);
+        //                Point vec1(curPoint1.x - curPoint.x,curPoint1.y - curPoint.y);
+        //                double dot = vec0.x * vec1.x + vec0.y * vec1.y;
+        //                double lenth0 = sqrt(vec0.x * vec0.x + vec0.y
+        //                                     * vec0.y);
+        //                double lenth1 = sqrt(vec1.x * vec1.x + vec1.y
+        //                                     * vec1.y);
+        //                double cosTheta = dot / (lenth0 * lenth1);
+        //                bool bool1 = isClosedToBoundary(curPoint0, frame);
+        //                bool bool2 = isClosedToBoundary(curPoint1, frame);
+        //                if ((depth > handGesture->inCircleRadius * 0.7)
+        //                        && (cosTheta >= -0.7) && !bool1 && !bool2) {
+        //                    Point finVec0(curPoint0.x - handGesture->inCircle.x, curPoint0.y - handGesture->inCircle.y);
+        //                    double finAngle0 = atan2(finVec0.y, finVec0.x);
+        //                    Point finVec1 (curPoint1.x - handGesture->inCircle.x, curPoint1.y - handGesture->inCircle.y);
+        //                    double finAngle1 = atan2(finVec1.y, finVec1.x);
 
-//                    if (handGesture->fingerTipsOrdered.size() == 0) {
-//                        handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle0, curPoint0));
-//                        handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle1, curPoint1));
+        //                    if (handGesture->fingerTipsOrdered.size() == 0) {
+        //                        handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle0, curPoint0));
+        //                        handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle1, curPoint1));
 
-//                    } else {
-//                        handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle0, curPoint0));
-//                        handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle1, curPoint1));
+        //                    } else {
+        //                        handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle0, curPoint0));
+        //                        handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle1, curPoint1));
 
-//                    }
-//                }
-//                //                else {
-//                //                    if (((!bool1 && bool2) || (bool1 && !bool2)) && (depth > (handGesture->inCircleRadius * 0.2)) && (cosTheta <= 0)) {
-//                //                        //                        System.out.println("Current Point: " + curPoint.x + " " + curPoint.y);
-//                //                        //                        System.out.println("Radius: " + handGesture->inCircleRadius);
-//                //                        //                        System.out.println("dept: " + depth);
-//                //                        //                        System.out.println("cosTheta: " + cosTheta);
-//                //                        //                        System.out.println("Point 0: " + isClosedToBoundary(curPoint0, frame) + " " + curPoint0.x + " " + curPoint0.y);
-//                //                        //                        System.out.println("Point 1: " + isClosedToBoundary(curPoint1, frame) + " " + curPoint1.x + " " + curPoint1.y);
-//                //                        // handGesture->defectIdAfter.add((i));
-//                //                        handGesture->defectIdAfter.push_back(i);
-//                //                        Point finVec0(curPoint0.x - handGesture->inCircle.x, curPoint0.y - handGesture->inCircle.y);
-//                //                        double finAngle0 = atan2(finVec0.y, finVec0.x);
-//                //                        Point finVec1 (curPoint1.x - handGesture->inCircle.x, curPoint1.y - handGesture->inCircle.y);
-//                //                        double finAngle1 = atan2(finVec1.y, finVec1.x);
+        //                    }
+        //                }
+        //                //                else {
+        //                //                    if (((!bool1 && bool2) || (bool1 && !bool2)) && (depth > (handGesture->inCircleRadius * 0.2)) && (cosTheta <= 0)) {
+        //                //                        //                        System.out.println("Current Point: " + curPoint.x + " " + curPoint.y);
+        //                //                        //                        System.out.println("Radius: " + handGesture->inCircleRadius);
+        //                //                        //                        System.out.println("dept: " + depth);
+        //                //                        //                        System.out.println("cosTheta: " + cosTheta);
+        //                //                        //                        System.out.println("Point 0: " + isClosedToBoundary(curPoint0, frame) + " " + curPoint0.x + " " + curPoint0.y);
+        //                //                        //                        System.out.println("Point 1: " + isClosedToBoundary(curPoint1, frame) + " " + curPoint1.x + " " + curPoint1.y);
+        //                //                        // handGesture->defectIdAfter.add((i));
+        //                //                        handGesture->defectIdAfter.push_back(i);
+        //                //                        Point finVec0(curPoint0.x - handGesture->inCircle.x, curPoint0.y - handGesture->inCircle.y);
+        //                //                        double finAngle0 = atan2(finVec0.y, finVec0.x);
+        //                //                        Point finVec1 (curPoint1.x - handGesture->inCircle.x, curPoint1.y - handGesture->inCircle.y);
+        //                //                        double finAngle1 = atan2(finVec1.y, finVec1.x);
 
-//                //                        if (handGesture->fingerTipsOrdered.size() == 0) {
-//                //                            handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle0, curPoint0));
-//                //                            handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle1, curPoint1));
-//                //                            //  handGesture->fingerTipsOrdered.put(finAngle1, curPoint1);
+        //                //                        if (handGesture->fingerTipsOrdered.size() == 0) {
+        //                //                            handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle0, curPoint0));
+        //                //                            handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle1, curPoint1));
+        //                //                            //  handGesture->fingerTipsOrdered.put(finAngle1, curPoint1);
 
-//                //                        } else {
-//                //                            handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle0, curPoint0));
-//                //                            handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle1, curPoint1));
-//                //                            //                            handGesture->fingerTipsOrdered.put(finAngle0, curPoint0);
+        //                //                        } else {
+        //                //                            handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle0, curPoint0));
+        //                //                            handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle1, curPoint1));
+        //                //                            //                            handGesture->fingerTipsOrdered.put(finAngle0, curPoint0);
 
-//                //                            //                            handGesture->fingerTipsOrdered.put(finAngle1, curPoint1);
+        //                //                            //                            handGesture->fingerTipsOrdered.put(finAngle1, curPoint1);
 
-//                //                        }
-//                //                    }
-//                //                }
+        //                //                        }
+        //                //                    }
+        //                //                }
 
-//                // }
-//            }
-//        }
+        //                // }
+        //            }
+        //        }
 
     }
 
     if (handGesture->detectIsHand(frame)) {
-        cout << "vao day nhi" << endl;
+        //cout << "vao day nhi" << endl;
 
         // handGesture->boundingRect represents four coordinates of the bounding box.
-     //   rectangle(frame, handGesture->boundingRect.tl(), handGesture->boundingRect.br(),
-       //           mColorsRGB[1], 2);
-        // drawContours(frame, handGesture->hullP, handGesture->cMaxId, mColorsRGB[2]);
-        emit handSubtractingChanged(frame,handGesture->boundingRect);
+        //   rectangle(frame, handGesture->boundingRect.tl(), handGesture->boundingRect.br(),
+        //           mColorsRGB[1], 2);
+        //drawContours(frame, handGesture->hullP, handGesture->cMaxId, mColorsRGB[2]);
+        //emit handSubtractingChanged(frame, binMat,handGesture->boundingRect);
     }
-    //return frame;
+    return binMat;
 }
 
 // Generates binary image containing user's hand
-Mat HandThread::produceBinImg(Mat &imgIn, Mat &imgOut) {
-    int colNum = imgIn.cols;
-    int rowNum = imgIn.rows;
-    int boxExtension = 0;
+Mat HandThread::produceBinImg() {
+    //  int boxExtension = 0;
 
     boundariesCorrection();
 
-    produceBinHandImg(imgIn, binTmpMat);
-    imwrite("/home/nickseven/bin1.png",binTmpMat);
+    produceBinHandImg();
+    //    imwrite("/home/nickseven/bin1.png",binTmpMat);
 
-    produceBinBackImg(imgIn, binTmpMat2);
-    imwrite("/home/nickseven/bin2.png",binTmpMat2);
+    produceBinBackImg();
+    //    imwrite("/home/nickseven/bin2.png",binTmpMat2);
     bitwise_and(binTmpMat, binTmpMat2, binTmpMat);
-    imwrite("/home/nickseven/result.png",binTmpMat);
+    //    imwrite("/home/nickseven/result.png",binTmpMat);
+    imwrite("/home/nickseven/re-and.png",binTmpMat);
     binTmpMat.copyTo(tmpMat);
-    binTmpMat.copyTo(imgOut);
+    binTmpMat.copyTo(binMat);
 
     Rect roiRect = makeBoundingBox(tmpMat);
 
@@ -458,15 +589,15 @@ Mat HandThread::produceBinImg(Mat &imgIn, Mat &imgOut) {
 
     if (roiRect.area() > 0) {
 
-        roiRect.x = max(0, roiRect.x - boxExtension);
-        roiRect.y = max(0, roiRect.y - boxExtension);
-        roiRect.width = min(roiRect.width + boxExtension, colNum);
-        roiRect.height = min(roiRect.height + boxExtension, rowNum);
+        roiRect.x = max(0, roiRect.x);
+        roiRect.y = max(0, roiRect.y);
+        roiRect.width = min(roiRect.width, cols);
+        roiRect.height = min(roiRect.height, rows);
 
         Mat roi1(binTmpMat, roiRect);
-        Mat roi3(imgOut, roiRect);
+        Mat roi3(binMat, roiRect);
         // imgOut.setTo(Scalar.all(0));
-        imgOut.setTo(Scalar::all(0));
+        binMat.setTo(Scalar::all(0));
 
         roi1.copyTo(roi3);
 
@@ -477,8 +608,8 @@ Mat HandThread::produceBinImg(Mat &imgIn, Mat &imgOut) {
         erode(roi3, roi3, element, Point(-1, -1), 2);
 
     }
-
+    imwrite("/home/nickseven/re-fi.png",binMat);
     // cropBinImg(imgOut, imgOut);
-     return imgOut;
+    return binMat;
 }
 
