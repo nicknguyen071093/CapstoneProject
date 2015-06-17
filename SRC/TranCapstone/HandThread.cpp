@@ -4,7 +4,6 @@
 HandThread::HandThread(QObject *parent) :
     QThread(parent)
 {
-
     handGesture = new HandGesture();
     cols = 320;
     rows = 240;
@@ -14,6 +13,8 @@ HandThread::HandThread(QObject *parent) :
     webSource.set(CV_CAP_PROP_FRAME_HEIGHT,rows);
     initCLowerUpper(50, 50, 10, 10, 10, 10);
     initCBackLowerUpper(50, 50, 3, 3, 3, 3);
+    initBackPoints();
+    initHandPoints();
     this->STOP = false;
     this->mode = BACKGROUND_MODE;
 }
@@ -32,7 +33,7 @@ void HandThread::run() {
             webSource.retrieve(frame);
             flip(frame,frame,1);
             //            GaussianBlur(frame, blurMat, Size(5, 5), 5, 5);
-            //  imwrite("/home/nickseven/canny.png",frame);
+              imwrite("/home/nickseven/mau-tay.png",frame);
             GaussianBlur(frame, blurMat, Size(9, 9), 4);
             cvtColor(blurMat, interMat, COLOR_BGR2Lab);
             Mat showMat ;
@@ -50,9 +51,9 @@ void HandThread::run() {
             } else if (mode == BACKGROUND_MODE) {// First mode which presamples
                 // background colors
                 //additionFrame = frame.clone();
-                frame = imread("/home/nickseven/1.png");
-                GaussianBlur(frame, blurMat, Size(7, 7), 3);
-                cvtColor(blurMat, interMat, COLOR_BGR2Lab);
+//                frame = imread("/home/nickseven/1.png");
+//                GaussianBlur(frame, blurMat, Size(7, 7), 3);
+//                cvtColor(blurMat, interMat, COLOR_BGR2Lab);
 
                 imwrite("/home/nickseven/bg-mau.png",frame);
                 showMat = preSampleBack(frame.clone());
@@ -111,7 +112,7 @@ void HandThread::initCLowerUpper(double cl1, double cu1, double cl2, double cu2,
 void HandThread::initCBackLowerUpper(double cl1, double cu1, double cl2, double cu2,
                                      double cl3, double cu3) {
 
-    for (int i = 0; i < SAMPLE_NUM; i++) {
+    for (int i = 0; i < HAND_NUM; i++) {
         cBackLower[i][0] = cl1;
         cBackUpper[i][0] = cu1;
         cBackLower[i][1] = cl2;
@@ -119,44 +120,132 @@ void HandThread::initCBackLowerUpper(double cl1, double cu1, double cl2, double 
         cBackLower[i][2] = cl3;
         cBackUpper[i][2] = cu3;
     }
+}
 
+void HandThread::initHandPoints() {
+    sampleHandPoints[0][0].x = cols / 2;
+    sampleHandPoints[0][1].x = cols / 2 + squareLen;
+    sampleHandPoints[0][0].y = rows / 4;
+    sampleHandPoints[0][1].y = rows / 4 + squareLen;
+    sampleHandPoints[1][0].x = cols * 5 / 12;
+    sampleHandPoints[1][1].x = cols * 5 / 12 + squareLen;
+    sampleHandPoints[1][0].y = rows * 5 / 12;
+    sampleHandPoints[1][1].y = rows * 5 / 12 + squareLen;
+    sampleHandPoints[2][0].x = cols * 7 / 12;
+    sampleHandPoints[2][1].x = cols * 7 / 12 + squareLen;
+    sampleHandPoints[2][0].y = rows * 5 / 12;
+    sampleHandPoints[2][1].y = rows * 5 / 12 + squareLen;
+    sampleHandPoints[3][0].x = cols / 2;
+    sampleHandPoints[3][1].x = cols / 2 + squareLen;
+    sampleHandPoints[3][0].y = rows * 7 / 12;
+    sampleHandPoints[3][1].y = rows * 7 / 12 + squareLen;
+    sampleHandPoints[4][0].x = cols / 3;
+    sampleHandPoints[4][1].x = cols / 3 + squareLen;
+    sampleHandPoints[4][0].y = rows * 7 / 12;
+    sampleHandPoints[4][1].y = rows * 7 / 12 + squareLen;
+    sampleHandPoints[5][0].x = cols * 4 / 9;
+    sampleHandPoints[5][1].x = cols * 4 / 9 + squareLen;
+    sampleHandPoints[5][0].y = rows * 3 / 4;
+    sampleHandPoints[5][1].y = rows * 3 / 4 + squareLen;
+    sampleHandPoints[6][0].x = cols * 5 / 9;
+    sampleHandPoints[6][1].x = cols * 5 / 9 + squareLen;
+    sampleHandPoints[6][0].y = rows * 3 / 4;
+    sampleHandPoints[6][1].y = rows * 3 / 4 + squareLen;
+}
+
+void HandThread::initBackPoints() {
+    int width = cols / 5;
+    int height = rows / 4;
+    sampleBackPoints[0][0].x = cols / 9;
+    sampleBackPoints[0][0].y = rows / 7;
+    sampleBackPoints[0][1].x = cols / 9 + squareLen;
+    sampleBackPoints[0][1].y = rows / 7 + squareLen;
+    sampleBackPoints[1][0].x = cols / 3;
+    sampleBackPoints[1][0].y = rows / 7;
+    sampleBackPoints[1][1].x = cols / 3 + squareLen;
+    sampleBackPoints[1][1].y = rows / 7 + squareLen;
+    sampleBackPoints[2][0].x = cols / 1.7;
+    sampleBackPoints[2][0].y = rows / 7 ;
+    sampleBackPoints[2][1].x = cols / 1.7 + squareLen;
+    sampleBackPoints[2][1].y = rows / 7  + squareLen;
+    sampleBackPoints[3][0].x = cols / 9 * 7.5;
+    sampleBackPoints[3][0].y = rows / 7;
+    sampleBackPoints[3][1].x = cols / 9 * 7.5 + squareLen;
+    sampleBackPoints[3][1].y = rows / 7 + squareLen;
+    sampleBackPoints[4][0].x = cols / 9;
+    sampleBackPoints[4][0].y = rows / 2.1;
+    sampleBackPoints[4][1].x = cols / 9 + squareLen;
+    sampleBackPoints[4][1].y = rows / 2.1 + squareLen;
+    sampleBackPoints[5][0].x = cols / 3;
+    sampleBackPoints[5][0].y = rows / 2.1;
+    sampleBackPoints[5][1].x = cols / 3+ squareLen;
+    sampleBackPoints[5][1].y = rows / 2.1 + squareLen;
+    sampleBackPoints[6][0].x = cols / 1.7;
+    sampleBackPoints[6][0].y = rows / 2.1;
+    sampleBackPoints[6][1].x = cols / 1.7 + squareLen;
+    sampleBackPoints[6][1].y = rows / 2.1 + squareLen;
+    sampleBackPoints[7][0].x = cols / 9 * 7.5;
+    sampleBackPoints[7][0].y = rows / 2.1;
+    sampleBackPoints[7][1].x = cols / 9 * 7.5 + squareLen;
+    sampleBackPoints[7][1].y = rows / 2.1  + squareLen;
+    sampleBackPoints[8][0].x = cols / 9;
+    sampleBackPoints[8][0].y = rows / 1.25;
+    sampleBackPoints[8][1].x = cols / 9 + squareLen;
+    sampleBackPoints[8][1].y = rows / 1.25 + squareLen;
+    sampleBackPoints[9][0].x = cols / 3;
+    sampleBackPoints[9][0].y = rows / 1.25;
+    sampleBackPoints[9][1].x = cols / 3 + squareLen;
+    sampleBackPoints[9][1].y = rows / 1.25+ squareLen;
+    sampleBackPoints[10][0].x = cols / 1.7;
+    sampleBackPoints[10][0].y = rows / 1.25;
+    sampleBackPoints[10][1].x = cols / 1.7 + squareLen;
+    sampleBackPoints[10][1].y = rows / 1.25 + squareLen;
+    sampleBackPoints[11][0].x = cols / 9 * 7.5;
+    sampleBackPoints[11][0].y = rows / 1.25;
+    sampleBackPoints[11][1].x = cols / 9 * 7.5 + squareLen;
+    sampleBackPoints[11][1].y = rows / 1.25 + squareLen;
+    //    sampleBackPoints[0][0].x = cols / 6;
+    //    sampleBackPoints[0][0].y = rows / 3;
+    //    sampleBackPoints[1][0].x = cols / 6;
+    //    sampleBackPoints[1][0].y = rows * 2 / 3;
+    //    sampleBackPoints[2][0].x = cols / 2;
+    //    sampleBackPoints[2][0].y = rows / 6;
+    //    sampleBackPoints[3][0].x = cols / 2;
+    //    sampleBackPoints[3][0].y = rows / 2;
+    //    sampleBackPoints[4][0].x = cols / 2;
+    //    sampleBackPoints[4][0].y = rows * 5 / 6;
+    //    sampleBackPoints[5][0].x = cols * 5 / 6;
+    //    sampleBackPoints[5][0].y = rows / 3;
+    //    sampleBackPoints[6][0].x = cols * 5 / 6;
+    //    sampleBackPoints[6][0].y = rows * 2 / 3;
+
+    //    sampleBackPoints[0][1].x = cols / 6 + squareLen;
+    //    sampleBackPoints[0][1].y = rows / 3 + squareLen;
+    //    sampleBackPoints[1][1].x = cols / 6 + squareLen;
+    //    sampleBackPoints[1][1].y = rows * 2 / 3 + squareLen;
+    //    sampleBackPoints[2][1].x = cols / 2 + squareLen;
+    //    sampleBackPoints[2][1].y = rows / 6 + squareLen;
+    //    sampleBackPoints[3][1].x = cols / 2 + squareLen;
+    //    sampleBackPoints[3][1].y = rows / 2 + squareLen;
+    //    sampleBackPoints[4][1].x = cols / 2 + squareLen;
+    //    sampleBackPoints[4][1].y = rows * 5 / 6 + squareLen;
+    //    sampleBackPoints[5][1].x = cols * 5 / 6 + squareLen;
+    //    sampleBackPoints[5][1].y = rows / 3 + squareLen;
+    //    sampleBackPoints[6][1].x = cols * 5 / 6 + squareLen;
+    //    sampleBackPoints[6][1].y = rows * 2 / 3 + squareLen;
 }
 
 // Presampling hand colors.
 // Output is avgColor, which is essentially a 7 by 3 matrix storing the
 // colors sampled by seven squares
 Mat HandThread::preSampleHand(Mat img) {
-    Scalar color = mColorsRGB[1]; // Green Outline
-    samplePoints[0][0].x = cols / 2;
-    samplePoints[0][0].y = rows / 4;
-    samplePoints[1][0].x = cols * 5 / 12;
-    samplePoints[1][0].y = rows * 5 / 12;
-    samplePoints[2][0].x = cols * 7 / 12;
-    samplePoints[2][0].y = rows * 5 / 12;
-    samplePoints[3][0].x = cols / 2;
-    samplePoints[3][0].y = rows * 7 / 12;
-    samplePoints[4][0].x = cols / 3;
-    samplePoints[4][0].y = rows * 7 / 12;
-    samplePoints[5][0].x = cols * 4 / 9;
-    samplePoints[5][0].y = rows * 3 / 4;
-    samplePoints[6][0].x = cols * 5 / 9;
-    samplePoints[6][0].y = rows * 3 / 4;
+
 
     for (int i = 0; i < SAMPLE_NUM; i++) {
-        samplePoints[i][1].x = samplePoints[i][0].x + squareLen;
-        samplePoints[i][1].y = samplePoints[i][0].y + squareLen;
-    }
-
-    for (int i = 0; i < SAMPLE_NUM; i++) {
-        rectangle(img, samplePoints[i][0], samplePoints[i][1], color,
+        rectangle(img, sampleHandPoints[i][0], sampleHandPoints[i][1], mColorsRGB[1],
                 1);
     }
-    //    for (int i = 0; i < SAMPLE_NUM; i++) {
-    //        for (int j = 0; j < 3; j++) {
-    //            Vec3b intensity = interMat.at<Vec3b>((int) (samplePoints[i][0].y + squareLen / 2),(int) (samplePoints[i][0].x + squareLen / 2));
-    //            avgColor[i][j] = intensity.val[j];
-    //        }
-    //    }
+
     return img;
 }
 
@@ -164,7 +253,7 @@ void HandThread::getSampleHand() {
     Vec3b intensity;
     for (int i = 0; i < SAMPLE_NUM; i++) {
         for (int j = 0; j < 3; j++) {
-            intensity = interMat.at<Vec3b>((int) (samplePoints[i][0].y + squareLen / 2),(int) (samplePoints[i][0].x + squareLen / 2));
+            intensity = interMat.at<Vec3b>((int) (sampleHandPoints[i][0].y + squareLen / 2),(int) (sampleHandPoints[i][0].x + squareLen / 2));
             avgColor[i][j] = intensity.val[j];
         }
     }
@@ -174,51 +263,22 @@ void HandThread::getSampleHand() {
 // Output is avgBackColor, which is essentially a 7 by 3 matrix storing the
 // colors sampled by seven squares
 Mat HandThread::preSampleBack(Mat img) {
-    Scalar color = mColorsRGB[0]; // Blue Outline
 
-    samplePoints[0][0].x = cols / 6;
-    samplePoints[0][0].y = rows / 3;
-    samplePoints[1][0].x = cols / 6;
-    samplePoints[1][0].y = rows * 2 / 3;
-    samplePoints[2][0].x = cols / 2;
-    samplePoints[2][0].y = rows / 6;
-    samplePoints[3][0].x = cols / 2;
-    samplePoints[3][0].y = rows / 2;
-    samplePoints[4][0].x = cols / 2;
-    samplePoints[4][0].y = rows * 5 / 6;
-    samplePoints[5][0].x = cols * 5 / 6;
-    samplePoints[5][0].y = rows / 3;
-    samplePoints[6][0].x = cols * 5 / 6;
-    samplePoints[6][0].y = rows * 2 / 3;
-
-    for (int i = 0; i < SAMPLE_NUM; i++) {
-        samplePoints[i][1].x = samplePoints[i][0].x + squareLen;
-        samplePoints[i][1].y = samplePoints[i][0].y + squareLen;
-    }
-    //    imwrite("E:/CapstoneProject/Test/frameBack.png", frame);
-    for (int i = 0; i < SAMPLE_NUM; i++) {
-        rectangle(img, samplePoints[i][0], samplePoints[i][1], color,
+    for (int i = 0; i < HAND_NUM; i++) {
+        rectangle(img, sampleBackPoints[i][0], sampleBackPoints[i][1], mColorsRGB[0],
                 1);
     }
-
-        for (int i = 0; i < SAMPLE_NUM; i++) {
-            for (int j = 0; j < 3; j++) {
-                Vec3b intensity = interMat.at<Vec3b>((int) (samplePoints[i][0].y + squareLen / 2),(int) (samplePoints[i][0].x + squareLen / 2));
-                avgBackColor[i][j] = intensity.val[j];
-            }
-        }
-
     return img;
 }
 
 void HandThread::getSampleBack() {
     Vec3b intensity;
-//    for (int i = 0; i < SAMPLE_NUM; i++) {
-//        for (int j = 0; j < 3; j++) {
-//            intensity = interMat.at<Vec3b>((int) (samplePoints[i][0].y + squareLen / 2),(int) (samplePoints[i][0].x + squareLen / 2));
-//            avgBackColor[i][j] = intensity.val[j];
-//        }
-//    }
+    for (int i = 0; i < HAND_NUM; i++) {
+        for (int j = 0; j < 3; j++) {
+            intensity = interMat.at<Vec3b>((int) (sampleBackPoints[i][0].y + squareLen / 2),(int) (sampleBackPoints[i][0].x + squareLen / 2));
+            avgBackColor[i][j] = intensity.val[j];
+        }
+    }
     Mat src_gray, binary;
     /// Convert image to gray and blur it
     cvtColor(frame, src_gray, CV_BGR2GRAY );
@@ -246,18 +306,19 @@ void HandThread::getSampleBack() {
             x = rect.x + (rect.width/2);
             y = rect.y + (rect.height/2);
             if (pointPolygonTest(contours[i],Point(x,y),false) > 0) {
-                intensity = interMat.at<Vec3b>(x,y);
+                intensity = interMat.at<Vec3b>(y,x);
                 additionAvgBackColor.push_back(intensity);
                 rectangle(frame,rect,Scalar(255,0,0),2);
             } else if(pointPolygonTest(contours[i],Point(x/2,y),false) > 0) {
-                intensity = interMat.at<Vec3b>(x / 2,y);
+                intensity = interMat.at<Vec3b>(y,x / 2);
                 additionAvgBackColor.push_back(intensity);
-                rectangle(frame,rect,Scalar(255,0,0),2);
-            } else if (pointPolygonTest(contours[i],Point(x+x/2,y),false) > 0){
-                intensity = interMat.at<Vec3b>(x + (x / 2),y);
+                rectangle(frame,rect,Scalar(0,255,0),2);
+            } else if (pointPolygonTest(contours[i],Point(x+(x/2),y),false) > 0){
+                intensity = interMat.at<Vec3b>(y,x + (x / 2));
                 additionAvgBackColor.push_back(intensity);
-                rectangle(frame,rect,Scalar(255,0,0),2);
+                rectangle(frame,rect,Scalar(0,0,255),2);
             }
+
         }
     }
     for (int i = 0; i < additionAvgBackColor.size(); i++) {
@@ -320,16 +381,10 @@ void HandThread::produceBinHandImg() {
         lowerBound.val[0] = avgColor[i][0] - cLower[i][0];
         lowerBound.val[1] = avgColor[i][1] - cLower[i][1];
         lowerBound.val[2] = avgColor[i][2] - cLower[i][2];
-        //                lowerBound.set(double[3] {avgColor[i][0] - cLower[i][0],
-        //                    avgColor[i][1] - cLower[i][1],
-        //                    avgColor[i][2] - cLower[i][2]});
-        //                upperBound(avgColor[i][0] + cUpper[i][0],
-        //                avgColor[i][1] + cUpper[i][1],
-        //                avgColor[i][2] + cUpper[i][2]);
+
         upperBound.val[0] = avgColor[i][0] + cUpper[i][0];
         upperBound.val[1] = avgColor[i][1] + cUpper[i][1];
         upperBound.val[2] = avgColor[i][2] + cUpper[i][2];
-        // imwrite("/home/flyc/imgIn.png",imgIn);
         inRange(interMat, lowerBound, upperBound, sampleMats[i]);
 
     }
@@ -349,71 +404,52 @@ void HandThread::produceBinHandImg() {
 void HandThread::produceBinBackImg() {
     sampleBackgroundMats.clear();
     //    imwrite("/home/nickseven/imgIn.png",imgIn);
-    for (int i = 0; i < SAMPLE_NUM; i++) {
+    for (int i = 0; i < HAND_NUM; i++) {
         lowerBound.val[0] = avgBackColor[i][0] - cBackLower[i][0];
         lowerBound.val[1] = avgBackColor[i][1] - cBackLower[i][1];
         lowerBound.val[2] = avgBackColor[i][2] - cBackLower[i][2];
-        //        lowerBound.set(new double[]{
-        //            avgBackColor[i][0] - cBackLower[i][0],
-        //                    avgBackColor[i][1] - cBackLower[i][1],
-        //                    avgBackColor[i][2] - cBackLower[i][2]});
+
         upperBound.val[0] = avgBackColor[i][0] + cBackUpper[i][0];
         upperBound.val[1] = avgBackColor[i][1] + cBackUpper[i][1];
         upperBound.val[2] = avgBackColor[i][2] + cBackUpper[i][2];
-        //        upperBound.set(new double[]{
-        //            avgBackColor[i][0] + cBackUpper[i][0],
-        //                    avgBackColor[i][1] + cBackUpper[i][1],
-        //                    avgBackColor[i][2] + cBackUpper[i][2]});
-        //        Mat tmpSampleBackgroundMat;
-        //        inRange(interMat, lowerBound, upperBound, tmpSampleBackgroundMat);
-        //        sampleBackgroundMats.push_back(tmpSampleBackgroundMat);
-        inRange(interMat, lowerBound, upperBound, sampleMats[i]);
-        imwrite("/home/nickseven/sample-"+ QString::number(i).toStdString() +".png",sampleMats[i]);
-    }
-    //    for (int i = 0; i < additionAvgBackColor.size();i++) {
-    //        lowerBound.val[0] = additionAvgBackColor[i].val[0] - addBackLower[i][0];
-    //        lowerBound.val[1] = additionAvgBackColor[i].val[1] - addBackLower[i][1];
-    //        lowerBound.val[2] = additionAvgBackColor[i].val[2] - addBackLower[i][2];
-    //        //        lowerBound.set(new double[]{
-    //        //            avgBackColor[i][0] - cBackLower[i][0],
-    //        //                    avgBackColor[i][1] - cBackLower[i][1],
-    //        //                    avgBackColor[i][2] - cBackLower[i][2]});
-    //        upperBound.val[0] = additionAvgBackColor[i].val[0] + addBackUpper[i][0];
-    //        upperBound.val[1] = additionAvgBackColor[i].val[1] + addBackUpper[i][1];
-    //        upperBound.val[2] = additionAvgBackColor[i].val[2] + addBackUpper[i][2];
-    //        //        upperBound.set(new double[]{
-    //        //            avgBackColor[i][0] + cBackUpper[i][0],
-    //        //                    avgBackColor[i][1] + cBackUpper[i][1],
-    //        //                    avgBackColor[i][2] + cBackUpper[i][2]});
-    //        Mat tmpSampleBackgroundMat;
-    //        inRange(interMat, lowerBound, upperBound, tmpSampleBackgroundMat);
-    //        sampleBackgroundMats.push_back(tmpSampleBackgroundMat);
-    //    }
-    binTmpMat2.release();
-    //sampleBackgroundMats[0].copyTo(binTmpMat2);
-    sampleMats[0].copyTo(binTmpMat2);
-    for (int i = 1; i < SAMPLE_NUM; i++) {
-        add(binTmpMat2, sampleMats[i], binTmpMat2);
-    }
 
-    //    for (int i = 1; i < sampleBackgroundMats.size(); i++) {
-    //        add(binTmpMat2, sampleBackgroundMats[i], binTmpMat2);
-    //    }
+        Mat tmpSampleBackgroundMat;
+        inRange(interMat, lowerBound, upperBound, tmpSampleBackgroundMat);
+        sampleBackgroundMats.push_back(tmpSampleBackgroundMat);
+        imwrite("/home/nickseven/sample-"+ QString::number(i).toStdString() +".png",tmpSampleBackgroundMat);
+    }
+    for (int i = 0; i < additionAvgBackColor.size();i++) {
+        lowerBound.val[0] = (double) additionAvgBackColor[i].val[0] - addBackLower[i][0];
+        lowerBound.val[1] = (double) additionAvgBackColor[i].val[1] - addBackLower[i][1];
+        lowerBound.val[2] = (double) additionAvgBackColor[i].val[2] - addBackLower[i][2];
+
+        upperBound.val[0] = (double) additionAvgBackColor[i].val[0] + addBackUpper[i][0];
+        upperBound.val[1] = (double) additionAvgBackColor[i].val[1] + addBackUpper[i][1];
+        upperBound.val[2] = (double) additionAvgBackColor[i].val[2] + addBackUpper[i][2];
+
+        Mat tmpSampleBackgroundMat;
+        inRange(interMat, lowerBound, upperBound, tmpSampleBackgroundMat);
+        sampleBackgroundMats.push_back(tmpSampleBackgroundMat);
+        imwrite("/home/nickseven/sample-after-"+ QString::number(i).toStdString() +".png",tmpSampleBackgroundMat);
+    }
+    binTmpMat2.release();
+
+    sampleBackgroundMats[0].copyTo(binTmpMat2);
+    for (int i = 1; i < sampleBackgroundMats.size(); i++) {
+        add(binTmpMat2, sampleBackgroundMats[i], binTmpMat2);
+    }
     imwrite("/home/nickseven/bg-bin.png",binTmpMat2);
     bitwise_not(binTmpMat2, binTmpMat2);
     imwrite("/home/nickseven/bg-bin-1.png",binTmpMat2);
     medianBlur(binTmpMat2, binTmpMat2, 7);
     imwrite("/home/nickseven/bg-bin-2.png",binTmpMat2);
-
 }
 
 Rect HandThread::makeBoundingBox(Mat &img) {
     handGesture->contours.clear();
-    //cout<<img.type();
-    //imwrite("/home/flyc/2.png",img);
+
     findContours(img, handGesture->contours, handGesture->hie, CV_RETR_TREE,CV_CHAIN_APPROX_SIMPLE);
 
-    //  cout<<"alo 123";
     handGesture->findBiggestContour();
     if (handGesture->cMaxId > -1) {
         handGesture->boundingRect = boundingRect(handGesture->contours[handGesture->cMaxId]);

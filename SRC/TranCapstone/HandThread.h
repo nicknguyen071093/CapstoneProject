@@ -36,11 +36,12 @@ private:
     vector<uchar> mem;
     int squareLen;
     const static int SAMPLE_NUM = 7;
+    const static int HAND_NUM = 12;
     Scalar mColorsRGB[3] = {Scalar(255,0,0),Scalar(0,255,0),Scalar(0,0,255)};
     double cLower[SAMPLE_NUM][3];
     double cUpper[SAMPLE_NUM][3];
-    double cBackLower[SAMPLE_NUM][3];
-    double cBackUpper[SAMPLE_NUM][3];
+    double cBackLower[HAND_NUM][3];
+    double cBackUpper[HAND_NUM][3];
     //vector<double[3]> addBackLower;
     //vector<double[3]> addBackUpper;
     double addBackLower[50][3];
@@ -48,11 +49,13 @@ private:
     Scalar lowerBound;
     Scalar upperBound;
     double avgColor[SAMPLE_NUM][3];
-    double avgBackColor[SAMPLE_NUM][3];
+    double avgBackColor[HAND_NUM][3];
     vector<Vec3b> additionAvgBackColor;
     Point samplePoints[SAMPLE_NUM][2];
+    Point sampleBackPoints[HAND_NUM][2];
+    Point sampleHandPoints[SAMPLE_NUM][2];
     Mat sampleMats[SAMPLE_NUM];
-//    Mat tmpSampleBackgroundMat;
+    //    Mat tmpSampleBackgroundMat;
     vector<Mat> sampleBackgroundMats;
     int cols;
     int rows;
@@ -72,6 +75,8 @@ private:
                          double , double );
     void initCBackLowerUpper(double , double , double , double ,
                              double , double );
+    void initHandPoints();
+    void initBackPoints();
     Mat preSampleHand(Mat);
     Mat preSampleBack(Mat);
     void getSampleBack();
