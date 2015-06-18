@@ -1,0 +1,347 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<sim-project version="7.7" multi-file="no">
+  <meta>
+    <name>Project</name>
+    <authors> </authors>
+    <description />
+  </meta>
+  <counters models="1">
+    <entity-names>
+      <counter>
+        <item-type stereotype="" type="UmlComponent" />
+        <value>4</value>
+      </counter>
+    </entity-names>
+    <entity-ids>
+      <counter>
+        <item-type stereotype="" type="AbstractElementGroup" />
+        <value>86</value>
+      </counter>
+      <counter>
+        <item-type stereotype="" type="UmlComponent" />
+        <value>5</value>
+      </counter>
+      <counter>
+        <item-type stereotype="" type="UmlRequiredInterfaceConnector" />
+        <value>6</value>
+      </counter>
+      <counter>
+        <item-type stereotype="" type="UmlRequiredInterfaceEnd" />
+        <value>4</value>
+      </counter>
+      <counter>
+        <item-type stereotype="" type="UmlContainment" />
+        <value>2</value>
+      </counter>
+      <counter>
+        <item-type stereotype="" type="UmlProvidedInterfaceConnector" />
+        <value>7</value>
+      </counter>
+      <counter>
+        <item-type stereotype="" type="UmlInterface" />
+        <value>4</value>
+      </counter>
+    </entity-ids>
+    <diagrams>
+      <counter>
+        <type>SoftwareIdeasModeler.Core.Diagrams.UmlDiagrams.UmlComponentDiagram</type>
+        <value>1</value>
+      </counter>
+    </diagrams>
+    <fields />
+  </counters>
+  <management>
+    <persons>
+      <person id="Pb1db5bf0baea4c56b843a6c732a3c2a2">
+        <first-name />
+        <last-name />
+        <role />
+        <e-mail />
+        <phone-number />
+        <description />
+        <color>#00000000</color>
+      </person>
+    </persons>
+    <tasks />
+    <requirements />
+    <issues />
+    <to-dos />
+  </management>
+  <glossary />
+  <types>
+    <type-sets>
+      <type-set file="UmlTypes.xml" />
+    </type-sets>
+    <custom-types />
+  </types>
+  <filters />
+  <items>
+    <item id="di379704009381123900" cid="RQI001" type="uml-required-interface-end" name="" style-class="" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creator="Pb1db5bf0baea4c56b843a6c732a3c2a2" creation-date="06/18/2015 11:01:36">
+      <stereotypes />
+      <associated-diagrams />
+      <owned-items />
+      <style class="default" />
+      <required-interface interface-ref="di431545649692790893" />
+    </item>
+    <item id="di431545649692790893" cid="IFC001" type="uml-interface" name="" style-class="" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creator="Pb1db5bf0baea4c56b843a6c732a3c2a2" creation-date="06/18/2015 11:02:20">
+      <stereotypes />
+      <associated-diagrams />
+      <owned-items />
+      <style class="default" />
+      <interface required-interface-ref="di379704009381123900" />
+    </item>
+    <item id="di434175699347897878" cid="RQI002" type="uml-required-interface-end" name="" style-class="" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creator="Pb1db5bf0baea4c56b843a6c732a3c2a2" creation-date="06/18/2015 11:03:16">
+      <stereotypes />
+      <associated-diagrams />
+      <owned-items />
+      <style class="default" />
+      <required-interface interface-ref="di274185560391841416" />
+    </item>
+    <item id="di274185560391841416" cid="IFC002" type="uml-interface" name="" style-class="" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creator="Pb1db5bf0baea4c56b843a6c732a3c2a2" creation-date="06/18/2015 11:03:27">
+      <stereotypes />
+      <associated-diagrams />
+      <owned-items />
+      <style class="default" />
+      <interface required-interface-ref="di434175699347897878" />
+    </item>
+    <item id="di507480792324954929" cid="RQI003" type="uml-required-interface-end" name="" style-class="" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creator="Pb1db5bf0baea4c56b843a6c732a3c2a2" creation-date="06/18/2015 11:04:23">
+      <stereotypes />
+      <associated-diagrams />
+      <owned-items />
+      <style class="default" />
+      <required-interface interface-ref="di859875214956168830" />
+    </item>
+    <item id="di859875214956168830" cid="IFC003" type="uml-interface" name="" style-class="" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creator="Pb1db5bf0baea4c56b843a6c732a3c2a2" creation-date="06/18/2015 11:04:34">
+      <stereotypes />
+      <associated-diagrams />
+      <owned-items />
+      <style class="default" />
+      <interface required-interface-ref="di507480792324954929" />
+    </item>
+  </items>
+  <models>
+    <model id="p867222575573906762" name="Model 1" type="" namespace="" order-index="1">
+      <meta>
+        <authors>
+          <author> </author>
+        </authors>
+        <description />
+        <creation-date>06/18/2015 10:59:12</creation-date>
+        <change-date>01/01/0001 00:00:00</change-date>
+        <revision-count>0</revision-count>
+        <version />
+      </meta>
+      <abstract-items />
+      <sub-models />
+      <diagram type="uml-component" id="p844700579692796310" name="ComponentDiagram1" order-index="1" show-id="false" show-name="true" show-parent-name="false" show-stereotypes="true" show-tagged-values="false" show-template-parameters="true" show-fields="true" show-empty-compartments="true" show-attributes="true" show-attribute-visibility="true" show-operations="true" show-operation-parameters="true" show-operation-visibility="true" show-nullability="true" show-sequence-number="false" show-extension-points="true" show-relationship-texts="true" auto-routed-paths="false">
+        <style>
+          <background-color index="1" color="#FFFFFFFF" />
+          <background-color index="2" color="#FFFFFFFF" />
+          <background-type type="solid" />
+        </style>
+        <meta>
+          <authors>
+            <author> </author>
+          </authors>
+          <description />
+          <creation-date>06/18/2015 10:59:12</creation-date>
+          <change-date>06/18/2015 11:04:34</change-date>
+          <revision-count>0</revision-count>
+          <version />
+        </meta>
+        <abstract-items>
+          <item id="di445673936851750559" cid="CPT001" type="component" name="Raspberry Pi B2" style-class="" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creator="Pb1db5bf0baea4c56b843a6c732a3c2a2" creation-date="06/18/2015 10:59:44">
+            <stereotypes />
+            <associated-diagrams />
+            <owned-items />
+            <style class="default" />
+          </item>
+          <item id="di800288966813093036" cid="CPT002" type="component" name="Camera" style-class="" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creator="Pb1db5bf0baea4c56b843a6c732a3c2a2" creation-date="06/18/2015 11:00:15">
+            <stereotypes />
+            <associated-diagrams />
+            <owned-items />
+            <style class="default" />
+          </item>
+          <item id="di271536911799710247" cid="CPT003" type="component" name="LED" style-class="" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creator="Pb1db5bf0baea4c56b843a6c732a3c2a2" creation-date="06/18/2015 11:00:23">
+            <stereotypes />
+            <associated-diagrams />
+            <owned-items />
+            <style class="default" />
+          </item>
+          <item id="di466252348388210447" cid="CPT004" type="component" name="LCD" style-class="" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creator="Pb1db5bf0baea4c56b843a6c732a3c2a2" creation-date="06/18/2015 11:00:29">
+            <stereotypes />
+            <associated-diagrams />
+            <owned-items />
+            <style class="default" />
+          </item>
+          <item id="di426064721699866346" cid="ELEM001" type="uml-required-interface-connector" name="Camera port" style-class="" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creator="Pb1db5bf0baea4c56b843a6c732a3c2a2" creation-date="06/18/2015 11:01:36">
+            <stereotypes />
+            <associated-diagrams />
+            <owned-items />
+            <style class="default" />
+          </item>
+          <item id="di702970075230598667" cid="ELEM002" type="uml-provided-interface-connector" name="" style-class="" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creator="Pb1db5bf0baea4c56b843a6c732a3c2a2" creation-date="06/18/2015 11:02:20">
+            <stereotypes />
+            <associated-diagrams />
+            <owned-items />
+            <style class="default" />
+          </item>
+          <item id="di700992799756448793" cid="ELEM003" type="uml-required-interface-connector" name="HDMI" style-class="" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creator="Pb1db5bf0baea4c56b843a6c732a3c2a2" creation-date="06/18/2015 11:03:16">
+            <stereotypes />
+            <associated-diagrams />
+            <owned-items />
+            <style class="default" />
+          </item>
+          <item id="di688218679581733155" cid="ELEM004" type="uml-provided-interface-connector" name="" style-class="" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creator="Pb1db5bf0baea4c56b843a6c732a3c2a2" creation-date="06/18/2015 11:03:27">
+            <stereotypes />
+            <associated-diagrams />
+            <owned-items />
+            <style class="default" />
+          </item>
+          <item id="di852196557806482608" cid="ELEM005" type="uml-required-interface-connector" name="GPIO" style-class="" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creator="Pb1db5bf0baea4c56b843a6c732a3c2a2" creation-date="06/18/2015 11:04:23">
+            <stereotypes />
+            <associated-diagrams />
+            <owned-items />
+            <style class="default" />
+          </item>
+          <item id="di152412038589833711" cid="ELEM006" type="uml-provided-interface-connector" name="" style-class="" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creator="Pb1db5bf0baea4c56b843a6c732a3c2a2" creation-date="06/18/2015 11:04:34">
+            <stereotypes />
+            <associated-diagrams />
+            <owned-items />
+            <style class="default" />
+          </item>
+        </abstract-items>
+        <layer name="Default" visible="true" enabled="true" locked="false">
+          <item id="di445673936851750559" iid="394c0fb0d3a6452985fca1975283d4d6" creation-date="06/18/2015 10:59:44" order-index="0" type="entity">
+            <layout ax="355" ay="298.5" awidth="132" aheight="69" x="355" y="298.5" width="132" height="69" angle="0" />
+          </item>
+          <item id="di800288966813093036" iid="a28f7fa1e0f546139a3bf952344d30fc" creation-date="06/18/2015 11:00:15" order-index="1" type="entity">
+            <layout ax="130.5" ay="225" awidth="125" aheight="61" x="130.5" y="225" width="125" height="61" angle="0" />
+          </item>
+          <item id="di271536911799710247" iid="21f3dd65cd2749d7b423ad7410bdccbd" creation-date="06/18/2015 11:00:23" order-index="2" type="entity">
+            <layout ax="603" ay="301" awidth="124" aheight="64" x="603" y="301" width="124" height="64" angle="0" />
+          </item>
+          <item id="di466252348388210447" iid="4c1bd7a5f4bc41c2b7b4b337ff66438d" creation-date="06/18/2015 11:00:29" order-index="3" type="entity">
+            <layout ax="164" ay="428.5" awidth="125" aheight="67" x="164" y="428.5" width="125" height="67" angle="0" />
+          </item>
+          <item id="di426064721699866346" iid="21b98f1fd84043de9b387ae3f94232a5" creation-date="06/18/2015 11:01:36" order-index="4" type="relation">
+            <layout line-style="oblique" lock-start-point="true" lock-end-point="false" lock-to-fields="false" name-position="10,-10" auto-path="" x1="355" y1="320" x2="312" y2="293" start-border-pos="0.920289855072464" end-border-pos="0.451981201171875">
+              <points>
+                <point x="355" y="320" />
+                <point x="312" y="293" />
+              </points>
+            </layout>
+            <attached-parts>
+              <attached-part ref="c55d80be0c5449acbe41796d718796ee" />
+            </attached-parts>
+            <relation from="di445673936851750559" from-iid="394c0fb0d3a6452985fca1975283d4d6" to="di379704009381123900" to-iid="c55d80be0c5449acbe41796d718796ee" />
+          </item>
+          <item id="di379704009381123900" iid="c55d80be0c5449acbe41796d718796ee" creation-date="06/18/2015 11:01:36" order-index="5" type="entity">
+            <layout ax="289" ay="273.5" awidth="25" aheight="25" x="289" y="273.5" width="25" height="25" angle="0" name-position="30,-10" />
+            <attached-parts>
+              <attached-part ref="21b98f1fd84043de9b387ae3f94232a5" />
+            </attached-parts>
+            <required-interface interface-ref="91da0fa0bd764b509c65e69a7a762cf7" />
+          </item>
+          <item id="di702970075230598667" iid="f7ae30fb999c4ce8b550243a559d3450" creation-date="06/18/2015 11:02:20" order-index="6" type="relation">
+            <layout line-style="oblique" lock-start-point="true" lock-end-point="false" lock-to-fields="false" name-position="10,-10" auto-path="" x1="256" y1="258" x2="294" y2="282" start-border-pos="0.387295081967213" end-border-pos="0.955562815946691">
+              <points>
+                <point x="256" y="258" />
+                <point x="294" y="282" />
+              </points>
+            </layout>
+            <attached-parts>
+              <attached-part ref="91da0fa0bd764b509c65e69a7a762cf7" />
+            </attached-parts>
+            <relation from="di800288966813093036" from-iid="a28f7fa1e0f546139a3bf952344d30fc" to="di431545649692790893" to-iid="91da0fa0bd764b509c65e69a7a762cf7" />
+          </item>
+          <item id="di431545649692790893" iid="91da0fa0bd764b509c65e69a7a762cf7" creation-date="06/18/2015 11:02:20" order-index="7" type="entity">
+            <layout ax="293" ay="277.5" awidth="17" aheight="17" x="293" y="277.5" width="17" height="17" angle="0" name-position="30,-10" />
+            <attached-parts>
+              <attached-part ref="f7ae30fb999c4ce8b550243a559d3450" />
+            </attached-parts>
+            <interface required-interface-ref="c55d80be0c5449acbe41796d718796ee" />
+          </item>
+          <item id="di700992799756448793" iid="ba7520af16bd424aabfcae6f52946f26" creation-date="06/18/2015 11:03:16" order-index="8" type="relation">
+            <layout line-style="oblique" lock-start-point="true" lock-end-point="false" lock-to-fields="false" name-position="-6,-1" auto-path="" x1="379" y1="368" x2="325" y2="400" start-border-pos="0.704545454545455" end-border-pos="0.30484619140625" name-width="57">
+              <points>
+                <point x="379" y="368" />
+                <point x="325" y="400" />
+              </points>
+            </layout>
+            <attached-parts>
+              <attached-part ref="f64119227b824507834b5dc03f739bf2" />
+            </attached-parts>
+            <relation from="di445673936851750559" from-iid="394c0fb0d3a6452985fca1975283d4d6" to="di434175699347897878" to-iid="f64119227b824507834b5dc03f739bf2" />
+          </item>
+          <item id="di434175699347897878" iid="f64119227b824507834b5dc03f739bf2" creation-date="06/18/2015 11:03:16" order-index="9" type="entity">
+            <layout ax="301.5" ay="393.5" awidth="25" aheight="25" x="301.5" y="393.5" width="25" height="25" angle="0" name-position="30,-10" />
+            <attached-parts>
+              <attached-part ref="ba7520af16bd424aabfcae6f52946f26" />
+            </attached-parts>
+            <required-interface interface-ref="aa5777750caa4994bcb805ec7c8e14a5" />
+          </item>
+          <item id="di688218679581733155" iid="c99dbe5c77ba47eba6fd30592b3553a1" creation-date="06/18/2015 11:03:27" order-index="10" type="relation">
+            <layout line-style="oblique" lock-start-point="false" lock-end-point="false" lock-to-fields="false" name-position="10,-10" auto-path="" x1="279" y1="428" x2="307" y2="411" start-border-pos="0.230857116699219" end-border-pos="0.790775523466222">
+              <points>
+                <point x="279" y="428" />
+                <point x="307" y="411" />
+              </points>
+            </layout>
+            <attached-parts>
+              <attached-part ref="aa5777750caa4994bcb805ec7c8e14a5" />
+            </attached-parts>
+            <relation from="di466252348388210447" from-iid="4c1bd7a5f4bc41c2b7b4b337ff66438d" to="di274185560391841416" to-iid="aa5777750caa4994bcb805ec7c8e14a5" />
+          </item>
+          <item id="di274185560391841416" iid="aa5777750caa4994bcb805ec7c8e14a5" creation-date="06/18/2015 11:03:27" order-index="11" type="entity">
+            <layout ax="305.5" ay="397.5" awidth="17" aheight="17" x="305.5" y="397.5" width="17" height="17" angle="0" name-position="30,-10" />
+            <attached-parts>
+              <attached-part ref="c99dbe5c77ba47eba6fd30592b3553a1" />
+            </attached-parts>
+            <interface required-interface-ref="f64119227b824507834b5dc03f739bf2" />
+          </item>
+          <item id="di852196557806482608" iid="d03c1f7763014f4aa4ec69ed3f86a7c7" creation-date="06/18/2015 11:04:23" order-index="12" type="relation">
+            <layout line-style="oblique" lock-start-point="true" lock-end-point="true" lock-to-fields="false" name-position="10,-10" auto-path="" x1="487" y1="333" x2="543" y2="333" start-border-pos="0.375" end-border-pos="0.875">
+              <points>
+                <point x="487" y="333" />
+                <point x="543" y="333" />
+              </points>
+            </layout>
+            <attached-parts>
+              <attached-part ref="176701f2c4c74a33a5a51ed32ed30ef1" />
+            </attached-parts>
+            <relation from="di445673936851750559" from-iid="394c0fb0d3a6452985fca1975283d4d6" to="di507480792324954929" to-iid="176701f2c4c74a33a5a51ed32ed30ef1" />
+          </item>
+          <item id="di507480792324954929" iid="176701f2c4c74a33a5a51ed32ed30ef1" creation-date="06/18/2015 11:04:23" order-index="13" type="entity">
+            <layout ax="543" ay="320.5" awidth="25" aheight="25" x="543" y="320.5" width="25" height="25" angle="0" name-position="30,-10" />
+            <attached-parts>
+              <attached-part ref="d03c1f7763014f4aa4ec69ed3f86a7c7" />
+            </attached-parts>
+            <required-interface interface-ref="370bb62aaa1b43ddbec5736d16751653" />
+          </item>
+          <item id="di152412038589833711" iid="8984dc62b419434ea0f8d3ddaea28698" creation-date="06/18/2015 11:04:34" order-index="14" type="relation">
+            <layout line-style="oblique" lock-start-point="true" lock-end-point="true" lock-to-fields="false" name-position="10,-10" auto-path="" x1="603" y1="332" x2="564" y2="333" start-border-pos="0.87890625" end-border-pos="0.375">
+              <points>
+                <point x="603" y="332" />
+                <point x="564" y="333" />
+              </points>
+            </layout>
+            <attached-parts>
+              <attached-part ref="370bb62aaa1b43ddbec5736d16751653" />
+            </attached-parts>
+            <relation from="di271536911799710247" from-iid="21f3dd65cd2749d7b423ad7410bdccbd" to="di859875214956168830" to-iid="370bb62aaa1b43ddbec5736d16751653" />
+          </item>
+          <item id="di859875214956168830" iid="370bb62aaa1b43ddbec5736d16751653" creation-date="06/18/2015 11:04:34" order-index="15" type="entity">
+            <layout ax="547" ay="324.5" awidth="17" aheight="17" x="547" y="324.5" width="17" height="17" angle="0" name-position="30,-10" />
+            <attached-parts>
+              <attached-part ref="8984dc62b419434ea0f8d3ddaea28698" />
+            </attached-parts>
+            <interface required-interface-ref="176701f2c4c74a33a5a51ed32ed30ef1" />
+          </item>
+        </layer>
+      </diagram>
+    </model>
+  </models>
+  <documents />
+  <document-templates />
+</sim-project>
