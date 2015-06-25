@@ -3,7 +3,6 @@
 
 #include <QThread>
 #include "HandGesture.h"
-#include "ImageTranslating.h"
 #include "unistd.h"
 
 class HandThread : public QThread
@@ -27,7 +26,6 @@ public:
     HandGesture *handGesture;
     void setMode(int);
     void releaseAll();
-
     bool STOP;
 
 private:
@@ -35,7 +33,7 @@ private:
     Mat frame;
     vector<uchar> mem;
     int squareLen;
-    const static int SAMPLE_NUM = 7;
+    const static int SAMPLE_NUM = 13;
     const static int HAND_NUM = 12;
     Scalar mColorsRGB[3] = {Scalar(255,0,0),Scalar(0,255,0),Scalar(0,0,255)};
     double cLower[SAMPLE_NUM][3];
@@ -53,6 +51,8 @@ private:
     vector<Vec3b> additionAvgBackColor;
     Point samplePoints[SAMPLE_NUM][2];
     Point sampleBackPoints[HAND_NUM][2];
+    vector < vector<Point> > drawingHand;
+    vector<Vec4i> hierarchy;
     Point sampleHandPoints[SAMPLE_NUM][2];
     Mat sampleMats[SAMPLE_NUM];
     //    Mat tmpSampleBackgroundMat;
@@ -68,7 +68,6 @@ private:
     Mat binTmpMat2 ;
     int mode;
     int curLabel;
-    QImage imageObject;
     void run();
     //void finished();
     void initCLowerUpper(double , double , double , double ,
@@ -91,7 +90,7 @@ private:
     Mat produceBinImg();
 
 signals:
-    void handTrackingChanged(QImage);
+    void handTrackingChanged(Mat);
     void binaryImageHandChanged (Mat, Mat);
     void handSubtractingChanged(Mat,Mat,Rect);
 

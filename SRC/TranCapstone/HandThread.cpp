@@ -11,7 +11,7 @@ HandThread::HandThread(QObject *parent) :
     webSource = VideoCapture(0);
     webSource.set(CV_CAP_PROP_FRAME_WIDTH,cols);
     webSource.set(CV_CAP_PROP_FRAME_HEIGHT,rows);
-    initCLowerUpper(50, 50, 10, 10, 10, 10);
+    initCLowerUpper(25, 25, 5, 5, 5, 5);
     initCBackLowerUpper(50, 50, 3, 3, 3, 3);
     initBackPoints();
     initHandPoints();
@@ -33,7 +33,7 @@ void HandThread::run() {
             webSource.retrieve(frame);
             flip(frame,frame,1);
             //            GaussianBlur(frame, blurMat, Size(5, 5), 5, 5);
-              imwrite("/home/nickseven/mau-tay.png",frame);
+            //            imwrite("/home/nickseven/mau-tay.png",frame);
             GaussianBlur(frame, blurMat, Size(9, 9), 4);
             cvtColor(blurMat, interMat, COLOR_BGR2Lab);
             Mat showMat ;
@@ -41,52 +41,54 @@ void HandThread::run() {
                 // binary image containing the
                 // segmented hand represented by
                 // white color
-                frame = imread("/home/nickseven/2.png");
+                frame = imread("/home/nickseven/hand-detect.png");
                 GaussianBlur(frame, blurMat, Size(7, 7), 3);
                 cvtColor(blurMat, interMat, COLOR_BGR2Lab);
                 showMat = produceBinImg();
                 //                imwrite("/home/nickseven/re-mau.png",showMat);
-                emit binaryImageHandChanged(frame, binMat);
+
+
+
+                emit binaryImageHandChanged(frame.clone(), binMat.clone());
                 //   bitwise_and(frame,frame,showMat,showMat);
             } else if (mode == BACKGROUND_MODE) {// First mode which presamples
                 // background colors
-                //additionFrame = frame.clone();
-//                frame = imread("/home/nickseven/1.png");
-//                GaussianBlur(frame, blurMat, Size(7, 7), 3);
-//                cvtColor(blurMat, interMat, COLOR_BGR2Lab);
+                frame = imread("/home/nickseven/bg-mau.png");
+                GaussianBlur(frame, blurMat, Size(7, 7), 3);
+                cvtColor(blurMat, interMat, COLOR_BGR2Lab);
 
-                imwrite("/home/nickseven/bg-mau.png",frame);
+                // imwrite("/home/nickseven/bg-mau.png",frame);
                 showMat = preSampleBack(frame.clone());
             } else if (mode == SAMPLE_MODE) { // Second mode which presamples the colors of
                 // the hand
-                //getSampleBack();
-                frame = imread("/home/nickseven/2.png");
+                frame = imread("/home/nickseven/hand-detect.png");
                 GaussianBlur(frame, blurMat, Size(7, 7), 3);
                 cvtColor(blurMat, interMat, COLOR_BGR2Lab);
-                imwrite("/home/nickseven/ha-mau.png",frame);
+                //imwrite("/home/nickseven/ha-mau.png",frame);
                 showMat = preSampleHand(frame.clone());
             } else if (mode == TRAIN_REC_MODE) {
-                frame = imread("/home/nickseven/2.png");
+                frame = imread("/home/nickseven/hand-detect.png");
                 GaussianBlur(frame, blurMat, Size(7, 7), 3);
                 cvtColor(blurMat, interMat, COLOR_BGR2Lab);
                 showMat = produceBinImg();
                 makeContours();
                 //  handGesture->featureExtraction(frame, curLabel);
             } else if (mode == GET_AVG_BACKGROUND) {
-                frame = imread("/home/nickseven/1.png");
+                frame = imread("/home/nickseven/bg-mau.png");
                 GaussianBlur(frame, blurMat, Size(7, 7), 3);
                 cvtColor(blurMat, interMat, COLOR_BGR2Lab);
+//                imwrite("/home/nickseven/b-degtect.png",frame);
                 getSampleBack();
                 mode = SAMPLE_MODE;
             } else {
-                frame = imread("/home/nickseven/2.png");
+                frame = imread("/home/nickseven/hand-detect.png");
                 GaussianBlur(frame, blurMat, Size(7, 7), 3);
                 cvtColor(blurMat, interMat, COLOR_BGR2Lab);
+                //  imwrite("/home/nickseven/hand-detect.png",frame);
                 getSampleHand();
                 mode = DETECTION_MODE;
             }
-            imageObject = cvMatToQImage(showMat);
-            emit handTrackingChanged(imageObject);
+            emit handTrackingChanged(showMat.clone());
         }
     }
 }
@@ -123,34 +125,93 @@ void HandThread::initCBackLowerUpper(double cl1, double cu1, double cl2, double 
 }
 
 void HandThread::initHandPoints() {
-    sampleHandPoints[0][0].x = cols / 2;
-    sampleHandPoints[0][1].x = cols / 2 + squareLen;
-    sampleHandPoints[0][0].y = rows / 4;
-    sampleHandPoints[0][1].y = rows / 4 + squareLen;
-    sampleHandPoints[1][0].x = cols * 5 / 12;
-    sampleHandPoints[1][1].x = cols * 5 / 12 + squareLen;
-    sampleHandPoints[1][0].y = rows * 5 / 12;
-    sampleHandPoints[1][1].y = rows * 5 / 12 + squareLen;
-    sampleHandPoints[2][0].x = cols * 7 / 12;
-    sampleHandPoints[2][1].x = cols * 7 / 12 + squareLen;
-    sampleHandPoints[2][0].y = rows * 5 / 12;
-    sampleHandPoints[2][1].y = rows * 5 / 12 + squareLen;
-    sampleHandPoints[3][0].x = cols / 2;
-    sampleHandPoints[3][1].x = cols / 2 + squareLen;
-    sampleHandPoints[3][0].y = rows * 7 / 12;
-    sampleHandPoints[3][1].y = rows * 7 / 12 + squareLen;
-    sampleHandPoints[4][0].x = cols / 3;
-    sampleHandPoints[4][1].x = cols / 3 + squareLen;
-    sampleHandPoints[4][0].y = rows * 7 / 12;
-    sampleHandPoints[4][1].y = rows * 7 / 12 + squareLen;
-    sampleHandPoints[5][0].x = cols * 4 / 9;
-    sampleHandPoints[5][1].x = cols * 4 / 9 + squareLen;
-    sampleHandPoints[5][0].y = rows * 3 / 4;
-    sampleHandPoints[5][1].y = rows * 3 / 4 + squareLen;
-    sampleHandPoints[6][0].x = cols * 5 / 9;
-    sampleHandPoints[6][1].x = cols * 5 / 9 + squareLen;
-    sampleHandPoints[6][0].y = rows * 3 / 4;
-    sampleHandPoints[6][1].y = rows * 3 / 4 + squareLen;
+    sampleHandPoints[0][0].x = 69;
+    sampleHandPoints[0][1].x = 74;
+    sampleHandPoints[0][0].y = 135;
+    sampleHandPoints[0][1].y = 140;
+    sampleHandPoints[1][0].x = 106;
+    sampleHandPoints[1][1].x = 111;
+    sampleHandPoints[1][0].y = 175;
+    sampleHandPoints[1][1].y = 180;
+    sampleHandPoints[2][0].x = 115;
+    sampleHandPoints[2][1].x = 120;
+    sampleHandPoints[2][0].y = 51;
+    sampleHandPoints[2][1].y = 56;
+    sampleHandPoints[3][0].x = 135;
+    sampleHandPoints[3][1].x = 140;
+    sampleHandPoints[3][0].y = 118;
+    sampleHandPoints[3][1].y = 123;
+    sampleHandPoints[4][0].x = 161;
+    sampleHandPoints[4][1].x = 166;
+    sampleHandPoints[4][0].y = 33;
+    sampleHandPoints[4][1].y = 38;
+    sampleHandPoints[5][0].x = 163;
+    sampleHandPoints[5][1].x = 168;
+    sampleHandPoints[5][0].y = 113;
+    sampleHandPoints[5][1].y = 118;
+    sampleHandPoints[6][0].x = 196;
+    sampleHandPoints[6][1].x = 201;
+    sampleHandPoints[6][0].y = 44;
+    sampleHandPoints[6][1].y = 49;
+    sampleHandPoints[7][0].x = 188;
+    sampleHandPoints[7][1].x = 193;
+    sampleHandPoints[7][0].y = 118;
+    sampleHandPoints[7][1].y = 123;
+    sampleHandPoints[8][0].x = 239;
+    sampleHandPoints[8][1].x = 244;
+    sampleHandPoints[8][0].y = 72;
+    sampleHandPoints[8][1].y = 77;
+    sampleHandPoints[9][0].x = 213;
+    sampleHandPoints[9][1].x = 218;
+    sampleHandPoints[9][0].y = 131;
+    sampleHandPoints[9][1].y = 136;
+    sampleHandPoints[10][0].x = 130;
+    sampleHandPoints[10][1].x = 135;
+    sampleHandPoints[10][0].y = 196;
+    sampleHandPoints[10][1].y = 201;
+    sampleHandPoints[11][0].x = 201;
+    sampleHandPoints[11][1].x = 206;
+    sampleHandPoints[11][0].y = 196;
+    sampleHandPoints[11][1].y = 201;
+    sampleHandPoints[12][0].x = 167;
+    sampleHandPoints[12][1].x = 172;
+    sampleHandPoints[12][0].y = 162;
+    sampleHandPoints[12][1].y = 167;
+    //    sampleHandPoints[0][0].x = cols / 2;
+    //    sampleHandPoints[0][1].x = cols / 2 + squareLen;
+    //    sampleHandPoints[0][0].y = rows / 4;
+    //    sampleHandPoints[0][1].y = rows / 4 + squareLen;
+    //    sampleHandPoints[1][0].x = cols * 5 / 12;
+    //    sampleHandPoints[1][1].x = cols * 5 / 12 + squareLen;
+    //    sampleHandPoints[1][0].y = rows * 5 / 12;
+    //    sampleHandPoints[1][1].y = rows * 5 / 12 + squareLen;
+    //    sampleHandPoints[2][0].x = cols * 7 / 12;
+    //    sampleHandPoints[2][1].x = cols * 7 / 12 + squareLen;
+    //    sampleHandPoints[2][0].y = rows * 5 / 12;
+    //    sampleHandPoints[2][1].y = rows * 5 / 12 + squareLen;
+    //    sampleHandPoints[3][0].x = cols / 2;
+    //    sampleHandPoints[3][1].x = cols / 2 + squareLen;
+    //    sampleHandPoints[3][0].y = rows * 7 / 12;
+    //    sampleHandPoints[3][1].y = rows * 7 / 12 + squareLen;
+    //    sampleHandPoints[4][0].x = cols / 3;
+    //    sampleHandPoints[4][1].x = cols / 3 + squareLen;
+    //    sampleHandPoints[4][0].y = rows * 7 / 12;
+    //    sampleHandPoints[4][1].y = rows * 7 / 12 + squareLen;
+    //    sampleHandPoints[5][0].x = cols * 4 / 9;
+    //    sampleHandPoints[5][1].x = cols * 4 / 9 + squareLen;
+    //    sampleHandPoints[5][0].y = rows * 3 / 4;
+    //    sampleHandPoints[5][1].y = rows * 3 / 4 + squareLen;
+    //    sampleHandPoints[6][0].x = cols * 5 / 9;
+    //    sampleHandPoints[6][1].x = cols * 5 / 9 + squareLen;
+    //    sampleHandPoints[6][0].y = rows * 3 / 4;
+    //    sampleHandPoints[6][1].y = rows * 3 / 4 + squareLen;
+    Mat image = imread("/home/nickseven/mau-tay-moi.png");
+    /// Convert the image to Gray
+    Mat src_gray;
+    cvtColor( image, src_gray, CV_BGR2GRAY );
+    Mat dst;
+    threshold(src_gray, dst, 128, 255,0);
+    findContours(dst,drawingHand,hierarchy,CV_RETR_TREE,CV_CHAIN_APPROX_SIMPLE);
 }
 
 void HandThread::initBackPoints() {
@@ -204,6 +265,7 @@ void HandThread::initBackPoints() {
     sampleBackPoints[11][0].y = rows / 1.25;
     sampleBackPoints[11][1].x = cols / 9 * 7.5 + squareLen;
     sampleBackPoints[11][1].y = rows / 1.25 + squareLen;
+
     //    sampleBackPoints[0][0].x = cols / 6;
     //    sampleBackPoints[0][0].y = rows / 3;
     //    sampleBackPoints[1][0].x = cols / 6;
@@ -240,7 +302,7 @@ void HandThread::initBackPoints() {
 // colors sampled by seven squares
 Mat HandThread::preSampleHand(Mat img) {
 
-
+    drawContours(img, drawingHand, -1, Scalar(255,0,0), 2, 8, hierarchy, 0, Point());
     for (int i = 0; i < SAMPLE_NUM; i++) {
         rectangle(img, sampleHandPoints[i][0], sampleHandPoints[i][1], mColorsRGB[1],
                 1);
@@ -251,11 +313,21 @@ Mat HandThread::preSampleHand(Mat img) {
 
 void HandThread::getSampleHand() {
     Vec3b intensity;
+    //        for (int i = 0; i < SAMPLE_NUM; i++) {
+    //            for (int j = 0; j < 3; j++) {
+    //                intensity = interMat.at<Vec3b>((int) (sampleHandPoints[i][0].y + squareLen / 2),(int) (sampleHandPoints[i][0].x + squareLen / 2));
+    //                avgColor[i][j] = intensity.val[j];
+    //            }
+    //        }
+
     for (int i = 0; i < SAMPLE_NUM; i++) {
         for (int j = 0; j < 3; j++) {
-            intensity = interMat.at<Vec3b>((int) (sampleHandPoints[i][0].y + squareLen / 2),(int) (sampleHandPoints[i][0].x + squareLen / 2));
+            intensity = interMat.at<Vec3b>((int) (sampleHandPoints[i][0].y),(int) (sampleHandPoints[i][0].x));
             avgColor[i][j] = intensity.val[j];
+
         }
+        cout << "x:" << (int) (sampleHandPoints[i][0].x) << " y:" << (int) (sampleHandPoints[i][0].y);
+        cout << " 1:" << (double)intensity.val[0] << " 2:" << (double) intensity.val[1] << " 2:" << (double) intensity.val[2] << endl;
     }
 }
 
@@ -386,7 +458,7 @@ void HandThread::produceBinHandImg() {
         upperBound.val[1] = avgColor[i][1] + cUpper[i][1];
         upperBound.val[2] = avgColor[i][2] + cUpper[i][2];
         inRange(interMat, lowerBound, upperBound, sampleMats[i]);
-
+        imwrite("/home/nickseven/tay-" + QString::number(i).toStdString() +  ".png",sampleMats[i]);
     }
 
     binTmpMat.release();
@@ -395,9 +467,14 @@ void HandThread::produceBinHandImg() {
     for (int i = 1; i < SAMPLE_NUM; i++) {
         add(binTmpMat, sampleMats[i], binTmpMat);
     }
-    imwrite("/home/nickseven/h1.png",binTmpMat);
+    imwrite("/home/nickseven/h1a.png",binTmpMat);
+    Mat element = getStructuringElement(MORPH_RECT, Size( 2*3 + 1, 2*3 + 1 ), Point( 3, 3 ) );
+
+    /// Apply the specified morphology operation
+    morphologyEx( binTmpMat, binTmpMat, CV_MOP_OPEN, element );
+    imwrite("/home/nickseven/h2a.png",binTmpMat);
     medianBlur(binTmpMat, binTmpMat, 3);
-    imwrite("/home/nickseven/h2.png",binTmpMat);
+    imwrite("/home/nickseven/h3a.png",binTmpMat);
 }
 
 // Generates binary image thresholded only by sampled background colors
@@ -441,8 +518,13 @@ void HandThread::produceBinBackImg() {
     imwrite("/home/nickseven/bg-bin.png",binTmpMat2);
     bitwise_not(binTmpMat2, binTmpMat2);
     imwrite("/home/nickseven/bg-bin-1.png",binTmpMat2);
-    medianBlur(binTmpMat2, binTmpMat2, 7);
+    Mat element = getStructuringElement(MORPH_RECT, Size( 2*3 + 1, 2*3 + 1 ), Point( 3, 3 ) );
+
+    /// Apply the specified morphology operation
+    morphologyEx( binTmpMat2, binTmpMat2, CV_MOP_OPEN, element );
     imwrite("/home/nickseven/bg-bin-2.png",binTmpMat2);
+    //    medianBlur(binTmpMat2, binTmpMat2, 7);
+    //    imwrite("/home/nickseven/bg-bin-3.png",binTmpMat2);
 }
 
 Rect HandThread::makeBoundingBox(Mat &img) {
@@ -619,32 +701,31 @@ Mat HandThread::produceBinImg() {
     binTmpMat.copyTo(tmpMat);
     binTmpMat.copyTo(binMat);
 
-    Rect roiRect = makeBoundingBox(tmpMat);
+    //    Rect roiRect = makeBoundingBox(tmpMat);
 
-    // adjustBoundingBox(roiRect, binTmpMat);
 
-    if (roiRect.area() > 0) {
+    //    if (roiRect.area() > 0) {
 
-        roiRect.x = max(0, roiRect.x);
-        roiRect.y = max(0, roiRect.y);
-        roiRect.width = min(roiRect.width, cols);
-        roiRect.height = min(roiRect.height, rows);
+    //        roiRect.x = max(0, roiRect.x);
+    //        roiRect.y = max(0, roiRect.y);
+    //        roiRect.width = min(roiRect.width, cols);
+    //        roiRect.height = min(roiRect.height, rows);
 
-        Mat roi1(binTmpMat, roiRect);
-        Mat roi3(binMat, roiRect);
-        // imgOut.setTo(Scalar.all(0));
-        binMat.setTo(Scalar::all(0));
+    //        Mat roi1(binTmpMat, roiRect);
+    //        Mat roi3(binMat, roiRect);
+    //        // imgOut.setTo(Scalar.all(0));
+    //        binMat.setTo(Scalar::all(0));
 
-        roi1.copyTo(roi3);
+    //        roi1.copyTo(roi3);
 
-        Mat element = getStructuringElement(MORPH_ELLIPSE,
-                                            Size(3, 3));
-        dilate(roi3, roi3, element, Point(-1, -1), 2);
+    //        Mat element = getStructuringElement(MORPH_ELLIPSE,
+    //                                            Size(3, 3));
+    //        dilate(roi3, roi3, element, Point(-1, -1), 2);
 
-        erode(roi3, roi3, element, Point(-1, -1), 2);
+    //        erode(roi3, roi3, element, Point(-1, -1), 2);
 
-    }
-    imwrite("/home/nickseven/re-fi.png",binMat);
+    //    }
+    imwrite("/home/nickseven/i.png",binMat);
     // cropBinImg(imgOut, imgOut);
     return binMat;
 }

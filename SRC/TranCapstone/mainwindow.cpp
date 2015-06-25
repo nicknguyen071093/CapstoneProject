@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
     handThread = new HandThread(this);
     qRegisterMetaType<Mat>("Mat");
     qRegisterMetaType<Rect>("Rect");
-    connect(handThread,SIGNAL(handTrackingChanged(QImage)),this,SLOT(onHandTrackingChanged(QImage)));
+    connect(handThread,SIGNAL(handTrackingChanged(Mat)),this,SLOT(onHandTrackingChanged(Mat)));
     connect(handThread,SIGNAL(finished()),this,SLOT(onHandTrackingFinishinished()));
     connect(handThread,SIGNAL(binaryImageHandChanged(Mat,Mat)),this,SLOT(onBinaryImageHandChanged(Mat,Mat)));
     connect(handThread,SIGNAL(handSubtractingChanged(Mat,Mat,Rect)),this,SLOT(onHandSubtracted(Mat,Mat,Rect)));
@@ -21,15 +21,17 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
 void MainWindow::onHandTrackingFinishinished() {
     ui->lbFrame->clear();
     ui->lbSubtractedHand->clear();
     handThread->releaseAll();
 }
 
-void MainWindow::onHandTrackingChanged(QImage receivedImage) {
-    if (!receivedImage.isNull()) {
-        QPixmap pixmapObject = QPixmap::fromImage(receivedImage);
+void MainWindow::onHandTrackingChanged(Mat receivedImage) {
+    QImage handImage = cvMatToQImage(receivedImage);
+    if (!handImage.isNull()) {
+        QPixmap pixmapObject = QPixmap::fromImage(handImage);
         if (!pixmapObject.isNull()) {
             ui->lbFrame->setPixmap(pixmapObject.scaled(320,240,Qt::KeepAspectRatio));
         }
@@ -53,23 +55,23 @@ void MainWindow::onBinaryImageHandChanged(Mat frame, Mat binMat) {
     }
     Mat mask = Mat::zeros(frame.rows, frame.cols, CV_8UC1);
     drawContours(mask, handThread->handGesture->contours, handThread->handGesture->cMaxId, Scalar(255), CV_FILLED);
-   // imwrite("/home/nickseven/hand-mask.png",croppedBinMat);
-//    cout << "chet htat ak" << endl;
+    // imwrite("/home/nickseven/hand-mask.png",croppedBinMat);
+    //    cout << "chet htat ak" << endl;
     Mat croppedBinMat = mask(handThread->handGesture->boundingRect);
-//    cout << "ak chua" << endl;
+    //    cout << "ak chua" << endl;
     // Mat croppedBinMat = binMat(handThread->handGesture->boundingRect).clone();
     Mat croppedFrame = frame(handThread->handGesture->boundingRect).clone();
     int squareLength;
     int tly, tlx;
     Mat croppedHand;
     if (croppedBinMat.cols > croppedBinMat.rows) {
-        squareLength = croppedBinMat.cols + 4;
+        squareLength = croppedBinMat.cols + 10;
         tly = (squareLength - croppedBinMat.rows) / 2;
-        tlx =  2;
+        tlx =  5;
     } else {
-        squareLength = croppedBinMat.rows + 4;
+        squareLength = croppedBinMat.rows + 10;
         tlx = (squareLength - croppedBinMat.cols) / 2;
-        tly =  2;
+        tly =  5;
     }
     croppedHand = Mat(squareLength,squareLength,CV_8UC3);
     croppedHand.setTo(Scalar(0,255,0));

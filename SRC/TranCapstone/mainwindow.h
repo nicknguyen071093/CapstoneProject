@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "HandThread.h"
+#include "ImageTranslating.h"
 
 namespace Ui {
 class MainWindow;
@@ -28,7 +29,7 @@ private slots:
 
     void on_MainWindow_destroyed();
 
-    void onHandTrackingChanged(QImage);
+    void onHandTrackingChanged(Mat);
 
     void onBinaryImageHandChanged (Mat, Mat);
 
