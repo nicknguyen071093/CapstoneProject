@@ -1,0 +1,9 @@
+if (window['google'] != undefined && window['google']['loader'] != undefined) {
+if (!window['google']['elements']) {
+window['google']['elements'] = {};
+google.elements.Version = '1.0';
+google.elements.JSHash = '4b163b51f31247b789774b556c2fe3d2';
+google.elements.LoadArgs = 'file\75elements\46v\0751\46packages\75inputtools\46async\0752\46sig\0754b163b51f31247b789774b556c2fe3d2\46have\75transliteration';
+}
+google.loader.writeLoadTag("script", google.loader.ServiceBase + "/api/elements/1.0/4b163b51f31247b789774b556c2fe3d2/inputtools.js", true);
+}
