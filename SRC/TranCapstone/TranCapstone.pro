@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -32,14 +32,16 @@ SOURCES += main.cpp\
     HandGesture.cpp \
     ImageTranslating.cpp \
     SVM.cpp \
-    HandTranslating.cpp
+    HandTranslating.cpp \
+    letterget.cpp
 
 HEADERS  += mainwindow.h \
     HandGesture.h \
     HandThread.h \
     ImageTranslating.h \
     SVM.h \
-    HandTranslating.h
+    HandTranslating.h \
+    letterget.h
 
 FORMS    += mainwindow.ui
 
