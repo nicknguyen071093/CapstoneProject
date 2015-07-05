@@ -30,12 +30,16 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     HandThread.cpp \
     HandGesture.cpp \
-    ImageTranslating.cpp
+    ImageTranslating.cpp \
+    SVM.cpp \
+    HandTranslating.cpp
 
 HEADERS  += mainwindow.h \
     HandGesture.h \
     HandThread.h \
-    ImageTranslating.h
+    ImageTranslating.h \
+    SVM.h \
+    HandTranslating.h
 
 FORMS    += mainwindow.ui
 

@@ -2,6 +2,7 @@
 #define HANDTHREAD_H
 
 #include <QThread>
+#include <QtCore>
 #include "HandGesture.h"
 #include "unistd.h"
 
@@ -27,6 +28,7 @@ public:
     void setMode(int);
     void releaseAll();
     bool STOP;
+    bool lockEmitFrame;
 
 private:
     VideoCapture webSource;
@@ -35,7 +37,7 @@ private:
     int squareLen;
     const static int SAMPLE_NUM = 13;
     const static int HAND_NUM = 12;
-    Scalar mColorsRGB[3] = {Scalar(255,0,0),Scalar(0,255,0),Scalar(0,0,255)};
+    Scalar mColorsRGB[3];
     double cLower[SAMPLE_NUM][3];
     double cUpper[SAMPLE_NUM][3];
     double cBackLower[HAND_NUM][3];
@@ -92,6 +94,7 @@ private:
 signals:
     void handTrackingChanged(Mat);
     void binaryImageHandChanged (Mat, Mat);
+    void sendingBinaryImage(Mat);
     void handSubtractingChanged(Mat,Mat,Rect);
 
 public slots:

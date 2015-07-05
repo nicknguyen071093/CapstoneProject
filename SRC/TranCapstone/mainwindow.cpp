@@ -7,14 +7,21 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+
     ui->setupUi(this);
+    takingPic = false;
     handThread = new HandThread(this);
+    translatingThread = new HandTranslating(this);
+    translatingThread->start();
     qRegisterMetaType<Mat>("Mat");
     qRegisterMetaType<Rect>("Rect");
     connect(handThread,SIGNAL(handTrackingChanged(Mat)),this,SLOT(onHandTrackingChanged(Mat)));
     connect(handThread,SIGNAL(finished()),this,SLOT(onHandTrackingFinishinished()));
+    connect(handThread,SIGNAL(sendingBinaryImage(Mat)),this,SLOT(onSendingBinaryImage(Mat)));
+    connect(translatingThread,SIGNAL(translatingResultChanged(double)),this,SLOT(onTranslatingResultChanged(double)));
     connect(handThread,SIGNAL(binaryImageHandChanged(Mat,Mat)),this,SLOT(onBinaryImageHandChanged(Mat,Mat)));
     connect(handThread,SIGNAL(handSubtractingChanged(Mat,Mat,Rect)),this,SLOT(onHandSubtracted(Mat,Mat,Rect)));
+
 }
 
 MainWindow::~MainWindow()
@@ -38,6 +45,67 @@ void MainWindow::onHandTrackingChanged(Mat receivedImage) {
     }
 }
 
+
+void MainWindow::onSendingBinaryImage(Mat binMat) {
+    handThread->handGesture->contours.clear();
+    findContours(binMat.clone(), handThread->handGesture->contours, handThread->handGesture->hie,
+                 RETR_EXTERNAL, CHAIN_APPROX_NONE);
+    // Find biggest contour and return the index of the contour, which is
+    // handGesture->cMaxId
+    handThread->handGesture->findBiggestContour();
+    if (handThread->handGesture->cMaxId > -1) {
+        handThread->handGesture->boundingRect = boundingRect(handThread->handGesture->contours[handThread->handGesture->cMaxId]);
+    }
+    Mat mask = Mat(binMat.rows,binMat.cols,CV_8UC1);
+    mask.setTo(Scalar(255,255,255));
+    drawContours(mask, handThread->handGesture->contours, handThread->handGesture->cMaxId, Scalar(0,0,0), 2, 8, handThread->handGesture->hie, 0, Point());
+    Mat croppedBinMat = mask(handThread->handGesture->boundingRect);
+    int squareLength;
+    int tly, tlx;
+    Mat croppedHand;
+    if (croppedBinMat.cols > croppedBinMat.rows) {
+        squareLength = croppedBinMat.cols + 10;
+        tly = (squareLength - croppedBinMat.rows) / 2;
+        tlx =  5;
+    } else {
+        squareLength = croppedBinMat.rows + 10;
+        tlx = (squareLength - croppedBinMat.cols) / 2;
+        tly =  5;
+    }
+    croppedHand = Mat(squareLength,squareLength,CV_8UC1);
+    croppedHand.setTo(Scalar(255,255,255));
+    Mat subROI = croppedHand(Rect(tlx,tly,croppedBinMat.cols,croppedBinMat.rows));
+    croppedBinMat.copyTo(subROI);
+    cv::resize(croppedHand, croppedHand, Size(96,96), 0, 0, CV_INTER_AREA);
+    if (translatingThread->enableToTranslate != true) {
+        translatingThread->recevingImage(croppedHand.clone());
+        translatingThread->enableToTranslate = true;
+    }
+    QImage handImage = cvMatToQImage(croppedHand);
+    if (!handImage.isNull()) {
+        ui->lbWarning->setText("Chup duoc roi");
+        QPixmap pixmapObject = QPixmap::fromImage(handImage);
+        if (!pixmapObject.isNull()) {
+            ui->lbSubtractedHand->setPixmap(pixmapObject.scaled(96,96,Qt::KeepAspectRatio));
+        }
+        if (takingPic) {
+            QDir databaseDirectory("../Database/" + ui->txtType->text());
+            if (databaseDirectory.exists()) {
+                imwrite(databaseDirectory.path().toStdString() + "/" + ui->txtSTT->text().toStdString() + ".jpg",croppedHand);
+            } else {
+                ui->lbWarning->setText(QString::fromUtf8("Thư mục không tồn tại!"));
+            }
+            takingPic = false;
+        }
+    } else {
+        ui->lbWarning->setText("null roi");
+    }
+}
+
+void MainWindow::onTranslatingResultChanged(double result) {
+    ui->lbResult->setText(QString::fromUtf8("Kết quả: ") + QString::number(result));
+}
+
 void MainWindow::onBinaryImageHandChanged(Mat frame, Mat binMat) {
     // Rect rect;
     handThread->handGesture->contours.clear();
@@ -56,7 +124,7 @@ void MainWindow::onBinaryImageHandChanged(Mat frame, Mat binMat) {
     Mat mask = Mat::zeros(frame.rows, frame.cols, CV_8UC1);
     drawContours(mask, handThread->handGesture->contours, handThread->handGesture->cMaxId, Scalar(255), CV_FILLED);
     // imwrite("/home/nickseven/hand-mask.png",croppedBinMat);
-    //    cout << "chet htat ak" << endl;
+    //    cout << "chet htat ak" << endl;``
     Mat croppedBinMat = mask(handThread->handGesture->boundingRect);
     //    cout << "ak chua" << endl;
     // Mat croppedBinMat = binMat(handThread->handGesture->boundingRect).clone();
@@ -193,3 +261,8 @@ void MainWindow::on_MainWindow_destroyed()
     //webSource.release();
 }
 
+
+void MainWindow::on_btnTakepic_clicked()
+{
+    takingPic = true;
+}

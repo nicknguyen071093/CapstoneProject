@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>616</width>
-    <height>428</height>
+    <width>633</width>
+    <height>453</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -118,14 +118,77 @@
    <widget class="QLabel" name="lbWarning">
     <property name="geometry">
      <rect>
-      <x>380</x>
-      <y>170</y>
-      <width>67</width>
-      <height>17</height>
+      <x>390</x>
+      <y>90</y>
+      <width>171</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="text">
+     <string notr="true">Warning</string>
+    </property>
+    <property name="scaledContents">
+     <bool>false</bool>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="txtType">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>280</y>
+      <width>201</width>
+      <height>27</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="txtSTT">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>320</y>
+      <width>201</width>
+      <height>27</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnTakepic">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>350</y>
+      <width>601</width>
+      <height>27</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>Takepic</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbResult">
+    <property name="geometry">
+     <rect>
+      <x>390</x>
+      <y>190</y>
+      <width>181</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Kết Quả:</string>
     </property>
    </widget>
   </widget>
@@ -134,7 +197,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>616</width>
+     <width>633</width>
      <height>25</height>
     </rect>
    </property>
