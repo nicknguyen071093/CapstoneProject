@@ -5,6 +5,7 @@
 #include "HandThread.h"
 #include "HandTranslating.h"
 #include "ImageTranslating.h"
+#include "letterget.h"
 #include "QDir"
 
 namespace Ui {
@@ -18,8 +19,6 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    HandThread *handThread;
-    HandTranslating *translatingThread;
 
 private slots:
     void on_pushButton_clicked();
@@ -48,9 +47,15 @@ private slots:
 
     void on_btnTakepic_clicked();
 
+    void on_btnBackHand_clicked();
+
 private:
     Ui::MainWindow *ui;
     bool takingPic;
+    HandThread *handThread;
+    LetterGet *wordDAO;
+    HandTranslating *translatingThread;
+    QMap <int,QString> wordMap;
 };
 
 #endif // MAINWINDOW_H

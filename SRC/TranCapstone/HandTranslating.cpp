@@ -28,8 +28,8 @@ void HandTranslating::run() {
         mutex.unlock();
         if (enableToTranslate) {
             int currentFeatures = 0;
-            imwrite("../Database/Test/chuTest.jpg",binaryMat);
-            binaryMat = imread("../Database/Test/chuTest.jpg");
+//            imwrite("../Database/Test/chuTest.jpg",binaryMat);
+//            binaryMat = imread("../Database/Test/chuTest.jpg");
             Mat gray;
             cvtColor(binaryMat, gray, CV_BGR2GRAY);
             Mat binary;

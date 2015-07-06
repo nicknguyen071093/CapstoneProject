@@ -2,24 +2,21 @@
 
 LetterGet::LetterGet()
 {
-}
-QString LetterGet::getLetter(int id)
-{
-    QString a;
     db = QSqlDatabase::addDatabase("QSQLITE");
-     db.setDatabaseName("../ImageData.sqlite");
-    QMap<int, QString> Map;
+    db.setDatabaseName("../ImageData.sqlite");
     if(!db.open()){
         qDebug() << "connect to database fail";
     }
-    else{
+}
 
-        QSqlQuery q(db);
-        q.exec("select * from (LinkImage join Alphabet) where (LinkImage.idLetter = Alphabet.id)");
-        for ( q.first(); q.isValid(); q.next()) {
-            Map.insert(q.value(2).toInt(),q.value(4).toString());
-        }
-        foreach(int i, Map.keys()) if(i= id) a = Map[i];
+
+QMap<int, QString> LetterGet::getLetter()
+{
+    QMap<int, QString> mapWords;
+    QSqlQuery q(db);
+    q.exec("select * from Alphabet");
+    for ( q.first(); q.isValid(); q.next()) {
+        mapWords.insert(q.value(0).toInt(),q.value(1).toString());
     }
-    return a;
+    return mapWords;
 }

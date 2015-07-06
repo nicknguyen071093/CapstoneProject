@@ -10,8 +10,9 @@ class LetterGet
 {
 public:
     LetterGet();
+    QMap<int,QString> getLetter();
+private:
     QSqlDatabase db;
-    QString getLetter(int);
 };
 
 #endif // LETTERGET_H

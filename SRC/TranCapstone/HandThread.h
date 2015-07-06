@@ -15,6 +15,7 @@ public:
     const static int SAMPLE_MODE = 0;
     // Mode that generates binary image
     const static  int DETECTION_MODE = 1;
+    const static int SAMPLE_BACK_HAND_MODE = 6;
     // Mode that displays color image together with contours, fingertips,
     // defect points and so on.
     const static  int TRAIN_REC_MODE = 2;
@@ -23,6 +24,8 @@ public:
     const static  int GET_AVG_BACKGROUND = 4;
     // Mode that presamples background colors
     const static  int GET_AVG_HAND = 5;
+    // Mode that presamples background colors
+    const static  int GET_AVG_BACK_HAND = 7;
     // Stores all the information about the hand
     HandGesture *handGesture;
     void setMode(int);
@@ -40,6 +43,8 @@ private:
     Scalar mColorsRGB[3];
     double cLower[SAMPLE_NUM][3];
     double cUpper[SAMPLE_NUM][3];
+    double cBackHandLower[SAMPLE_NUM][3];
+    double cBackHandUpper[SAMPLE_NUM][3];
     double cBackLower[HAND_NUM][3];
     double cBackUpper[HAND_NUM][3];
     //vector<double[3]> addBackLower;
@@ -49,13 +54,16 @@ private:
     Scalar lowerBound;
     Scalar upperBound;
     double avgColor[SAMPLE_NUM][3];
+    double avgBackHandColor[SAMPLE_NUM][3];
     double avgBackColor[HAND_NUM][3];
     vector<Vec3b> additionAvgBackColor;
     Point samplePoints[SAMPLE_NUM][2];
     Point sampleBackPoints[HAND_NUM][2];
     vector < vector<Point> > drawingHand;
+    vector < vector<Point> > drawingBackHand;
     vector<Vec4i> hierarchy;
     Point sampleHandPoints[SAMPLE_NUM][2];
+    Point sampleBackHandPoints[SAMPLE_NUM][2];
     Mat sampleMats[SAMPLE_NUM];
     //    Mat tmpSampleBackgroundMat;
     vector<Mat> sampleBackgroundMats;
@@ -79,9 +87,11 @@ private:
     void initHandPoints();
     void initBackPoints();
     Mat preSampleHand(Mat);
+    Mat preSampleBackHand(Mat);
     Mat preSampleBack(Mat);
     void getSampleBack();
     void getSampleHand();
+    void getSampleBackHand();
     bool isClosedToBoundary(Point, Mat);
     void boundariesCorrection();
     void produceBinHandImg();

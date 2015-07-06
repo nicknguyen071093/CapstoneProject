@@ -7,11 +7,12 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-
     ui->setupUi(this);
     takingPic = false;
     handThread = new HandThread(this);
     translatingThread = new HandTranslating(this);
+    wordDAO = new LetterGet();
+    wordMap = wordDAO->getLetter();
     translatingThread->start();
     qRegisterMetaType<Mat>("Mat");
     qRegisterMetaType<Rect>("Rect");
@@ -21,7 +22,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(translatingThread,SIGNAL(translatingResultChanged(double)),this,SLOT(onTranslatingResultChanged(double)));
     connect(handThread,SIGNAL(binaryImageHandChanged(Mat,Mat)),this,SLOT(onBinaryImageHandChanged(Mat,Mat)));
     connect(handThread,SIGNAL(handSubtractingChanged(Mat,Mat,Rect)),this,SLOT(onHandSubtracted(Mat,Mat,Rect)));
-
 }
 
 MainWindow::~MainWindow()
@@ -56,7 +56,8 @@ void MainWindow::onSendingBinaryImage(Mat binMat) {
     if (handThread->handGesture->cMaxId > -1) {
         handThread->handGesture->boundingRect = boundingRect(handThread->handGesture->contours[handThread->handGesture->cMaxId]);
     }
-    Mat mask = Mat(binMat.rows,binMat.cols,CV_8UC1);
+//    Mat mask = Mat(binMat.rows,binMat.cols,CV_8UC1);
+     Mat mask = Mat(binMat.rows,binMat.cols,CV_8UC3);
     mask.setTo(Scalar(255,255,255));
     drawContours(mask, handThread->handGesture->contours, handThread->handGesture->cMaxId, Scalar(0,0,0), 2, 8, handThread->handGesture->hie, 0, Point());
     Mat croppedBinMat = mask(handThread->handGesture->boundingRect);
@@ -72,7 +73,8 @@ void MainWindow::onSendingBinaryImage(Mat binMat) {
         tlx = (squareLength - croppedBinMat.cols) / 2;
         tly =  5;
     }
-    croppedHand = Mat(squareLength,squareLength,CV_8UC1);
+//    croppedHand = Mat(squareLength,squareLength,CV_8UC1);
+    croppedHand = Mat(squareLength,squareLength,CV_8UC3);
     croppedHand.setTo(Scalar(255,255,255));
     Mat subROI = croppedHand(Rect(tlx,tly,croppedBinMat.cols,croppedBinMat.rows));
     croppedBinMat.copyTo(subROI);
@@ -103,7 +105,7 @@ void MainWindow::onSendingBinaryImage(Mat binMat) {
 }
 
 void MainWindow::onTranslatingResultChanged(double result) {
-    ui->lbResult->setText(QString::fromUtf8("Kết quả: ") + QString::number(result));
+    ui->lbResult->setText(QString::fromUtf8("Kết quả: ") + wordMap.value((int)result));
 }
 
 void MainWindow::onBinaryImageHandChanged(Mat frame, Mat binMat) {
@@ -244,9 +246,13 @@ void MainWindow::on_pushButton_3_clicked()
     handThread->setMode(handThread->GET_AVG_HAND);
 }
 
+void MainWindow::on_btnBackHand_clicked()
+{
+    handThread->setMode(handThread->GET_AVG_BACK_HAND);
+}
+
 void MainWindow::on_pushButton_4_clicked()
 {
-    handThread->setMode(handThread->TRAIN_REC_MODE);
 }
 
 
@@ -266,3 +272,5 @@ void MainWindow::on_btnTakepic_clicked()
 {
     takingPic = true;
 }
+
+
