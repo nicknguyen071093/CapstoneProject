@@ -37,10 +37,6 @@ private slots:
 
     void onTranslatingResultChanged(double);
 
-    void onBinaryImageHandChanged (Mat, Mat);
-
-    void onHandSubtracted(Mat,Mat,Rect);
-
     void onHandTrackingFinishinished();
 
     void on_pushButton_5_clicked();

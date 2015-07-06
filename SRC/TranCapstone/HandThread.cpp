@@ -65,7 +65,7 @@ void HandThread::run() {
                 //                GaussianBlur(frame, blurMat, Size(7, 7), 3);
                 //                cvtColor(blurMat, interMat, COLOR_BGR2Lab);
 
-                // imwrite("/home/nickseven/bg-mau.png",frame);
+                //                imwrite("/home/nickseven/back-hand-mau.jpg",frame);
                 showMat = preSampleBack(frame.clone());
                 emit handTrackingChanged(showMat.clone());
             } else if (mode == SAMPLE_MODE) { // Second mode which presamples the colors of
@@ -82,6 +82,7 @@ void HandThread::run() {
                 //                GaussianBlur(frame, blurMat, Size(7, 7), 3);
                 //                cvtColor(blurMat, interMat, COLOR_BGR2Lab);
                 //imwrite("/home/nickseven/ha-mau.png",frame);`
+                //                imwrite("/home/nickseven/back-hand-mau.jpg",frame);
                 showMat = preSampleBackHand(frame.clone());
                 emit handTrackingChanged(showMat.clone());
             } else if (mode == TRAIN_REC_MODE) {
@@ -211,58 +212,58 @@ void HandThread::initHandPoints() {
     sampleHandPoints[12][0].y = 162;
     sampleHandPoints[12][1].y = 167;
     // ------------------
-    sampleBackHandPoints[0][0].x = cols -69;
-    sampleBackHandPoints[0][1].x = cols -74;
-    sampleBackHandPoints[0][0].y = 135;
-    sampleBackHandPoints[0][1].y = 140;
-    sampleBackHandPoints[1][0].x = cols -106;
-    sampleBackHandPoints[1][1].x = cols -111;
-    sampleBackHandPoints[1][0].y = 175;
-    sampleBackHandPoints[1][1].y = 180;
-    sampleBackHandPoints[2][0].x = cols -115;
-    sampleBackHandPoints[2][1].x = cols -120;
-    sampleBackHandPoints[2][0].y = 51;
-    sampleBackHandPoints[2][1].y = 56;
-    sampleBackHandPoints[3][0].x = cols -135;
-    sampleBackHandPoints[3][1].x = cols -140;
-    sampleBackHandPoints[3][0].y = 118;
-    sampleBackHandPoints[3][1].y = 123;
-    sampleBackHandPoints[4][0].x = cols -161;
-    sampleBackHandPoints[4][1].x = cols -166;
-    sampleBackHandPoints[4][0].y = 33;
-    sampleBackHandPoints[4][1].y = 38;
-    sampleBackHandPoints[5][0].x = cols -163;
-    sampleBackHandPoints[5][1].x = cols -168;
-    sampleBackHandPoints[5][0].y = 113;
-    sampleBackHandPoints[5][1].y = 118;
-    sampleBackHandPoints[6][0].x = cols -196;
-    sampleBackHandPoints[6][1].x = cols -201;
-    sampleBackHandPoints[6][0].y = 44;
-    sampleBackHandPoints[6][1].y = 49;
-    sampleBackHandPoints[7][0].x = cols -188;
-    sampleBackHandPoints[7][1].x = cols -193;
-    sampleBackHandPoints[7][0].y = 118;
-    sampleBackHandPoints[7][1].y = 123;
-    sampleBackHandPoints[8][0].x = cols -239;
-    sampleBackHandPoints[8][1].x = cols -244;
-    sampleBackHandPoints[8][0].y = 72;
-    sampleBackHandPoints[8][1].y = 77;
-    sampleBackHandPoints[9][0].x = cols -213;
-    sampleBackHandPoints[9][1].x = cols -218;
-    sampleBackHandPoints[9][0].y = 131;
-    sampleBackHandPoints[9][1].y = 136;
-    sampleBackHandPoints[10][0].x = cols -130;
-    sampleBackHandPoints[10][1].x = cols -135;
-    sampleBackHandPoints[10][0].y = 196;
-    sampleBackHandPoints[10][1].y = 201;
-    sampleBackHandPoints[11][0].x = cols -201;
-    sampleBackHandPoints[11][1].x = cols -206;
-    sampleBackHandPoints[11][0].y = 196;
-    sampleBackHandPoints[11][1].y = 201;
-    sampleBackHandPoints[12][0].x = cols -167;
-    sampleBackHandPoints[12][1].x = cols -172;
-    sampleBackHandPoints[12][0].y = 162;
-    sampleBackHandPoints[12][1].y = 167;
+    sampleBackHandPoints[0][0].x = 122;
+    sampleBackHandPoints[0][1].x = 127;
+    sampleBackHandPoints[0][0].y = 93;
+    sampleBackHandPoints[0][1].y = 98;
+    sampleBackHandPoints[1][0].x =  155;
+    sampleBackHandPoints[1][1].x = 160;
+    sampleBackHandPoints[1][0].y = 77;
+    sampleBackHandPoints[1][1].y = 82;
+    sampleBackHandPoints[2][0].x = 185;
+    sampleBackHandPoints[2][1].x = 190;
+    sampleBackHandPoints[2][0].y = 77;
+    sampleBackHandPoints[2][1].y = 82;
+    sampleBackHandPoints[3][0].x = 117;
+    sampleBackHandPoints[3][1].x = 122;
+    sampleBackHandPoints[3][0].y = 150;
+    sampleBackHandPoints[3][1].y = 155;
+    sampleBackHandPoints[4][0].x = 154;
+    sampleBackHandPoints[4][1].x = 159;
+    sampleBackHandPoints[4][0].y = 131;
+    sampleBackHandPoints[4][1].y = 136;
+    sampleBackHandPoints[5][0].x = 188;
+    sampleBackHandPoints[5][1].x = 193;
+    sampleBackHandPoints[5][0].y = 130;
+    sampleBackHandPoints[5][1].y = 135;
+    sampleBackHandPoints[6][0].x = 120;
+    sampleBackHandPoints[6][1].x = 125;
+    sampleBackHandPoints[6][0].y = 171;
+    sampleBackHandPoints[6][1].y = 176;
+    sampleBackHandPoints[7][0].x = 155;
+    sampleBackHandPoints[7][1].x = 160;
+    sampleBackHandPoints[7][0].y = 170;
+    sampleBackHandPoints[7][1].y = 175;
+    sampleBackHandPoints[8][0].x = 193;
+    sampleBackHandPoints[8][1].x = 198;
+    sampleBackHandPoints[8][0].y = 158;
+    sampleBackHandPoints[8][1].y = 163;
+    sampleBackHandPoints[9][0].x = 226;
+    sampleBackHandPoints[9][1].x = 231;
+    sampleBackHandPoints[9][0].y = 155;
+    sampleBackHandPoints[9][1].y = 160;
+    sampleBackHandPoints[10][0].x = 131;
+    sampleBackHandPoints[10][1].x = 136;
+    sampleBackHandPoints[10][0].y = 203;
+    sampleBackHandPoints[10][1].y = 208;
+    sampleBackHandPoints[11][0].x = 177;
+    sampleBackHandPoints[11][1].x = 182;
+    sampleBackHandPoints[11][0].y = 206;
+    sampleBackHandPoints[11][1].y = 211;
+    sampleBackHandPoints[12][0].x = 206;
+    sampleBackHandPoints[12][1].x = 211;
+    sampleBackHandPoints[12][0].y = 179;
+    sampleBackHandPoints[12][1].y = 184;
     //    sampleHandPoints[0][0].x = cols / 2;
     //    sampleHandPoints[0][1].x = cols / 2 + squareLen;
     //    sampleHandPoints[0][0].y = rows / 4;
@@ -291,15 +292,15 @@ void HandThread::initHandPoints() {
     //    sampleHandPoints[6][1].x = cols * 5 / 9 + squareLen;
     //    sampleHandPoints[6][0].y = rows * 3 / 4;
     //    sampleHandPoints[6][1].y = rows * 3 / 4 + squareLen;
-    Mat image = imread("../Database/mau-tay-moi.png");
-    /// Convert the image to Gray
-    Mat src_gray;
+    Mat image, src_gray, dst;
+    image = imread("../Database/mau-tay-moi.png");
     cvtColor( image, src_gray, CV_BGR2GRAY );
-    Mat dst;
     threshold(src_gray, dst, 128, 255,0);
     findContours(dst,drawingHand,hierarchy,CV_RETR_TREE,CV_CHAIN_APPROX_SIMPLE);
-    flip(dst,dst,1);
-     findContours(dst,drawingBackHand,hierarchy,CV_RETR_TREE,CV_CHAIN_APPROX_SIMPLE);
+    image = imread("../Database/back-hand-mau.png");
+    cvtColor( image, src_gray, CV_BGR2GRAY );
+    threshold(src_gray, dst, 128, 255,0);
+    findContours(dst,drawingBackHand,hierarchy,CV_RETR_TREE,CV_CHAIN_APPROX_SIMPLE);
 }
 
 void HandThread::initBackPoints() {
@@ -544,15 +545,6 @@ void HandThread::boundariesCorrection() {
                 cBackHandUpper[i][j] = 255 - avgBackHandColor[i][j];
             }
 
-            if (avgBackColor[i][j] - cBackLower[i][j] < 0) {
-                cBackLower[i][j] = avgBackColor[i][j];
-            }
-
-
-            if (avgBackColor[i][j] + cBackUpper[i][j] > 255) {
-                cBackUpper[i][j] = 255 - avgBackColor[i][j];
-            }
-
         }
     }
 
@@ -730,7 +722,7 @@ Mat HandThread::makeContours() {
                      mColorsRGB[0], 1);
         // Palm center is stored in handGesture->inCircle, radius of the inscribed
         // circle is stored in handGesture->inCircleRadius
-        //        handGesture->findInscribedCircle(frame);
+        handGesture->findInscribedCircle(frame);
         handGesture->boundingRect = boundingRect(handGesture->contours[handGesture->cMaxId]);
         //        convexHull(handGesture->contours[handGesture->cMaxId], handGesture->hullI, false);
         //        handGesture->hullP.clear();

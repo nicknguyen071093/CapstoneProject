@@ -212,8 +212,6 @@ string HandGesture::featureExtraction(Mat &img, int label) {
 
 // Find the location of inscribed circle and return the radius and the center location
 void HandGesture::findInscribedCircle(Mat &img) {
-
-
     Point tl = boundingRect.tl();
     Point br = boundingRect.br();
     //        inCircleRadius = findInscribedCircleJNI(img.getNativeObjAddr(), tl.x, tl.y, br.x, br.y, cirx, ciry,
