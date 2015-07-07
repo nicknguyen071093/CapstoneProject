@@ -68,7 +68,7 @@ string HandGesture::featureExtraction(Mat &img, int label) {
     if ((detectIsHand(img))) {
 
         Mat(defectPoints).copyTo(defectMat);
-        // defectMat.fromList(defectPoints);
+        // defectMat.fromList(d efectPoints);
 
         // List<Integer> dList = defects.toList();
         //Point contourPts[] = contours.get(cMaxId).toArray();
@@ -87,8 +87,8 @@ string HandGesture::featureExtraction(Mat &img, int label) {
             //            if (prevDefectVec != NULL) {
             double dotProduct = curDefectVec.x * prevDefectVec.x
                     + curDefectVec.y * prevDefectVec.y;
-            double crossProduct = curDefectVec.x * prevDefectVec.y
-                    - prevDefectVec.x * curDefectVec.y;
+            double crossProduct = (double) curDefectVec.x * (double) prevDefectVec.y
+                    - (double) prevDefectVec.x * (double) curDefectVec.y;
 
             if (crossProduct <= 0) {
                 break;
@@ -199,10 +199,7 @@ string HandGesture::featureExtraction(Mat &img, int label) {
             count++;
 
         }
-
         //ret = feature2SVMString(label);
-
-
     }
 
     return ret;
@@ -212,6 +209,8 @@ string HandGesture::featureExtraction(Mat &img, int label) {
 
 // Find the location of inscribed circle and return the radius and the center location
 void HandGesture::findInscribedCircle(Mat &img) {
+    Mat(contours[cMaxId]).copyTo(approxContour);
+    approxPolyDP(approxContour, approxContour, 2, true);
     Point tl = boundingRect.tl();
     Point br = boundingRect.br();
     //        inCircleRadius = findInscribedCircleJNI(img.getNativeObjAddr(), tl.x, tl.y, br.x, br.y, cirx, ciry,
@@ -241,7 +240,7 @@ void HandGesture::findInscribedCircle(Mat &img) {
     inCircle.x = targetX;
     inCircle.y = targetY;
 
-    circle(img, inCircle, (int) inCircleRadius, Scalar(240, 240, 45, 0), 2);
+    circle(img, inCircle, (int) inCircleRadius, Scalar(0,0,0), 2);
     circle(img, inCircle, 3, Scalar::all(0), -2);
 }
 

@@ -89,10 +89,12 @@ void HandThread::run() {
                 //                frame = imread("/home/nickseven/hand-detect.png");
                 //                GaussianBlur(frame, blurMat, Size(7, 7), 3);
                 //                cvtColor(blurMat, interMat, COLOR_BGR2Lab);
-                showMat = produceBinImg();
+                produceBinImg();
                 makeContours();
+                handGesture->featureExtraction(frame, curLabel);
+                showMat = frame.clone();
                 emit handTrackingChanged(showMat.clone());
-                //  handGesture->featureExtraction(frame, curLabel);
+
             } else if (mode == GET_AVG_BACKGROUND) {
                 //                frame = imread("/home/nickseven/bg-mau.png");
                 //                GaussianBlur(frame, blurMat, Size(7, 7), 3);
@@ -622,7 +624,7 @@ void HandThread::produceBinHandImg() {
     /// Apply the specified morphology operation
     morphologyEx( binTmpMat, binTmpMat, CV_MOP_OPEN, element );
     //    imwrite("/home/nickseven/h2a.png",binTmpMat);
-    //    medianBlur(binTmpMat, binTmpMat, 3);
+//    medianBlur(binTmpMat, binTmpMat, 3);
     //    imwrite("/home/nickseven/h3a.png",binTmpMat);
 }
 
@@ -715,109 +717,110 @@ Mat HandThread::makeContours() {
 
     if (handGesture->cMaxId > -1) {
         //biggestContours.
-        //  Mat(handGesture->contours[handGesture->cMaxId]).copyTo(handGesture->approxContour);
-        // approxPolyDP(handGesture->approxContour, handGesture->approxContour, 2, true);
-        // Mat(handGesture->approxContour).copyTo(handGesture->contours[handGesture->cMaxId]);
+        Mat(handGesture->contours[handGesture->cMaxId]).copyTo(handGesture->approxContour);
+        approxPolyDP(handGesture->approxContour, handGesture->approxContour, 2, true);
+        Mat(handGesture->approxContour).copyTo(handGesture->contours[handGesture->cMaxId]);
         drawContours(frame, handGesture->contours, handGesture->cMaxId,
                      mColorsRGB[0], 1);
         // Palm center is stored in handGesture->inCircle, radius of the inscribed
         // circle is stored in handGesture->inCircleRadius
         handGesture->findInscribedCircle(frame);
         handGesture->boundingRect = boundingRect(handGesture->contours[handGesture->cMaxId]);
-        //        convexHull(handGesture->contours[handGesture->cMaxId], handGesture->hullI, false);
-        //        handGesture->hullP.clear();
-        //        for (int i = 0; i < handGesture->contours.size(); i++) {
-        //            handGesture->hullP.push_back(vector<Point>());
-        //        }
-        //        vector<Point> lp;
-        //        for (int i = 0; i < handGesture->hullI.size(); i++) {
-        //            lp.push_back(handGesture->contours[handGesture->cMaxId][handGesture->hullI[i]]);
-        //        }
+        convexHull(handGesture->contours[handGesture->cMaxId], handGesture->hullI, false);
+        handGesture->hullP.clear();
+        for (int i = 0; i < handGesture->contours.size(); i++) {
+            handGesture->hullP.push_back(vector<Point>());
+        }
+        vector<Point> lp;
+        for (int i = 0; i < handGesture->hullI.size(); i++) {
+            lp.push_back(handGesture->contours[handGesture->cMaxId][handGesture->hullI[i]]);
+        }
 
-        //        // handGesture->hullP.get(handGesture->cMaxId) returns the locations of the points in
-        //        // the convex hull of the hand
-        //        lp.clear();
+        // handGesture->hullP.get(handGesture->cMaxId) returns the locations of the points in
+        // the convex hull of the hand
+        Mat(lp).copyTo(handGesture->hullP[handGesture->cMaxId]);
+        lp.clear();
 
-        //        handGesture->fingerTips.clear();
-        //        handGesture->defectPoints.clear();
-        //        handGesture->defectPointsOrdered.clear();
+        handGesture->fingerTips.clear();
+        handGesture->defectPoints.clear();
+        handGesture->defectPointsOrdered.clear();
 
-        //        handGesture->fingerTipsOrdered.clear();
-        //        handGesture->defectIdAfter.clear();
+        handGesture->fingerTipsOrdered.clear();
+        handGesture->defectIdAfter.clear();
+        handGesture->defects.clear();
 
-        //        if ((handGesture->contours[handGesture->cMaxId].size() >= 5) &&
-        //                (handGesture->detectIsHand(frame))
-        //                && (handGesture->hullI.size() >= 5))
-        //        {
-        //            convexityDefects(handGesture->contours[handGesture->cMaxId], handGesture->hullI,
-        //                    handGesture->defects);
-        //            for (int i = 0; i < handGesture->defects.size(); i++) {
-        //                Vec4i defect = handGesture->defects[i];
-        //                double depth = (double) defect[3] / 256.0;
-        //                Point curPoint = handGesture->contours[handGesture->cMaxId][defect[2]];
-        //                Point curPoint0 = handGesture->contours[handGesture->cMaxId][defect[0]];
-        //                Point curPoint1 = handGesture->contours[handGesture->cMaxId][defect[1]];
-        //                Point vec0(curPoint0.x - curPoint.x,curPoint0.y - curPoint.y);
-        //                Point vec1(curPoint1.x - curPoint.x,curPoint1.y - curPoint.y);
-        //                double dot = vec0.x * vec1.x + vec0.y * vec1.y;
-        //                double lenth0 = sqrt(vec0.x * vec0.x + vec0.y
-        //                                     * vec0.y);
-        //                double lenth1 = sqrt(vec1.x * vec1.x + vec1.y
-        //                                     * vec1.y);
-        //                double cosTheta = dot / (lenth0 * lenth1);
-        //                bool bool1 = isClosedToBoundary(curPoint0, frame);
-        //                bool bool2 = isClosedToBoundary(curPoint1, frame);
-        //                if ((depth > handGesture->inCircleRadius * 0.7)
-        //                        && (cosTheta >= -0.7) && !bool1 && !bool2) {
-        //                    Point finVec0(curPoint0.x - handGesture->inCircle.x, curPoint0.y - handGesture->inCircle.y);
-        //                    double finAngle0 = atan2(finVec0.y, finVec0.x);
-        //                    Point finVec1 (curPoint1.x - handGesture->inCircle.x, curPoint1.y - handGesture->inCircle.y);
-        //                    double finAngle1 = atan2(finVec1.y, finVec1.x);
+        if ((handGesture->contours[handGesture->cMaxId].size() >= 5) &&
+                (handGesture->detectIsHand(frame))
+                && (handGesture->hullI.size() >= 5))
+        {
+            convexityDefects(handGesture->contours[handGesture->cMaxId], handGesture->hullI,
+                    handGesture->defects);
+            for (int i = 0; i < handGesture->defects.size(); i++) {
+                Vec4i defect = handGesture->defects[i];
+                double depth = (double) defect[3] / 256.0;
+                Point curPoint = handGesture->contours[handGesture->cMaxId][defect[2]];
+                Point curPoint0 = handGesture->contours[handGesture->cMaxId][defect[0]];
+                Point curPoint1 = handGesture->contours[handGesture->cMaxId][defect[1]];
+                Point vec0(curPoint0.x - curPoint.x,curPoint0.y - curPoint.y);
+                Point vec1(curPoint1.x - curPoint.x,curPoint1.y - curPoint.y);
+                double dot = (double) vec0.x * (double) vec1.x + (double) vec0.y * (double) vec1.y;
+                double lenth0 = sqrt((double) vec0.x * (double) vec0.x + (double) vec0.y
+                                     * (double) vec0.y);
+                double lenth1 = sqrt((double) vec1.x * (double) vec1.x + (double) vec1.y
+                                     * (double) vec1.y);
+                double cosTheta = dot / (lenth0 * lenth1);
+                bool bool1 = isClosedToBoundary(curPoint0, frame);
+                bool bool2 = isClosedToBoundary(curPoint1, frame);
+                if ((depth > handGesture->inCircleRadius * 0.7)
+                        && (cosTheta >= -0.7) && !bool1 && !bool2) {
+                    Point finVec0(curPoint0.x - handGesture->inCircle.x, curPoint0.y - handGesture->inCircle.y);
+                    double finAngle0 = atan2(finVec0.y, finVec0.x);
+                    Point finVec1 (curPoint1.x - handGesture->inCircle.x, curPoint1.y - handGesture->inCircle.y);
+                    double finAngle1 = atan2(finVec1.y, finVec1.x);
 
-        //                    if (handGesture->fingerTipsOrdered.size() == 0) {
-        //                        handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle0, curPoint0));
-        //                        handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle1, curPoint1));
+                    if (handGesture->fingerTipsOrdered.size() == 0) {
+                        handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle0, curPoint0));
+                        handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle1, curPoint1));
 
-        //                    } else {
-        //                        handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle0, curPoint0));
-        //                        handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle1, curPoint1));
+                    } else {
+                        handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle0, curPoint0));
+                        handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle1, curPoint1));
+                    }
+                }
+                //                else {
+                //                    if (((!bool1 && bool2) || (bool1 && !bool2)) && (depth > (handGesture->inCircleRadius * 0.2)) && (cosTheta <= 0)) {
+                //                        //                        System.out.println("Current Point: " + curPoint.x + " " + curPoint.y);
+                //                        //                        System.out.println("Radius: " + handGesture->inCircleRadius);
+                //                        //                        System.out.println("dept: " + depth);
+                //                        //                        System.out.println("cosTheta: " + cosTheta);
+                //                        //                        System.out.println("Point 0: " + isClosedToBoundary(curPoint0, frame) + " " + curPoint0.x + " " + curPoint0.y);
+                //                        //                        System.out.println("Point 1: " + isClosedToBoundary(curPoint1, frame) + " " + curPoint1.x + " " + curPoint1.y);
+                //                        // handGesture->defectIdAfter.add((i));
+                //                        handGesture->defectIdAfter.push_back(i);
+                //                        Point finVec0(curPoint0.x - handGesture->inCircle.x, curPoint0.y - handGesture->inCircle.y);
+                //                        double finAngle0 = atan2(finVec0.y, finVec0.x);
+                //                        Point finVec1 (curPoint1.x - handGesture->inCircle.x, curPoint1.y - handGesture->inCircle.y);
+                //                        double finAngle1 = atan2(finVec1.y, finVec1.x);
 
-        //                    }
-        //                }
-        //                //                else {
-        //                //                    if (((!bool1 && bool2) || (bool1 && !bool2)) && (depth > (handGesture->inCircleRadius * 0.2)) && (cosTheta <= 0)) {
-        //                //                        //                        System.out.println("Current Point: " + curPoint.x + " " + curPoint.y);
-        //                //                        //                        System.out.println("Radius: " + handGesture->inCircleRadius);
-        //                //                        //                        System.out.println("dept: " + depth);
-        //                //                        //                        System.out.println("cosTheta: " + cosTheta);
-        //                //                        //                        System.out.println("Point 0: " + isClosedToBoundary(curPoint0, frame) + " " + curPoint0.x + " " + curPoint0.y);
-        //                //                        //                        System.out.println("Point 1: " + isClosedToBoundary(curPoint1, frame) + " " + curPoint1.x + " " + curPoint1.y);
-        //                //                        // handGesture->defectIdAfter.add((i));
-        //                //                        handGesture->defectIdAfter.push_back(i);
-        //                //                        Point finVec0(curPoint0.x - handGesture->inCircle.x, curPoint0.y - handGesture->inCircle.y);
-        //                //                        double finAngle0 = atan2(finVec0.y, finVec0.x);
-        //                //                        Point finVec1 (curPoint1.x - handGesture->inCircle.x, curPoint1.y - handGesture->inCircle.y);
-        //                //                        double finAngle1 = atan2(finVec1.y, finVec1.x);
+                //                        if (handGesture->fingerTipsOrdered.size() == 0) {
+                //                            handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle0, curPoint0));
+                //                            handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle1, curPoint1));
+                //                            //  handGesture->fingerTipsOrdered.put(finAngle1, curPoint1);
 
-        //                //                        if (handGesture->fingerTipsOrdered.size() == 0) {
-        //                //                            handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle0, curPoint0));
-        //                //                            handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle1, curPoint1));
-        //                //                            //  handGesture->fingerTipsOrdered.put(finAngle1, curPoint1);
+                //                        } else {
+                //                            handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle0, curPoint0));
+                //                            handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle1, curPoint1));
+                //                            //                            handGesture->fingerTipsOrdered.put(finAngle0, curPoint0);
 
-        //                //                        } else {
-        //                //                            handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle0, curPoint0));
-        //                //                            handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle1, curPoint1));
-        //                //                            //                            handGesture->fingerTipsOrdered.put(finAngle0, curPoint0);
+                //                            //                            handGesture->fingerTipsOrdered.put(finAngle1, curPoint1);
 
-        //                //                            //                            handGesture->fingerTipsOrdered.put(finAngle1, curPoint1);
+                //                        }
+                //                    }
+                //                }
 
-        //                //                        }
-        //                //                    }
-        //                //                }
-
-        //                // }
-        //            }
-        //        }
+                // }
+            }
+        }
 
     }
 
@@ -825,12 +828,12 @@ Mat HandThread::makeContours() {
         //cout << "vao day nhi" << endl;
 
         // handGesture->boundingRect represents four coordinates of the bounding box.
-        //   rectangle(frame, handGesture->boundingRect.tl(), handGesture->boundingRect.br(),
-        //           mColorsRGB[1], 2);
-        //drawContours(frame, handGesture->hullP, handGesture->cMaxId, mColorsRGB[2]);
+//        rectangle(frame, handGesture->boundingRect.tl(), handGesture->boundingRect.br(),
+//                  mColorsRGB[1], 2);
+        drawContours(frame, handGesture->hullP, handGesture->cMaxId, mColorsRGB[2],2);
         //emit handSubtractingChanged(frame, binMat,handGesture->boundingRect);
     }
-    return binMat;
+    return frame;
 }
 
 // Generates binary image containing user's hand

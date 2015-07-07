@@ -43,7 +43,6 @@ void MainWindow::onHandTrackingChanged(Mat receivedImage) {
     }
 }
 
-
 void MainWindow::onSendingBinaryImage(Mat binMat) {
     handThread->handGesture->contours.clear();
     findContours(binMat.clone(), handThread->handGesture->contours, handThread->handGesture->hie,
@@ -54,11 +53,17 @@ void MainWindow::onSendingBinaryImage(Mat binMat) {
     if (handThread->handGesture->cMaxId > -1) {
         handThread->handGesture->boundingRect = boundingRect(handThread->handGesture->contours[handThread->handGesture->cMaxId]);
     }
-//    Mat mask = Mat(binMat.rows,binMat.cols,CV_8UC1);
-     Mat mask = Mat(binMat.rows,binMat.cols,CV_8UC3);
+    //    Mat mask = Mat(binMat.rows,binMat.cols,CV_8UC1);
+    Mat mask = Mat(binMat.rows,binMat.cols,CV_8UC3);
     mask.setTo(Scalar(255,255,255));
     drawContours(mask, handThread->handGesture->contours, handThread->handGesture->cMaxId, Scalar(0,0,0), 2, 8, handThread->handGesture->hie, 0, Point());
+
+    // ----- Radius ----
+    handThread->handGesture->findInscribedCircle(mask);
+    // ---- End Radius ----
+
     Mat croppedBinMat = mask(handThread->handGesture->boundingRect);
+
     int squareLength;
     int tly, tlx;
     Mat croppedHand;
@@ -71,7 +76,7 @@ void MainWindow::onSendingBinaryImage(Mat binMat) {
         tlx = (squareLength - croppedBinMat.cols) / 2;
         tly =  5;
     }
-//    croppedHand = Mat(squareLength,squareLength,CV_8UC1);
+    //    croppedHand = Mat(squareLength,squareLength,CV_8UC1);
     croppedHand = Mat(squareLength,squareLength,CV_8UC3);
     croppedHand.setTo(Scalar(255,255,255));
     Mat subROI = croppedHand(Rect(tlx,tly,croppedBinMat.cols,croppedBinMat.rows));
@@ -131,6 +136,7 @@ void MainWindow::on_btnBackHand_clicked()
 
 void MainWindow::on_pushButton_4_clicked()
 {
+    handThread->setMode(handThread->TRAIN_REC_MODE);
 }
 
 
