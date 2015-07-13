@@ -33,7 +33,8 @@ SOURCES += main.cpp\
     ImageTranslating.cpp \
     SVM.cpp \
     HandTranslating.cpp \
-    letterget.cpp
+    letterget.cpp \
+    Showcontent.cpp
 
 HEADERS  += mainwindow.h \
     HandGesture.h \
@@ -41,7 +42,9 @@ HEADERS  += mainwindow.h \
     ImageTranslating.h \
     SVM.h \
     HandTranslating.h \
-    letterget.h
+    letterget.h \
+    Showcontent.h
 
 FORMS    += mainwindow.ui
-
+INCLUDEPATH += /usr/local/include/espeak
+LIBS += -lespeak
