@@ -4,7 +4,7 @@
 #include <QtSql>
 #include <QString>
 #include <QMap>
-
+#include <wordDTO.h>
 
 class LetterGet
 {
