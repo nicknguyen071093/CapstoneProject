@@ -2,7 +2,7 @@
 #define SHOWINGIMAGETHREAD_H
 
 #include <QThread>
-#include <QtCore>
+#include <QMutex>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 

@@ -10,6 +10,7 @@
 #include <iostream>
 #include <string.h>
 #include <cstring>
+#include <QString>
 #include <map>
 #include <utility>
 
@@ -38,6 +39,10 @@ private:
     double totalLenN91ToN135Line;
     double nN136ToN179Line;
     double totalLenN136ToN179Line;
+    // Color White
+    Scalar whiteColor;
+    // Color Black
+    Scalar blackColor;
 
 public:
     HandGesture();
@@ -104,7 +109,18 @@ public:
     String featureExtraction(Mat &, int) ;
     // Find the location of inscribed circle and return the radius and the center location
     void findInscribedCircle() ;
-
+    // draw Inner and Xuong
+    void drawInnerAndXuong(Mat& ,Mat& );
+    //
+    QString getHeightFeatures(int&);
+    //
+    QString getRadiusFeatures(int&);
+    //
+    QString getAngleFeatures(int&);
+    //
+    QString getLinesFeatures(int&);
+    //
+    void classifyLine(Point, Point);
 
 };
 

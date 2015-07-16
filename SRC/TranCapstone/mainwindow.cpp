@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
     retrievingFrameThread = new RetrievingFrame(this);
     croppingThread = new CroppingImage(this);
     wordDAO = new LetterGet();
-    wordMap = wordDAO->getLetter();
+//    wordMap = wordDAO->getLetter();
     qRegisterMetaType<Mat>("Mat");
     qRegisterMetaType<Rect>("Rect");
     connect(handThread,SIGNAL(handTrackingChanged(Mat)),this,SLOT(onHandTrackingChanged(Mat)));
@@ -254,7 +254,6 @@ void MainWindow::onSendingBinaryImage(Mat frame, Mat binMat) {
         if (takingPic) {
             QDir databaseDirectory("../Database/Moi/" + ui->txtType->text());
             if (databaseDirectory.exists()) {
-
                 takingNumber++;
                 imwrite(databaseDirectory.path().toStdString() + "/" + QString::number(takingNumber).toStdString() + ".jpg",croppedHand);
                 imwrite(databaseDirectory.path().toStdString() + "/" + QString::number(takingNumber).toStdString()  + "-bin.jpg",croppedBinHand);

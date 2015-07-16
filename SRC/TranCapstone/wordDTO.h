@@ -6,18 +6,18 @@ class WordDTO
 {
 public:
     WordDTO();
-    WordDTO( int,  QString,  QString);
+    WordDTO(int,QString,QString);
     void SetId(int );
 
     int GetId() const;
 
-   void SetLink(QString );
+    void SetLink(QString );
 
-   QString GetLink() const;
+    QString GetLink() const;
 
-   void SetLetter(QString );
+    void SetLetter(QString );
 
-   QString GetLetter() const;
+    QString GetLetter() const;
 private:
     int id;
     QString letter;
