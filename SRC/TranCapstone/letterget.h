@@ -10,7 +10,8 @@ class LetterGet
 {
 public:
     LetterGet();
-    QMap<int,QString> getLetter();
+    QMap<int,WordDTO> getLetter();
+    void closeConnection();
 private:
     QSqlDatabase db;
 };

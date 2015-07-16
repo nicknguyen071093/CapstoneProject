@@ -18,6 +18,9 @@ public:
     ~ImageDialog();
     void onsetImageLable(const QString &s);
 
+private slots:
+    void on_pushButton_clicked();
+
 private:
     Ui::ImageDialog *ui;
 };

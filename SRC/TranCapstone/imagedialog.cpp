@@ -16,3 +16,8 @@ void ImageDialog::onsetImageLable(const QString &s){
     QPixmap image(s);
     ui->label->setPixmap(image);
 }
+
+void ImageDialog::on_pushButton_clicked()
+{
+
+}
