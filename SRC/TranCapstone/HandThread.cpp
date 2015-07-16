@@ -13,16 +13,17 @@ HandThread::HandThread(QObject *parent) :
     cols = 320;
     rows = 240;
     squareLen = rows / 20;
-    webSource = VideoCapture(0);
-    webSource.set(CV_CAP_PROP_FRAME_WIDTH,cols);
-    webSource.set(CV_CAP_PROP_FRAME_HEIGHT,rows);
-    webSource.set(CV_CAP_PROP_SATURATION,0.7);
+//    webSource = VideoCapture(0);
+//    webSource.set(CV_CAP_PROP_FRAME_WIDTH,cols);
+//    webSource.set(CV_CAP_PROP_FRAME_HEIGHT,rows);
+//    webSource.set(CV_CAP_PROP_SATURATION,0.7);
     initCLowerUpper(30, 30, 7, 7, 7, 7);
     initCBackLowerUpper(50, 50, 3, 3, 3, 3);
     initBackPoints();
     initHandPoints();
     this->STOP = false;
     this->mode = BACKGROUND_MODE;
+    thoi = 0;
 }
 
 void HandThread::setMode(int mode) {
@@ -35,8 +36,7 @@ void HandThread::run() {
         mutex.lock();
         if(this->STOP) break;
         mutex.unlock();
-        if (webSource.grab()) {
-            webSource.retrieve(frame);
+        if (webSource.read(frame)) {
             flip(frame,frame,1);
             //            GaussianBlur(frame, blurMat, Size(5, 5), 5, 5);
             //            imwrite("/home/nickseven/mau-tay.png",frame);
@@ -56,7 +56,7 @@ void HandThread::run() {
 
                 //                if (!lockEmitFrame) {
                 emit handTrackingChanged(showMat.clone());
-                emit sendingBinaryImage(showMat.clone());
+                emit sendingBinaryImage(frame.clone(),showMat.clone());
                 //                }
                 //   bitwise_and(frame,frame,showMat,showMat);
             } else if (mode == BACKGROUND_MODE) {// First mode which presamples
@@ -66,8 +66,9 @@ void HandThread::run() {
                 //                cvtColor(blurMat, interMat, COLOR_BGR2Lab);
 
                 //                imwrite("/home/nickseven/back-hand-mau.jpg",frame);
+                thoi++;
                 showMat = preSampleBack(frame.clone());
-                emit handTrackingChanged(showMat.clone());
+                emit thuPhatThoi(showMat.clone());
             } else if (mode == SAMPLE_MODE) { // Second mode which presamples the colors of
                 // the hand
                 //                frame = imread("/home/nickseven/hand-detect.png");
@@ -90,9 +91,9 @@ void HandThread::run() {
                 //                GaussianBlur(frame, blurMat, Size(7, 7), 3);
                 //                cvtColor(blurMat, interMat, COLOR_BGR2Lab);
                 produceBinImg();
-                makeContours();
-                handGesture->featureExtraction(frame, curLabel);
-                showMat = frame.clone();
+                showMat = makeContours();
+                //                handGesture->featureExtraction(showMat, curLabel);
+                //                showMat = frame.clone();
                 emit handTrackingChanged(showMat.clone());
 
             } else if (mode == GET_AVG_BACKGROUND) {
@@ -218,16 +219,16 @@ void HandThread::initHandPoints() {
     sampleBackHandPoints[0][1].x = 127;
     sampleBackHandPoints[0][0].y = 93;
     sampleBackHandPoints[0][1].y = 98;
-    sampleBackHandPoints[1][0].x =  155;
-    sampleBackHandPoints[1][1].x = 160;
+    sampleBackHandPoints[1][0].x =  160;
+    sampleBackHandPoints[1][1].x = 165;
     sampleBackHandPoints[1][0].y = 77;
     sampleBackHandPoints[1][1].y = 82;
     sampleBackHandPoints[2][0].x = 185;
     sampleBackHandPoints[2][1].x = 190;
     sampleBackHandPoints[2][0].y = 77;
     sampleBackHandPoints[2][1].y = 82;
-    sampleBackHandPoints[3][0].x = 117;
-    sampleBackHandPoints[3][1].x = 122;
+    sampleBackHandPoints[3][0].x = 120;
+    sampleBackHandPoints[3][1].x = 125;
     sampleBackHandPoints[3][0].y = 150;
     sampleBackHandPoints[3][1].y = 155;
     sampleBackHandPoints[4][0].x = 154;
@@ -238,8 +239,8 @@ void HandThread::initHandPoints() {
     sampleBackHandPoints[5][1].x = 193;
     sampleBackHandPoints[5][0].y = 130;
     sampleBackHandPoints[5][1].y = 135;
-    sampleBackHandPoints[6][0].x = 120;
-    sampleBackHandPoints[6][1].x = 125;
+    sampleBackHandPoints[6][0].x = 125;
+    sampleBackHandPoints[6][1].x = 130;
     sampleBackHandPoints[6][0].y = 171;
     sampleBackHandPoints[6][1].y = 176;
     sampleBackHandPoints[7][0].x = 155;
@@ -624,7 +625,7 @@ void HandThread::produceBinHandImg() {
     /// Apply the specified morphology operation
     morphologyEx( binTmpMat, binTmpMat, CV_MOP_OPEN, element );
     //    imwrite("/home/nickseven/h2a.png",binTmpMat);
-//    medianBlur(binTmpMat, binTmpMat, 3);
+    //    medianBlur(binTmpMat, binTmpMat, 3);
     //    imwrite("/home/nickseven/h3a.png",binTmpMat);
 }
 
@@ -687,7 +688,7 @@ Rect HandThread::makeBoundingBox(Mat &img) {
     if (handGesture->cMaxId > -1) {
         handGesture->boundingRect = boundingRect(handGesture->contours[handGesture->cMaxId]);
     }
-    if (handGesture->detectIsHand(frame)) {
+    if (handGesture->detectIsHand(img)) {
         return handGesture->boundingRect;
     } else {
         return Rect();
@@ -708,6 +709,10 @@ bool HandThread::isClosedToBoundary(Point pt, Mat img) {
 Mat HandThread::makeContours() {
     handGesture->contours.clear();
     //  Mat cloneBin = binMat.clone();
+    Mat image, src_gray, dst;
+    image = imread("../Database/V/testV.jpg")   ;
+    cvtColor( image, src_gray, CV_BGR2GRAY );
+    threshold(src_gray, binMat, 245, 255,0);
     findContours(binMat.clone(), handGesture->contours, handGesture->hie,
                  RETR_EXTERNAL, CHAIN_APPROX_NONE);
 
@@ -720,12 +725,16 @@ Mat HandThread::makeContours() {
         Mat(handGesture->contours[handGesture->cMaxId]).copyTo(handGesture->approxContour);
         approxPolyDP(handGesture->approxContour, handGesture->approxContour, 2, true);
         Mat(handGesture->approxContour).copyTo(handGesture->contours[handGesture->cMaxId]);
-        drawContours(frame, handGesture->contours, handGesture->cMaxId,
-                     mColorsRGB[0], 1);
+        //        drawContours(frame, handGesture->contours, handGesture->cMaxId,
+        //                     mColorsRGB[0], 1);
+        //        drawContours(image, handGesture->contours, handGesture->cMaxId,
+        //                     mColorsRGB[0], 1);
         // Palm center is stored in handGesture->inCircle, radius of the inscribed
         // circle is stored in handGesture->inCircleRadius
-        handGesture->findInscribedCircle(frame);
+        //        handGesture->findInscribedCircle(frame);
         handGesture->boundingRect = boundingRect(handGesture->contours[handGesture->cMaxId]);
+        handGesture->findInscribedCircle();
+        cout << "dac trung tile cao rong:" << ( (double) ((double) (handGesture->boundingRect.height) / (double) (handGesture->boundingRect.width)) / 2)  << endl;
         convexHull(handGesture->contours[handGesture->cMaxId], handGesture->hullI, false);
         handGesture->hullP.clear();
         for (int i = 0; i < handGesture->contours.size(); i++) {
@@ -740,7 +749,7 @@ Mat HandThread::makeContours() {
         // the convex hull of the hand
         Mat(lp).copyTo(handGesture->hullP[handGesture->cMaxId]);
         lp.clear();
-
+        drawContours(image, handGesture->hullP, handGesture->cMaxId, mColorsRGB[2],2);
         handGesture->fingerTips.clear();
         handGesture->defectPoints.clear();
         handGesture->defectPointsOrdered.clear();
@@ -748,15 +757,17 @@ Mat HandThread::makeContours() {
         handGesture->fingerTipsOrdered.clear();
         handGesture->defectIdAfter.clear();
         handGesture->defects.clear();
-
-        if ((handGesture->contours[handGesture->cMaxId].size() >= 5) &&
-                (handGesture->detectIsHand(frame))
+        cout << "hullI:" << handGesture->hullI.size() << endl;
+        if ((handGesture->contours[handGesture->cMaxId].size() >= 5)
+                //                && (handGesture->detectIsHand(frame))
                 && (handGesture->hullI.size() >= 5))
         {
             convexityDefects(handGesture->contours[handGesture->cMaxId], handGesture->hullI,
                     handGesture->defects);
+            cout << "Tong:" << handGesture->defects.size() << endl;
+            double dem = 0;
             for (int i = 0; i < handGesture->defects.size(); i++) {
-                Vec4i defect = handGesture->defects[i];
+                Vec4i defect = handGesture->defects[i]  ;
                 double depth = (double) defect[3] / 256.0;
                 Point curPoint = handGesture->contours[handGesture->cMaxId][defect[2]];
                 Point curPoint0 = handGesture->contours[handGesture->cMaxId][defect[0]];
@@ -769,24 +780,55 @@ Mat HandThread::makeContours() {
                 double lenth1 = sqrt((double) vec1.x * (double) vec1.x + (double) vec1.y
                                      * (double) vec1.y);
                 double cosTheta = dot / (lenth0 * lenth1);
-                bool bool1 = isClosedToBoundary(curPoint0, frame);
-                bool bool2 = isClosedToBoundary(curPoint1, frame);
-                if ((depth > handGesture->inCircleRadius * 0.7)
-                        && (cosTheta >= -0.7) && !bool1 && !bool2) {
-                    Point finVec0(curPoint0.x - handGesture->inCircle.x, curPoint0.y - handGesture->inCircle.y);
-                    double finAngle0 = atan2(finVec0.y, finVec0.x);
-                    Point finVec1 (curPoint1.x - handGesture->inCircle.x, curPoint1.y - handGesture->inCircle.y);
-                    double finAngle1 = atan2(finVec1.y, finVec1.x);
+                if (
+                        (depth > handGesture->inCircleRadius * 0.5) &&
+                        (cosTheta >= -0.7)
+                        //                        && !bool1 && !bool2
+                        ) {
+                    dem++;
+                    cout << "----Duoc:Oke\n----";
+                    cout << "radius:" << handGesture->inCircleRadius <<  " va dept:" << depth << endl;
+                    cout << "cosTheta:" << cosTheta << endl;
+                    cout << "farPoint.x:" << curPoint.x << " farPoint.y:" << curPoint.y << endl;
+                    cout << "Point1.x:" << curPoint0.x <<  " Point1.y:" << curPoint0.y << endl;
+                    cout << "2.x:" << curPoint1.x << " 2.y:" << curPoint1.y << endl;
+                    handGesture->defectIdAfter.push_back(i);
+                    line(image, handGesture->inCircle , curPoint0, Scalar(24, 77, 9), 2);
+                    line(image, handGesture->inCircle , curPoint1, Scalar(24, 77, 9), 2);
+                    line(image, curPoint, curPoint0, Scalar(24, 77, 9), 2);
+                    line(image, curPoint, curPoint1, Scalar(24, 77, 9), 2);
+                    circle(image, curPoint, 2, Scalar(0, 0, 255), -5);
+                    circle(image, curPoint0, 2, Scalar(0, 255, 0), -5);
+                    circle(image, curPoint1, 2, Scalar(255,0,0), -5);
+                    //                    Point finVec0(curPoint0.x - handGesture->inCircle.x, curPoint0.y - handGesture->inCircle.y);
+                    //                    double finAngle0 = atan2(finVec0.y, finVec0.x);
+                    //                    Point finVec1 (curPoint1.x - handGesture->inCircle.x, curPoint1.y - handGesture->inCircle.y);
+                    //                    double finAngle1 = atan2(finVec1.y, finVec1.x);
 
-                    if (handGesture->fingerTipsOrdered.size() == 0) {
-                        handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle0, curPoint0));
-                        handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle1, curPoint1));
+                    //                    if (handGesture->fingerTipsOrdered.size() == 0) {
+                    //                        handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle0, curPoint0));
+                    //                        handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle1, curPoint1));
 
-                    } else {
-                        handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle0, curPoint0));
-                        handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle1, curPoint1));
-                    }
+                    //                    } else {
+                    //                        handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle0, curPoint0));
+                    //                        handGesture->fingerTipsOrdered.insert(pair<double,Point>(finAngle1, curPoint1));
+                    //                    }
+                    cout << "----End\n\n----";
+                } else {
+                    //                    line(image, handGesture->inCircle , curPoint0, Scalar(24, 77, 9), 2);
+                    //                    line(image, handGesture->inCircle , curPoint1, Scalar(24, 77, 9), 2);
+                    //                    circle(image, curPoint, 2, Scalar(0, 0, 255), -5);
+                    //                    circle(image, curPoint0, 2, Scalar(0, 255, 0), -5);
+                    //                    circle(image, curPoint1, 2, Scalar(255,0,0), -5);
+                    //                    cout << "----Duoc:K Oke\n----";
+                    //                    cout << "radius:" << handGesture->inCircleRadius <<  " va dept:" << depth << endl;
+                    //                    cout << "cosTheta:" << cosTheta << endl;
+                    //                    cout << "farPoint.x:" << curPoint.x << " farPoint.y:" << curPoint.y << endl;
+                    //                    cout << "Point1.x:" << curPoint0.x <<  " Point1.y:" << curPoint0.y << endl;
+                    //                    cout << "2.x:" << curPoint1.x << " 2.y:" << curPoint1.y << endl;
+                    //                    cout << "----End\n\n----";
                 }
+
                 //                else {
                 //                    if (((!bool1 && bool2) || (bool1 && !bool2)) && (depth > (handGesture->inCircleRadius * 0.2)) && (cosTheta <= 0)) {
                 //                        //                        System.out.println("Current Point: " + curPoint.x + " " + curPoint.y);
@@ -820,20 +862,21 @@ Mat HandThread::makeContours() {
 
                 // }
             }
+            cout << "dac trung so goc: " << dem/5 << endl ;
+            cout << "----------ket thuc ---------\n"<< endl;
         }
-
     }
 
-    if (handGesture->detectIsHand(frame)) {
-        //cout << "vao day nhi" << endl;
+    //    if (handGesture->detectIsHand(frame)) {
+    //cout << "vao day nhi" << endl;
 
-        // handGesture->boundingRect represents four coordinates of the bounding box.
-//        rectangle(frame, handGesture->boundingRect.tl(), handGesture->boundingRect.br(),
-//                  mColorsRGB[1], 2);
-        drawContours(frame, handGesture->hullP, handGesture->cMaxId, mColorsRGB[2],2);
-        //emit handSubtractingChanged(frame, binMat,handGesture->boundingRect);
-    }
-    return frame;
+    // handGesture->boundingRect represents four coordinates of the bounding box.
+    //        rectangle(frame, handGesture->boundingRect.tl(), handGesture->boundingRect.br(),
+    //                  mColorsRGB[1], 2);
+    //    drawContours(image, handGesture->hullP, handGesture->cMaxId, mColorsRGB[2],2);
+    //emit handSubtractingChanged(frame, binMat,handGesture->boundingRect);
+    //    }
+    return image;
 }
 
 // Generates binary image containing user's hand
@@ -853,7 +896,7 @@ Mat HandThread::produceBinImg() {
     binTmpMat.copyTo(tmpMat);
     binTmpMat.copyTo(binMat);
 
-    //    Rect roiRect = makeBoundingBox(tmpMat);
+//        Rect roiRect = makeBoundingBox(tmpMat);
 
 
     //    if (roiRect.area() > 0) {

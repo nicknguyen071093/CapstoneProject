@@ -4,7 +4,8 @@
 #include <stdio.h>
 #include <cstdio>
 #include <cstdlib>
-#include "opencv2/opencv.hpp"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
 #include "vector"
 #include <iostream>
 #include <string.h>
@@ -18,11 +19,31 @@ using namespace cv;
 
 class HandGesture {
 private:
+    //
+    double nTotalLine;
+    double totalLenLine;
+    double n0To45Line;
+    double totalLen0To45Line;
+    double n46To90Line;
+    double totalLen46To90Line;
+    double n91To135Line;
+    double totalLen91To135Line;
+    double n136To180Line;
+    double totalLen136To180Line;
+    double nN1ToN45Line;
+    double totalLenN1ToN45Line;
+    double nN46ToN90Line;
+    double totalLenN46ToN90Line;
+    double nN91ToN135Line;
+    double totalLenN91ToN135Line;
+    double nN136ToN179Line;
+    double totalLenN136ToN179Line;
 
 public:
     HandGesture();
     //public List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
     vector<vector<Point> > contours;
+    vector<Point > biggestApporxContours;
     //public int cMaxId = -1;
     int cMaxId;
     // public Mat hie = new Mat();
@@ -35,6 +56,8 @@ public:
     Rect boundingRect;
     // public MatOfInt4 defects = new MatOfInt4();
     vector<Vec4i> defects;
+    //
+    vector<Point> correctDefects;
     //public ArrayList<Integer> defectIdAfter = new ArrayList<Integer>();
     vector<int> defectIdAfter;
     //public List<Point> fingerTips = new ArrayList<Point>();
@@ -67,21 +90,20 @@ public:
     Point inCircle;
     // public double inCircleRadius;
     double inCircleRadius;
+    //
+    double ratioHeightAndWidth;
     //public List<Double> features = new ArrayList<Double>();
     vector<double> features;
     // private boolean isHand = false;
     bool isHand;
-    //private float[] palmCircleRadius = {0};
-
+    // find out the biggest contour in image
     void findBiggestContour();
-
+    // check whether the biggest contour is hand
     bool detectIsHand(Mat) ;
-    //Convert the feature indicated by label to the string used in SVM input file
-    String feature2SVMString(int);
     //Extract hand features from img
     String featureExtraction(Mat &, int) ;
     // Find the location of inscribed circle and return the radius and the center location
-    void findInscribedCircle(Mat &) ;
+    void findInscribedCircle() ;
 
 
 };

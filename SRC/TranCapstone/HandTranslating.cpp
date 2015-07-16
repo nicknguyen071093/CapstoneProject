@@ -3,6 +3,8 @@
 HandTranslating::HandTranslating(QObject *parent) :
     QThread(parent)
 {
+    databaseFolderPath = "../Database/Main";
+    modelFile = "databaseMain.model";
     string model_file_name = databaseFolderPath + "/" + modelFile;
     if((model=svm_load_model(model_file_name.c_str()))==0)
     {
@@ -28,13 +30,10 @@ void HandTranslating::run() {
         mutex.unlock();
         if (enableToTranslate) {
             int currentFeatures = 0;
-//            imwrite("../Database/Test/chuTest.jpg",binaryMat);
-//            binaryMat = imread("../Database/Test/chuTest.jpg");
             Mat gray;
             cvtColor(binaryMat, gray, CV_BGR2GRAY);
             Mat binary;
             threshold(gray, binaryMat, 245, 255, CV_THRESH_BINARY);
-
             getFeature1To3(currentFeatures);
             getFeature4To6(currentFeatures);
             getFeature7To10(currentFeatures);

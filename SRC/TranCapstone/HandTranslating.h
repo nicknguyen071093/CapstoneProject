@@ -26,8 +26,8 @@ private:
     Mat binaryMat;
     const static int imageWidth = 96;
     const static int imageHeight = 96;
-    const string databaseFolderPath = "../Database/Main";
-    const string modelFile = "databaseMain.model";
+    string databaseFolderPath;
+    string modelFile;
     int svm_type;
     int nr_class;
     int *labels;

@@ -32,6 +32,7 @@ public:
     void releaseAll();
     bool STOP;
     bool lockEmitFrame;
+    int thoi;
 
 private:
     VideoCapture webSource;
@@ -104,8 +105,9 @@ private:
 signals:
     void handTrackingChanged(Mat);
     void binaryImageHandChanged (Mat, Mat);
-    void sendingBinaryImage(Mat);
+    void sendingBinaryImage(Mat,Mat);
     void handSubtractingChanged(Mat,Mat,Rect);
+    void thuPhatThoi(Mat);
 
 public slots:
     // void onHandTrackingChanged(QImage);

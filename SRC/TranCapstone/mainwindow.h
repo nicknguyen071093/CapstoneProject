@@ -5,8 +5,12 @@
 #include "HandThread.h"
 #include "HandTranslating.h"
 #include "ImageTranslating.h"
+#include "RetrievingFrame.h"
 #include "letterget.h"
+#include "ShowingImageThread.h"
+#include "CroppingImage.h"
 #include "QDir"
+#include "QFile"
 
 namespace Ui {
 class MainWindow;
@@ -33,11 +37,15 @@ private slots:
 
     void onHandTrackingChanged(Mat);
 
-    void onSendingBinaryImage(Mat);
+    void onSendingBinaryImage(Mat,Mat);
 
     void onTranslatingResultChanged(double);
 
     void onHandTrackingFinishinished();
+
+    void onToShow(Mat);
+
+    void recceiveCroppedImage(Mat,Mat,Mat,Mat,QString);
 
     void on_pushButton_5_clicked();
 
@@ -45,13 +53,24 @@ private slots:
 
     void on_btnBackHand_clicked();
 
+    void on_pushButton_6_clicked();
+
 private:
     Ui::MainWindow *ui;
     bool takingPic;
     HandThread *handThread;
+    RetrievingFrame *retrievingFrameThread;
     LetterGet *wordDAO;
+    ShowingImageThread *showingImageThread;
     HandTranslating *translatingThread;
+    CroppingImage *croppingThread;
     QMap <int,QString> wordMap;
+    QFile *file;
+    QTextStream *ghiout;
+    vector<int> compression_params;
+    QString trainPath;
+    int takingNumber;
+    void getFeature1To3(Mat);
 };
 
 #endif // MAINWINDOW_H

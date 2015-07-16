@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>633</width>
-    <height>455</height>
+    <height>486</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,7 +30,7 @@
    <widget class="QLabel" name="lbSubtractedHand">
     <property name="geometry">
      <rect>
-      <x>390</x>
+      <x>360</x>
       <y>10</y>
       <width>100</width>
       <height>100</height>
@@ -44,7 +44,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>280</y>
+      <y>320</y>
       <width>383</width>
       <height>68</height>
      </rect>
@@ -109,10 +109,10 @@
    <widget class="QLabel" name="lbWarning">
     <property name="geometry">
      <rect>
-      <x>390</x>
-      <y>90</y>
+      <x>360</x>
+      <y>200</y>
       <width>171</width>
-      <height>81</height>
+      <height>41</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -135,17 +135,7 @@
     <property name="geometry">
      <rect>
       <x>410</x>
-      <y>280</y>
-      <width>201</width>
-      <height>27</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="txtSTT">
-    <property name="geometry">
-     <rect>
-      <x>410</x>
-      <y>320</y>
+      <y>360</y>
       <width>201</width>
       <height>27</height>
      </rect>
@@ -155,7 +145,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>350</y>
+      <y>400</y>
       <width>601</width>
       <height>27</height>
      </rect>
@@ -167,8 +157,8 @@
    <widget class="QLabel" name="lbResult">
     <property name="geometry">
      <rect>
-      <x>390</x>
-      <y>190</y>
+      <x>360</x>
+      <y>230</y>
       <width>181</width>
       <height>41</height>
      </rect>
@@ -180,6 +170,68 @@
     </property>
     <property name="text">
      <string>Kết Quả:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="imgBin">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>10</y>
+      <width>96</width>
+      <height>96</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="imgInner">
+    <property name="geometry">
+     <rect>
+      <x>360</x>
+      <y>120</y>
+      <width>96</width>
+      <height>96</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="imgXuong">
+    <property name="geometry">
+     <rect>
+      <x>490</x>
+      <y>120</y>
+      <width>96</width>
+      <height>96</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="txtName">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>330</y>
+      <width>101</width>
+      <height>27</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_6">
+    <property name="geometry">
+     <rect>
+      <x>520</x>
+      <y>330</y>
+      <width>99</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Open</string>
     </property>
    </widget>
   </widget>

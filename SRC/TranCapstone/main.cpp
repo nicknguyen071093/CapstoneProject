@@ -10,6 +10,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     MainWindow w;
     w.show();
+
     return a.exec();
     //    Mat image = imread("/home/nickseven/mau-tay-moi.png");
     //    /// Convert the image to Gray
