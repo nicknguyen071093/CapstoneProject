@@ -2,15 +2,16 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "HandThread.h"
 #include "HandTranslating.h"
 #include "ImageTranslating.h"
 #include "RetrievingFrame.h"
 #include "letterget.h"
 #include "ShowingImageThread.h"
 #include "CroppingImage.h"
+#include "TimerThread.h"
 #include "QDir"
 #include "QFile"
+#include <QThread>
 
 namespace Ui {
 class MainWindow;
@@ -22,43 +23,40 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
+    static int const EXIT_CODE_REBOOT = -123456789;
     ~MainWindow();
 
 private slots:
-    void on_pushButton_clicked();
-
-    void on_pushButton_2_clicked();
-
-    void on_pushButton_3_clicked();
-
-    void on_pushButton_4_clicked();
 
     void on_MainWindow_destroyed();
 
-    void onHandTrackingChanged(Mat);
-
-    void onSendingBinaryImage(Mat,Mat);
-
     void onTranslatingResultChanged(double);
-
-    void onHandTrackingFinishinished();
 
     void onToShow(Mat);
 
     void recceiveCroppedImage(Mat,Mat,Mat,Mat,QString);
 
+    void changeLabelNotice(QString);
+
     void on_pushButton_5_clicked();
 
     void on_btnTakepic_clicked();
 
-    void on_btnBackHand_clicked();
-
     void on_pushButton_6_clicked();
+
+    void changeToFrontHandMode();
+
+    void changeToBackHandMode();
+
+    void changeToBinaryImage();
+    void slotReboot();
+
 
 private:
     Ui::MainWindow *ui;
+
     bool takingPic;
-    HandThread *handThread;
+    TimerThread *timerThread;
     RetrievingFrame *retrievingFrameThread;
     LetterGet *wordDAO;
     ShowingImageThread *showingImageThread;
@@ -70,7 +68,7 @@ private:
     vector<int> compression_params;
     QString trainPath;
     int takingNumber;
-    void getFeature1To3(Mat);
+    void startThreads();
 };
 
 #endif // MAINWINDOW_H

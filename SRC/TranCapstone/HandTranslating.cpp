@@ -209,3 +209,8 @@ void HandTranslating::getFeature15To30(int &currentFeatures) {
 void HandTranslating::recevingImage(Mat binary) {
     this->binaryMat = binary;
 }
+
+void HandTranslating::setToDefaults() {
+    STOP = false;
+    enableToTranslate = false;
+}

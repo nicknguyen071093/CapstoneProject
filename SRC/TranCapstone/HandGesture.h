@@ -1,9 +1,6 @@
 #ifndef HANDGESTURE_H
 #define HANDGESTURE_H
 
-#include <stdio.h>
-#include <cstdio>
-#include <cstdlib>
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "vector"
@@ -63,50 +60,17 @@ public:
     vector<Vec4i> defects;
     //
     vector<Point> correctDefects;
-    //public ArrayList<Integer> defectIdAfter = new ArrayList<Integer>();
-    vector<int> defectIdAfter;
-    //public List<Point> fingerTips = new ArrayList<Point>();
-    vector<Point> fingerTips ;
-    //public List<Point> fingerTipsOrder = new ArrayList<Point>();
-    vector<Point> fingerTipsOrder;
-    //public Map<Double, Point> fingerTipsOrdered = new TreeMap<Double, Point>();
-    map<double, Point> fingerTipsOrdered;
-    //public MatOfPoint2f defectMat = new MatOfPoint2f();
-    vector<Point2f> defectMat;
-    //public List<Point> defectPoints = new ArrayList<Point>();
     vector<Point> defectPoints;
-    //public Map<Double, Integer> defectPointsOrdered = new TreeMap<Double, Integer>();
-    map<double, int> defectPointsOrdered;
-    //public Point palmCenter = new Point();
-    Point palmCenter;
-    //public MatOfPoint2f hullCurP = new MatOfPoint2f();
-    vector<Point2f> hullCurP;
-    //public MatOfPoint2f approxHull = new MatOfPoint2f();
-    vector<Point2f> approxHull;
-    //public MatOfPoint2f approxContour = new MatOfPoint2f();
     vector<Point2f> approxContour;
-    //public MatOfPoint palmDefects = new MatOfPoint();
-    vector<Point> palmDefects;
-    //public Point momentCenter = new Point();
-    Point momentCenter;
-    //public double momentTiltAngle;
-    double momentTiltAngle;
-    //public Point inCircle = new Point();
     Point inCircle;
-    // public double inCircleRadius;
     double inCircleRadius;
     //
     double ratioHeightAndWidth;
-    //public List<Double> features = new ArrayList<Double>();
-    vector<double> features;
-    // private boolean isHand = false;
     bool isHand;
     // find out the biggest contour in image
     void findBiggestContour();
     // check whether the biggest contour is hand
     bool detectIsHand(Mat) ;
-    //Extract hand features from img
-    String featureExtraction(Mat &, int) ;
     // Find the location of inscribed circle and return the radius and the center location
     void findInscribedCircle() ;
     // draw Inner and Xuong

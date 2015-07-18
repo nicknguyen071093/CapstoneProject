@@ -34,9 +34,11 @@ LIBS += -lopencv_videostab
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    SVM.cpp
+    SVM.cpp \
+    HandGesture.cpp
 
 HEADERS  += mainwindow.h \
-    SVM.h
+    SVM.h \
+    HandGesture.h
 
 FORMS    += mainwindow.ui

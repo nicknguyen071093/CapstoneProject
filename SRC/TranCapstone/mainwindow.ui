@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>633</width>
-    <height>486</height>
+    <height>538</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,8 +43,8 @@
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>320</y>
+      <x>20</x>
+      <y>360</y>
       <width>383</width>
       <height>68</height>
      </rect>
@@ -55,52 +55,13 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QPushButton" name="pushButton">
-           <property name="text">
-            <string>Start</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QPushButton" name="pushButton_5">
            <property name="text">
-            <string>Stop</string>
+            <string>Restart</string>
            </property>
           </widget>
          </item>
         </layout>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="QPushButton" name="pushButton_2">
-         <property name="text">
-          <string>ChangeTH</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_3">
-         <property name="text">
-          <string>ChangeTB</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="btnBackHand">
-         <property name="text">
-          <string>PushButton</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_4">
-         <property name="text">
-          <string>TrainRM</string>
-         </property>
-        </widget>
        </item>
       </layout>
      </item>
@@ -134,8 +95,8 @@
    <widget class="QLineEdit" name="txtType">
     <property name="geometry">
      <rect>
-      <x>410</x>
-      <y>360</y>
+      <x>420</x>
+      <y>400</y>
       <width>201</width>
       <height>27</height>
      </rect>
@@ -144,8 +105,8 @@
    <widget class="QPushButton" name="btnTakepic">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>400</y>
+      <x>20</x>
+      <y>440</y>
       <width>601</width>
       <height>27</height>
      </rect>
@@ -214,8 +175,8 @@
    <widget class="QLineEdit" name="txtName">
     <property name="geometry">
      <rect>
-      <x>410</x>
-      <y>330</y>
+      <x>420</x>
+      <y>370</y>
       <width>101</width>
       <height>27</height>
      </rect>
@@ -224,14 +185,27 @@
    <widget class="QPushButton" name="pushButton_6">
     <property name="geometry">
      <rect>
-      <x>520</x>
-      <y>330</y>
+      <x>530</x>
+      <y>370</y>
       <width>99</width>
       <height>27</height>
      </rect>
     </property>
     <property name="text">
      <string>Open</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbThongbao">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>330</y>
+      <width>591</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Thông Báo:</string>
     </property>
    </widget>
   </widget>

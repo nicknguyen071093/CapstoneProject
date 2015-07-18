@@ -5,8 +5,10 @@
 #include <QMutex>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <iostream>
 
 using namespace cv;
+using namespace  std;
 
 class ShowingImageThread : public QThread
 {
@@ -31,7 +33,16 @@ public:
     // Mode that displays color image together with contours, fingertips,
     // defect points and so on.
     const static  int TRAIN_REC_MODE = 7;
+    //
+    const static int GETTING_FIRST_AVG_FRONT_HAND = 8;
+    //
+    const static int GETTING_FIRST_AVG_BACK_HAND = 10;
+    //
+    const static int CHECKING_CHANGING_AVG_FRONT_HAND = 9;
+    //
+    const static int CHECKING_CHANGING_AVG_BACK_HAND = 11;
     void setMode(int);
+    void setToDefaults();
 
 private:
     void run();
@@ -45,7 +56,7 @@ private:
     Mat tmpMat;
     // temporary binary mat of hand is used to generate binary mat contains hand.
     Mat binTmpMat;
-     // temporary binary mat of background is used to generate binary mat contains hand.
+    // temporary binary mat of background is used to generate binary mat contains hand.
     Mat binTmpMat2 ;
     // current mode
     int mode;
@@ -72,6 +83,9 @@ private:
     // array to store the frond hand's feature range
     double cFrontHandLower[SAMPLE_HAND_NUM][3];
     double cFrontHandUpper[SAMPLE_HAND_NUM][3];
+    // array to store the frond hand's feature range
+    double chekingRangeFrontHandLower[SAMPLE_HAND_NUM][3];
+    double chekingRangeFrontHandUpper[SAMPLE_HAND_NUM][3];
     // array to store the back hand's feature range
     double cBackHandLower[SAMPLE_HAND_NUM][3];
     double cBackHandUpper[SAMPLE_HAND_NUM][3];
@@ -128,6 +142,14 @@ private:
     // Presampling background colors.
     // Output is avgBackColor, additionAvgBackColor
     void getSampleBack();
+    //
+    void getRangeForCheckingFrontHand();
+    //
+    void getRangeForCheckingBackHand();
+    //
+    bool checkCurrentAvgFrontHandIsInRange();
+    //
+    bool checkCurrentAvgBackHandIsInRange();
     // Presampling the front hand colors.
     // Output is avgColor,
     void getSampleHand();
@@ -142,13 +164,16 @@ private:
     void produceBinHandImg();
     // Generates binary image thresholded only by sampled background colors
     void produceBinBackImg();
+    //    bool isGettingFirstFinished;
 
 signals:
     void toShow(Mat);
     void sendImageToCrop(Mat,Mat);
+    void sendSignalEnableCountDown();
 public slots:
     void onChangingImage(Mat);
-
+    void moveToCheckFrontHand();
+    void moveToCheckBackHand();
 };
 
 #endif // SHOWINGIMAGETHREAD_H

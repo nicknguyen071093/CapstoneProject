@@ -13,6 +13,7 @@ class CroppingImage : public QThread
 public:
     explicit CroppingImage(QObject *parent = 0);
     bool STOP;
+    void setToDefaults();
 
 private:
     void run();

@@ -306,4 +306,10 @@ void CroppingImage::receiveBinaryImage(Mat frame, Mat binMat) {
     }
 }
 
+void CroppingImage::setToDefaults() {
+    enableToCrop = false;
+    handGesture = new HandGesture();
+    STOP = false;
+}
+
 

@@ -6,6 +6,7 @@ ShowingImageThread::ShowingImageThread(QObject *parent) :
 {
     STOP = false;
     enableToShow = false;
+    //    isGettingFirstFinished = false;
     mode = BACKGROUND_MODE;
     blue = Scalar(255,0,0);
     red = Scalar(0,0,255);
@@ -17,7 +18,6 @@ ShowingImageThread::ShowingImageThread(QObject *parent) :
     initBackPoints();
     initHandPoints();
 }
-
 
 void ShowingImageThread::run() {
     while(true) {
@@ -34,33 +34,72 @@ void ShowingImageThread::run() {
                 emit sendImageToCrop(frame.clone(),showMat.clone());
             } else if (mode == BACKGROUND_MODE) {
                 showMat = preSampleBack(frame.clone());
-//                imwrite("../xulyanh/sample-background.jpg",showMat);
+                //                imwrite("../xulyanh/sample-background.jpg",showMat);
             } else if (mode == SAMPLE_FRONT_HAND_MODE) {
                 showMat = preSampleFrontHand(frame.clone());
-//                imwrite("../xulyanh/sample-fronthand.jpg",showMat);
+                //                imwrite("../xulyanh/sample-fronthand.jpg",showMat);
             }  else if (mode == SAMPLE_BACK_HAND_MODE) {
                 showMat = preSampleBackHand(frame.clone());
-//                imwrite("../xulyanh/sample-backhand.jpg",showMat);
+                //                imwrite("../xulyanh/sample-backhand.jpg",showMat);
             }  else if (mode == GET_AVG_BACKGROUND) {
                 GaussianBlur(frame, blurMat, Size(9, 9), 4);
-//                imwrite("../xulyanh/sample-background-blur.jpg",blurMat);
+                //                imwrite("../xulyanh/sample-background-blur.jpg",blurMat);
                 cvtColor(blurMat, labMat, COLOR_BGR2Lab);
-//                imwrite("../xulyanh/sample-background-lab-mat.jpg",labMat);
+                //                imwrite("../xulyanh/sample-background-lab-mat.jpg",labMat);
                 getSampleBack();
+                mode = GETTING_FIRST_AVG_FRONT_HAND;
+            } else if (mode == GETTING_FIRST_AVG_FRONT_HAND) {
+                GaussianBlur(frame, blurMat, Size(9, 9), 4);
+                //                imwrite("../xulyanh/sample-background-blur.jpg",blurMat);
+                cvtColor(blurMat, labMat, COLOR_BGR2Lab);
+                //                imwrite("../xulyanh/sample-background-lab-mat.jpg",labMat);
+                getRangeForCheckingFrontHand();
                 mode = SAMPLE_FRONT_HAND_MODE;
+                //                isGettingFirstFinished = true;
+                emit sendSignalEnableCountDown();
+            } else if (mode == CHECKING_CHANGING_AVG_FRONT_HAND) {
+                GaussianBlur(frame, blurMat, Size(9, 9), 4);
+                //                imwrite("../xulyanh/sample-background-blur.jpg",blurMat);
+                cvtColor(blurMat, labMat, COLOR_BGR2Lab);
+                //                imwrite("../xulyanh/sample-background-lab-mat.jpg",labMat);
+                if (!checkCurrentAvgFrontHandIsInRange()) {
+                    mode = SAMPLE_FRONT_HAND_MODE;
+                    emit sendSignalEnableCountDown();
+                }
+                showMat = preSampleFrontHand(frame.clone());
+            } else if (mode == GETTING_FIRST_AVG_BACK_HAND) {
+                GaussianBlur(frame, blurMat, Size(9, 9), 4);
+                //                imwrite("../xulyanh/sample-background-blur.jpg",blurMat);
+                cvtColor(blurMat, labMat, COLOR_BGR2Lab);
+                //                imwrite("../xulyanh/sample-background-lab-mat.jpg",labMat);
+                getRangeForCheckingBackHand();
+                mode = SAMPLE_BACK_HAND_MODE;
+                //                isGettingFirstFinished = true;
+                emit sendSignalEnableCountDown();
+            } else if (mode == CHECKING_CHANGING_AVG_BACK_HAND) {
+                GaussianBlur(frame, blurMat, Size(9, 9), 4);
+                //                imwrite("../xulyanh/sample-background-blur.jpg",blurMat);
+                cvtColor(blurMat, labMat, COLOR_BGR2Lab);
+                //                imwrite("../xulyanh/sample-background-lab-mat.jpg",labMat);
+                if (!checkCurrentAvgBackHandIsInRange()) {
+                    mode = SAMPLE_BACK_HAND_MODE;
+                    emit sendSignalEnableCountDown();
+                }
+                showMat = preSampleBackHand(frame.clone());
             } else if (mode == GET_AVG_FRONT_HAND) {
                 GaussianBlur(frame, blurMat, Size(9, 9), 4);
-//                imwrite("../xulyanh/sample-fronthand-blur.jpg",blurMat);
+                //                imwrite("../xulyanh/sample-fronthand-blur.jpg",blurMat);
                 cvtColor(blurMat, labMat, COLOR_BGR2Lab);
-//                imwrite("../xulyanh/sample-fronthand-lab.jpg",labMat);
+                //                imwrite("../xulyanh/sample-fronthand-lab.jpg",labMat);
                 getSampleHand();
-                mode = SAMPLE_BACK_HAND_MODE;
+                mode = GETTING_FIRST_AVG_BACK_HAND;
             } else if (mode == GET_AVG_BACK_HAND) {
                 GaussianBlur(frame, blurMat, Size(9, 9), 4);
-//                imwrite("../xulyanh/sample-backhand-blur.jpg",blurMat);
+                //                imwrite("../xulyanh/sample-backhand-blur.jpg",blurMat);
                 cvtColor(blurMat, labMat, COLOR_BGR2Lab);
-//                imwrite("../xulyanh/sample-backhand-lab.jpg",labMat);
+                //                imwrite("../xulyanh/sample-backhand-lab.jpg",labMat);
                 getSampleBackHand();
+                boundariesCorrection();
                 mode = DETECTION_MODE;
             }
             emit (toShow(showMat.clone()));
@@ -148,6 +187,122 @@ void ShowingImageThread::getSampleHand() {
     }
 }
 
+void ShowingImageThread::getRangeForCheckingFrontHand() {
+    for (int i = 0; i < SAMPLE_HAND_NUM; i++) {
+        chekingRangeFrontHandLower[i][0] = 50;
+        chekingRangeFrontHandUpper[i][0] = 50;
+        chekingRangeFrontHandLower[i][1] = 3;
+        chekingRangeFrontHandUpper[i][1] = 3;
+        chekingRangeFrontHandLower[i][2] = 3;
+        chekingRangeFrontHandUpper[i][2] = 3;
+    }
+    Vec3b intensity;
+    for (int i = 0; i < SAMPLE_HAND_NUM; i++) {
+        intensity = labMat.at<Vec3b>((int) (sampleHandPoints[i].y),(int) (sampleHandPoints[i].x));
+        for (int j = 0; j < 3; j++) {
+            double value = (double) intensity.val[j];
+            avgColor[i][j] = value;
+            //            cout << "I:" << i << " J:" << j << " VA:" << avgColor[i][j] << " cuV:" << value << endl;
+            if (value - chekingRangeFrontHandLower[i][j] < 0) {
+                chekingRangeFrontHandLower[i][j] = value;
+            }
+            if ((double) intensity.val[j] + chekingRangeFrontHandUpper[i][j] > 255) {
+                chekingRangeFrontHandUpper[i][j] = 255 - value;
+            }
+            //            cout << "I:" << i << " J:" << j << " VA:" << avgColor[i][j] << endl;
+        }
+    }
+    //    cout << "xong roi\n";
+}
+
+void ShowingImageThread::getRangeForCheckingBackHand() {
+    for (int i = 0; i < SAMPLE_HAND_NUM; i++) {
+        chekingRangeFrontHandLower[i][0] = 50;
+        chekingRangeFrontHandUpper[i][0] = 50;
+        chekingRangeFrontHandLower[i][1] = 3;
+        chekingRangeFrontHandUpper[i][1] = 3;
+        chekingRangeFrontHandLower[i][2] = 3;
+        chekingRangeFrontHandUpper[i][2] = 3;
+    }
+    Vec3b intensity;
+    for (int i = 0; i < SAMPLE_HAND_NUM; i++) {
+        intensity = labMat.at<Vec3b>((int) (sampleBackHandPoints[i].y),(int) (sampleBackHandPoints[i].x));
+        for (int j = 0; j < 3; j++) {
+            double value = (double) intensity.val[j];
+            avgBackHandColor[i][j] = value;
+            //            cout << "I:" << i << " J:" << j << " VA:" << avgColor[i][j] << " cuV:" << value << endl;
+            if (value - chekingRangeFrontHandLower[i][j] < 0) {
+                chekingRangeFrontHandLower[i][j] = value;
+            }
+            if ((double) intensity.val[j] + chekingRangeFrontHandUpper[i][j] > 255) {
+                chekingRangeFrontHandUpper[i][j] = 255 - value;
+            }
+            //            cout << "I:" << i << " J:" << j << " VA:" << avgColor[i][j] << endl;
+        }
+    }
+    //    cout << "xong roi\n";
+}
+
+bool ShowingImageThread::checkCurrentAvgFrontHandIsInRange() {
+    Vec3b intensity;
+    for (int i = 0; i < SAMPLE_HAND_NUM; i++) {
+        intensity = labMat.at<Vec3b>((int) (sampleHandPoints[i].y),(int) (sampleHandPoints[i].x));
+        //        for (int j = 0; j < 3; j++) {
+        //            double lowerValue = avgColor[i][j] - chekingRangeFrontHandLower[i][j];
+        //            double uperValue = avgColor[i][j] + chekingRangeFrontHandUpper[i][j];
+        lowerBound.val[0] = avgColor[i][0] - chekingRangeFrontHandLower[i][0];
+        lowerBound.val[1] = avgColor[i][1] - chekingRangeFrontHandLower[i][1];
+        lowerBound.val[2] = avgColor[i][2] - chekingRangeFrontHandLower[i][2];
+
+        upperBound.val[0] = avgColor[i][0] + chekingRangeFrontHandUpper[i][0];
+        upperBound.val[1] = avgColor[i][1] + chekingRangeFrontHandUpper[i][1];
+        upperBound.val[2] = avgColor[i][2] + chekingRangeFrontHandUpper[i][2];
+        if (intensity.val[0] >= lowerBound.val[0] && intensity.val[0] <= upperBound.val[0]) {
+            if (intensity.val[1] >= lowerBound.val[1] && intensity.val[1] <= upperBound.val[1]) {
+                if (intensity.val[2] >= lowerBound.val[2] && intensity.val[2] <= upperBound.val[2]) {
+                    return true;
+                }
+            }
+        }
+        //            cout << "i:" << i << " j:" << j << " lower:" << lowerValue << " upper:" << uperValue << " current:" << (double)intensity.val[j] << endl;
+        //        if (intensity.val[j] >= lowerValue && intensity.val[j] <= uperValue) {
+        //            return true;
+        //        }
+        //        }
+    }
+    return false;
+}
+
+bool ShowingImageThread::checkCurrentAvgBackHandIsInRange() {
+    Vec3b intensity;
+    for (int i = 0; i < SAMPLE_HAND_NUM; i++) {
+        intensity = labMat.at<Vec3b>((int) (sampleBackHandPoints[i].y),(int) (sampleBackHandPoints[i].x));
+        //        for (int j = 0; j < 3; j++) {
+        //            double lowerValue = avgColor[i][j] - chekingRangeFrontHandLower[i][j];
+        //            double uperValue = avgColor[i][j] + chekingRangeFrontHandUpper[i][j];
+        lowerBound.val[0] = avgBackHandColor[i][0] - chekingRangeFrontHandLower[i][0];
+        lowerBound.val[1] = avgBackHandColor[i][1] - chekingRangeFrontHandLower[i][1];
+        lowerBound.val[2] = avgBackHandColor[i][2] - chekingRangeFrontHandLower[i][2];
+
+        upperBound.val[0] = avgBackHandColor[i][0] + chekingRangeFrontHandUpper[i][0];
+        upperBound.val[1] = avgBackHandColor[i][1] + chekingRangeFrontHandUpper[i][1];
+        upperBound.val[2] = avgBackHandColor[i][2] + chekingRangeFrontHandUpper[i][2];
+        if (intensity.val[0] >= lowerBound.val[0] && intensity.val[0] <= upperBound.val[0]) {
+            if (intensity.val[1] >= lowerBound.val[1] && intensity.val[1] <= upperBound.val[1]) {
+                if (intensity.val[2] >= lowerBound.val[2] && intensity.val[2] <= upperBound.val[2]) {
+                    return true;
+                }
+            }
+        }
+        //            cout << "i:" << i << " j:" << j << " lower:" << lowerValue << " upper:" << uperValue << " current:" << (double)intensity.val[j] << endl;
+        //        if (intensity.val[j] >= lowerValue && intensity.val[j] <= uperValue) {
+        //            return true;
+        //        }
+        //        }
+    }
+    return false;
+}
+
 void ShowingImageThread::getSampleBackHand() {
     Vec3b intensity;
     for (int i = 0; i < SAMPLE_HAND_NUM; i++) {
@@ -160,7 +315,7 @@ void ShowingImageThread::getSampleBackHand() {
 
 Mat ShowingImageThread::produceBinImg() {
     //  int boxExtension = 0;
-    boundariesCorrection();
+    //    boundariesCorrection();
     produceBinHandImg();
     produceBinBackImg();
     bitwise_and(binTmpMat, binTmpMat2, binTmpMat);
@@ -267,12 +422,12 @@ void ShowingImageThread::produceBinHandImg() {
     for (int i = 0; i < SAMPLE_HAND_NUM; i++) {
         add(binTmpMat, sampleMats[i], binTmpMat);
     }
-//    imwrite("../xulyanh/hand-image-in-range.jpg",binTmpMat);
+    //    imwrite("../xulyanh/hand-image-in-range.jpg",binTmpMat);
     Mat element = getStructuringElement(MORPH_RECT, Size( 2*3 + 1, 2*3 + 1 ), Point( 3, 3 ));
 
     /// Apply the specified morphology operation
     morphologyEx(binTmpMat, binTmpMat, CV_MOP_OPEN, element );
-//    imwrite("../xulyanh/morpholy-hand-image-in-range.jpg",binTmpMat);
+    //    imwrite("../xulyanh/morpholy-hand-image-in-range.jpg",binTmpMat);
 }
 
 void ShowingImageThread::produceBinBackImg() {
@@ -307,13 +462,13 @@ void ShowingImageThread::produceBinBackImg() {
     for (int i = 1; i < sampleBackgroundMats.size(); i++) {
         add(binTmpMat2, sampleBackgroundMats[i], binTmpMat2);
     }
-//    imwrite("../xulyanh/background-in-range.jpg",binTmpMat2);
+    //    imwrite("../xulyanh/background-in-range.jpg",binTmpMat2);
     bitwise_not(binTmpMat2, binTmpMat2);
-//    imwrite("../xulyanh/background-in-range-to-subtract.jpg",binTmpMat2);
+    //    imwrite("../xulyanh/background-in-range-to-subtract.jpg",binTmpMat2);
     Mat element = getStructuringElement(MORPH_RECT, Size( 2*3 + 1, 2*3 + 1 ), Point( 3, 3 ) );
     /// Apply the specified morphology operation
     morphologyEx( binTmpMat2, binTmpMat2, CV_MOP_OPEN, element );
-//    imwrite("../xulyanh/morpho-background-in-range-to-subtract.jpg",binTmpMat2);
+    //    imwrite("../xulyanh/morpho-background-in-range-to-subtract.jpg",binTmpMat2);
 }
 
 void ShowingImageThread::initCLowerUpper(double cl1, double cu1, double cl2, double cu2,
@@ -475,6 +630,26 @@ void ShowingImageThread::initHandPoints() {
 void ShowingImageThread::setMode(int mode) {
     this->mode = mode;
 }
+
+void ShowingImageThread::setToDefaults() {
+    initCLowerUpper(30, 30, 7, 7, 7, 7);
+    initCBackLowerUpper(50, 50, 3, 3, 3, 3);
+//    sampleFrontHand.clear();
+//    sampleBackHand.clear();
+    additionAvgBackColor.clear();
+    mode = BACKGROUND_MODE;
+    STOP = false;
+    enableToShow = false;
+}
+
+void ShowingImageThread::moveToCheckFrontHand() {
+    this->mode = CHECKING_CHANGING_AVG_FRONT_HAND;
+}
+
+void ShowingImageThread::moveToCheckBackHand() {
+    this->mode = CHECKING_CHANGING_AVG_BACK_HAND;
+}
+
 
 void ShowingImageThread::onChangingImage(Mat binary) {
     if (!enableToShow) {

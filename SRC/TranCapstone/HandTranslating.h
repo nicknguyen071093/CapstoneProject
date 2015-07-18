@@ -20,6 +20,7 @@ public:
     void recevingImage(Mat);
     bool STOP;
     bool enableToTranslate;
+    void setToDefaults();
 
 private:
     void run();
