@@ -1,0 +1,292 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<sim-project version="7.7" multi-file="no">
+  <meta>
+    <name>Project</name>
+    <authors> </authors>
+    <description />
+  </meta>
+  <counters diagrams="1" models="1">
+    <entity-names>
+      <counter>
+        <item-type stereotype="" type="UmlComponent" />
+        <value>1</value>
+      </counter>
+      <counter>
+        <item-type stereotype="" type="UmlSystemBoundary" />
+        <value>1</value>
+      </counter>
+      <counter>
+        <item-type stereotype="" type="UmlSequenceAction" />
+        <value>1</value>
+      </counter>
+      <counter>
+        <item-type stereotype="" type="UmlActor" />
+        <value>1</value>
+      </counter>
+    </entity-names>
+    <entity-ids>
+      <counter>
+        <item-type stereotype="" type="UmlComponent" />
+        <value>2</value>
+      </counter>
+      <counter>
+        <item-type stereotype="" type="AbstractShapeItem" />
+        <value>10</value>
+      </counter>
+      <counter>
+        <item-type stereotype="" type="UmlSystemBoundary" />
+        <value>2</value>
+      </counter>
+      <counter>
+        <item-type stereotype="" type="UmlAssociation" />
+        <value>33</value>
+      </counter>
+      <counter>
+        <item-type stereotype="" type="UmlSequenceAction" />
+        <value>2</value>
+      </counter>
+      <counter>
+        <item-type stereotype="" type="UmlActor" />
+        <value>2</value>
+      </counter>
+    </entity-ids>
+    <diagrams>
+      <counter>
+        <type>SoftwareIdeasModeler.Core.Diagrams.UmlDiagrams.UmlComponentDiagram</type>
+        <value>1</value>
+      </counter>
+      <counter>
+        <type>SoftwareIdeasModeler.Core.Diagrams.UmlDiagrams.UmlObjectDiagram</type>
+        <value>1</value>
+      </counter>
+    </diagrams>
+    <fields />
+  </counters>
+  <management>
+    <persons>
+      <person id="Pa9ce261b24cd4b3b9d448564f06e7afe">
+        <first-name />
+        <last-name />
+        <role />
+        <e-mail />
+        <phone-number />
+        <description />
+        <color>#00000000</color>
+      </person>
+    </persons>
+    <tasks />
+    <requirements />
+    <issues />
+    <to-dos />
+  </management>
+  <glossary />
+  <types>
+    <type-sets>
+      <type-set file="UmlTypes.xml" />
+    </type-sets>
+    <custom-types />
+  </types>
+  <filters />
+  <items />
+  <models>
+    <model id="p347553281673938806" name="Model 1" type="model" namespace="" order-index="1">
+      <meta>
+        <authors>
+          <author> </author>
+        </authors>
+        <description />
+        <creation-date>07/19/2015 12:07:21</creation-date>
+        <change-date>01/01/0001 00:00:00</change-date>
+        <revision-count>0</revision-count>
+        <version />
+      </meta>
+      <abstract-items />
+      <sub-models />
+      <diagram type="uml-component" id="p112846113354477447" name="ComponentDiagram1" order-index="1" show-id="false" show-name="true" show-parent-name="false" show-stereotypes="true" show-tagged-values="false" show-template-parameters="true" show-fields="true" show-empty-compartments="true" show-attributes="true" show-attribute-visibility="true" show-operations="true" show-operation-parameters="true" show-operation-visibility="true" show-nullability="true" show-sequence-number="false" show-extension-points="true" show-relationship-texts="true" auto-routed-paths="false">
+        <style>
+          <background-color index="1" color="#FFFFFFFF" />
+          <background-color index="2" color="#FFFFFFFF" />
+          <background-type type="solid" />
+        </style>
+        <meta>
+          <authors>
+            <author> </author>
+          </authors>
+          <description />
+          <creation-date>07/19/2015 12:07:21</creation-date>
+          <change-date>07/19/2015 12:10:58</change-date>
+          <revision-count>0</revision-count>
+          <version />
+        </meta>
+        <abstract-items />
+        <layer name="Default" visible="true" enabled="true" locked="false" />
+      </diagram>
+      <diagram type="uml-object" id="p631685811452147225" name="ObjectDiagram1" order-index="2" overview-order-index="0" show-id="false" show-name="true" show-parent-name="false" show-stereotypes="true" show-tagged-values="false" show-template-parameters="true" show-fields="true" show-empty-compartments="true" show-attributes="true" show-attribute-visibility="true" show-operations="true" show-operation-parameters="true" show-operation-visibility="true" show-nullability="true" show-sequence-number="false" show-extension-points="true" show-relationship-texts="true" auto-routed-paths="false">
+        <style>
+          <background-color index="1" color="#FFFFFFFF" />
+          <background-color index="2" color="#FFFFFFFF" />
+          <background-type type="solid" />
+        </style>
+        <meta>
+          <authors>
+            <author> </author>
+          </authors>
+          <description />
+          <creation-date>07/19/2015 12:11:08</creation-date>
+          <change-date>07/19/2015 12:11:08</change-date>
+          <revision-count>0</revision-count>
+          <version />
+        </meta>
+        <abstract-items />
+        <layer name="Default" visible="true" enabled="true" locked="false" />
+      </diagram>
+      <diagram type="uml-mixed" id="p272984718163904194" name="ChargingBattery" order-index="3" overview-order-index="1" show-id="false" show-name="true" show-parent-name="false" show-stereotypes="true" show-tagged-values="false" show-template-parameters="true" show-fields="true" show-empty-compartments="true" show-attributes="true" show-attribute-visibility="true" show-operations="true" show-operation-parameters="true" show-operation-visibility="true" show-nullability="true" show-sequence-number="false" show-extension-points="true" show-relationship-texts="true" auto-routed-paths="false">
+        <style>
+          <background-color index="1" color="#FFFFFFFF" />
+          <background-color index="2" color="#FFFFFFFF" />
+          <background-type type="solid" />
+        </style>
+        <meta>
+          <authors>
+            <author> </author>
+          </authors>
+          <description />
+          <creation-date>07/19/2015 12:11:15</creation-date>
+          <change-date>07/20/2015 02:21:51</change-date>
+          <revision-count>0</revision-count>
+          <version />
+        </meta>
+        <abstract-items>
+          <item id="di526579700772413314" cid="SYS001" type="system-boundary" name="Components Of Charging Battery" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creator="Pa9ce261b24cd4b3b9d448564f06e7afe" creation-date="07/19/2015 12:11:50">
+            <stereotypes />
+            <associated-diagrams />
+            <owned-items />
+            <style class="default" />
+          </item>
+          <item id="di117067749864866515" cid="REL025" type="relationship" name="1" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="07/19/2015 20:16:52">
+            <stereotypes />
+            <associated-diagrams />
+            <owned-items />
+            <style class="default" />
+            <relation from="di994338920398061005" to="di692007125470040766">
+              <start-role id="" name="" navigability="" association-type="association" visibility="private" />
+              <end-role id="" name="" navigability="yes" association-type="association" visibility="private" />
+            </relation>
+          </item>
+          <item id="di928679973378074910" cid="REL029" type="relationship" name="2" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="07/20/2015 02:18:19">
+            <stereotypes />
+            <associated-diagrams />
+            <owned-items />
+            <style class="default" />
+            <relation from="di692007125470040766" to="di283168698133008355">
+              <start-role id="" name="" navigability="" association-type="association" visibility="private" />
+              <end-role id="" name="" navigability="yes" association-type="association" visibility="private" />
+            </relation>
+          </item>
+          <item id="di836749115580478755" cid="REL031" type="relationship" name="2" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="07/20/2015 02:20:52">
+            <stereotypes />
+            <associated-diagrams />
+            <owned-items />
+            <style class="default" />
+            <relation from="di692007125470040766" to="di165240614850129581">
+              <start-role id="" name="" navigability="" association-type="association" visibility="private" />
+              <end-role id="" name="" navigability="yes" association-type="association" visibility="private" />
+            </relation>
+          </item>
+          <item id="di428285320413569625" cid="REL032" type="relationship" name="3" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="07/20/2015 02:21:51">
+            <stereotypes />
+            <associated-diagrams />
+            <owned-items />
+            <style class="default" />
+            <relation from="di283168698133008355" to="di278811283373291369">
+              <start-role id="" name="" navigability="" association-type="association" visibility="private" />
+              <end-role id="" name="" navigability="yes" association-type="association" visibility="private" />
+            </relation>
+          </item>
+        </abstract-items>
+        <layer name="Default" visible="true" enabled="true" locked="false">
+          <item id="di526579700772413314" iid="d7544927fdf54ad0a2f874fc1f9e0ddc" creation-date="07/19/2015 12:11:50" order-index="0" type="entity">
+            <layout ax="153" ay="97" awidth="648" aheight="273" x="153" y="97" width="648" height="273" angle="0" />
+          </item>
+          <item id="di994338920398061005" iid="a42f7966d3d34a4c8fefa57e23147a28" name="Element8" container="di526579700772413314" container-iid="d7544927fdf54ad0a2f874fc1f9e0ddc" creation-date="07/19/2015 12:23:43" order-index="3" type="drawing-shape">
+            <layout ax="179.75" ay="150" awidth="138.5" aheight="50" x="179.75" y="150" width="138.5" height="50" angle="0" />
+            <drawing-shape type="Rectangle">
+              <text>Power Source 220V</text>
+            </drawing-shape>
+            <style class="default" />
+          </item>
+          <item id="di692007125470040766" iid="3615250e161b4bc399a37c53ec81fe9b" name="Element8" container="di526579700772413314" container-iid="d7544927fdf54ad0a2f874fc1f9e0ddc" creation-date="07/19/2015 12:23:43" order-index="3" type="drawing-shape">
+            <layout ax="386.5" ay="150" awidth="138.5" aheight="50" x="386.5" y="150" width="138.5" height="50" angle="0" />
+            <drawing-shape type="Rectangle">
+              <text>Charging Battery Circuit</text>
+            </drawing-shape>
+            <style class="default" />
+          </item>
+          <item id="di117067749864866515" iid="b7574ffc8bba44918a46a7bf72ff8ce7" creation-date="07/19/2015 20:16:52" order-index="16" type="relation">
+            <layout line-style="oblique" lock-start-point="true" lock-end-point="true" lock-to-fields="false" name-position="-9,-6" auto-path="" x1="318" y1="175" x2="386" y2="175" start-border-pos="0.375" end-border-pos="0.875">
+              <points>
+                <point x="318" y="175" />
+                <point x="386" y="175" />
+              </points>
+            </layout>
+            <relation from="di994338920398061005" from-iid="a42f7966d3d34a4c8fefa57e23147a28" to="di692007125470040766" to-iid="3615250e161b4bc399a37c53ec81fe9b" />
+            <role-positions start-role="25,15" end-role="25,-15" start-multiplicity="25,-15" end-multiplicity="25,15" />
+          </item>
+          <item id="di283168698133008355" iid="d65116a3291d4c5d968207e3c65930df" name="Element8" container="di526579700772413314" container-iid="d7544927fdf54ad0a2f874fc1f9e0ddc" creation-date="07/19/2015 12:23:43" order-index="3" type="drawing-shape">
+            <layout ax="386.5" ay="285" awidth="138.5" aheight="50" x="386.5" y="285" width="138.5" height="50" angle="0" />
+            <drawing-shape type="Rectangle">
+              <text>LIPO Battery</text>
+            </drawing-shape>
+            <style class="default" />
+          </item>
+          <item id="di928679973378074910" iid="bf5d2cac66f4471d9594483815b0766c" creation-date="07/20/2015 02:18:19" order-index="17" type="relation">
+            <layout line-style="oblique" lock-start-point="true" lock-end-point="true" lock-to-fields="false" name-position="13,-4" auto-path="" x1="456" y1="200" x2="457" y2="285" start-border-pos="0.624548736462094" end-border-pos="0.127256317689531">
+              <points>
+                <point x="456" y="200" />
+                <point x="457" y="285" />
+              </points>
+            </layout>
+            <relation from="di692007125470040766" from-iid="3615250e161b4bc399a37c53ec81fe9b" to="di283168698133008355" to-iid="d65116a3291d4c5d968207e3c65930df" />
+            <role-positions start-role="25,15" end-role="25,-15" start-multiplicity="34.30942,-68.60112" end-multiplicity="25,15" />
+          </item>
+          <item id="di165240614850129581" iid="435d1cf022f141d696a3de07fc6e0e97" name="Element8" container="di526579700772413314" container-iid="d7544927fdf54ad0a2f874fc1f9e0ddc" creation-date="07/19/2015 12:23:43" order-index="3" type="drawing-shape">
+            <layout ax="623.25" ay="150" awidth="135.5" aheight="50" x="623.25" y="150" width="135.5" height="50" angle="0" />
+            <drawing-shape type="Rectangle">
+              <text>LED Indicator</text>
+            </drawing-shape>
+            <style class="default" />
+          </item>
+          <item id="di836749115580478755" iid="0ac7e7c9791649a29ea80a1eb2070fb0" creation-date="07/20/2015 02:20:52" order-index="18" type="relation">
+            <layout line-style="oblique" lock-start-point="true" lock-end-point="false" lock-to-fields="false" name-position="-3,-7" auto-path="" x1="525" y1="175" x2="623" y2="175" start-border-pos="0.375" end-border-pos="0.875">
+              <points>
+                <point x="525" y="175" />
+                <point x="623" y="175" />
+              </points>
+            </layout>
+            <relation from="di692007125470040766" from-iid="3615250e161b4bc399a37c53ec81fe9b" to="di165240614850129581" to-iid="435d1cf022f141d696a3de07fc6e0e97" />
+            <role-positions start-role="25,15" end-role="25,-15" start-multiplicity="25,-15" end-multiplicity="25,15" />
+          </item>
+          <item id="di278811283373291369" iid="3a1291110b10417ab942e13c9c51a982" name="Element8" container="di526579700772413314" container-iid="d7544927fdf54ad0a2f874fc1f9e0ddc" creation-date="07/19/2015 12:23:43" order-index="3" type="drawing-shape">
+            <layout ax="623.25" ay="285" awidth="135.5" aheight="50" x="623.25" y="285" width="135.5" height="50" angle="0" />
+            <drawing-shape type="Rectangle">
+              <text>LEDS Showing Capacity</text>
+            </drawing-shape>
+            <style class="default" />
+          </item>
+          <item id="di428285320413569625" iid="35166adc888c483397dc7c408d40ed9e" creation-date="07/20/2015 02:21:51" order-index="19" type="relation">
+            <layout line-style="oblique" lock-start-point="true" lock-end-point="true" lock-to-fields="false" name-position="-5,-7" auto-path="" x1="525" y1="308" x2="623" y2="308" start-border-pos="0.365" end-border-pos="0.885">
+              <points>
+                <point x="525" y="308" />
+                <point x="623" y="308" />
+              </points>
+            </layout>
+            <relation from="di283168698133008355" from-iid="d65116a3291d4c5d968207e3c65930df" to="di278811283373291369" to-iid="3a1291110b10417ab942e13c9c51a982" />
+            <role-positions start-role="25,15" end-role="25,-15" start-multiplicity="25,-15" end-multiplicity="36,45" />
+          </item>
+        </layer>
+      </diagram>
+    </model>
+  </models>
+  <documents />
+  <document-templates />
+</sim-project>
