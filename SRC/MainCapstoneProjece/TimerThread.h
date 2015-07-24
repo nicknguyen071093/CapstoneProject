@@ -10,11 +10,12 @@ class TimerThread : public QThread
 public:
     explicit TimerThread(QObject *parent = 0);
     bool STOP;
-    void setToDefaults();
 
 private:
     void run();
+    QMutex mutex;
     bool isEnableToCountDown;
+    bool testingResult;
     //    int countDownAnalyzingBackgroundNumber;
 signals:
     void sendSignalChangingToFrontHandMode();

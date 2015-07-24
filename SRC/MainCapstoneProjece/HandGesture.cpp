@@ -41,7 +41,7 @@ bool HandGesture::detectIsHand(Mat binaryMat) {
         boundingRect = cv::boundingRect(contours[cMaxId]);
         if (boundingRect.area() == 0) {
             isHand = false;
-        } else if (boundingRect.height < 70 || boundingRect.width < 70) {
+        } else if (boundingRect.height < 50 || boundingRect.width < 50) {
             isHand = false;
         } else {
             ratioHeightAndWidth = (double) boundingRect.height / (double) boundingRect.width;

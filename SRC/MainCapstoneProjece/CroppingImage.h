@@ -14,14 +14,24 @@ class CroppingImage : public QThread
     Q_OBJECT
 public:
     explicit CroppingImage(QObject *parent = 0);
+    ~CroppingImage();
     bool STOP;
     void setToDefaults();
+    const static int NO_MODE = 0;
     const static int TESTING_MODE = 1;
     const static int SELECTING_MODE = 2;
+    const static int RECOGNITION_MODE = 3;
+    const static int LEARNING_MODE = 4;
+
+    const static int NO_FUNCTION = 0;
+    const static int RECOGNITION_FUCNTION = 1;
+    const static int LEARNING_FUNCTION = 2;
 
 private:
     void run();
     int mode;
+    int selectedNumber;
+    QMutex mutex;
     bool testingResult;
     // recieved binary image from ShowingImageThread
     Mat binaryMat;
@@ -52,15 +62,28 @@ private:
     // position of "select" hand sign
     Point selectPoint;
     //
+    double recognitionResultNumber;
+
+
     void getFeature1of3VerticalAreas(Mat,int&,struct svm_node[],double);
     void getFeature1of3HorizontalAreas(Mat,int&,struct svm_node[],double);
     void getFeatures1of2VerticalAndHorizontalAreas(Mat,int&,struct svm_node[],double);
     void getFeature4CornerAreas(Mat,int&,struct svm_node[],double);
     void getFeatures4x4(Mat,int&,struct svm_node[],double);
     void getFeatures3x3(Mat,int&,struct svm_node[],double);
+
+    void recognizeSign();
+
+    QString getRecognitionResult();
+
 signals:
     void sendSignalToChangeLabelTestingResult(QString);
-    void sendSignalChangingBackGroundColor();
+
+    void sendSignalSelectingRecognition();
+    void sendSignalSelectingLearning();
+
+    void sendSignalChangingRecognitionResult(QString);
+//    void sendSignalChangingBackGroundColor();
 public slots:
     void changeToTestingMode();
     void receiveBinaryImage(Mat,Mat);

@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "HandTranslating.h"
 #include "ImageTranslating.h"
 #include "RetrievingFrame.h"
 #include "letterget.h"
@@ -46,17 +45,33 @@ private slots:
 
     void onFinishingColorSubtraction(bool);
 
-    void changeBackgroundButton();
+    void countDownRecognitionTimer(QString);
+
+    void updateRecognitionContent();
+
+    void changeToSelectingFunction();
+
+    void changeToRecognitionFunciton();
+
+    void changeToLearningFunction();
 
 private:
     Ui::MainWindow *ui;
+
     TimerThread *timerThread;
+
     RetrievingFrame *retrievingFrameThread;
-    LetterGet *wordDAO;
     ShowingImageThread *showingImageThread;
     CroppingImage *croppingThread;
+
     QMap <int,QString> wordMap;
+    LetterGet *wordDAO;
+
     void startThreads();
+
+    void initiateSelectingFunctionInterface();
+    void initiateRecognitionInterface();
+    void initiateLearningInterface();
 };
 
 #endif // MAINWINDOW_H

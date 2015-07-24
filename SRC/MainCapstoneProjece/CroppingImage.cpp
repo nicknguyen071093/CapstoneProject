@@ -23,11 +23,11 @@ void CroppingImage::run() {
     //    compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
     //    compression_params.push_back(100);
     while(true) {
-        QMutex mutex;
         mutex.lock();
         if(this->STOP)
         {
             free(handGesture);
+            free(signRecogntion);
             break;
         }
         mutex.unlock();
@@ -35,185 +35,197 @@ void CroppingImage::run() {
             //            imwrite("../bin.jpg",binaryMat,compression_params);
             //            imwrite("../frame.jpg",frame,compression_params);
             //            tile = ((double) ((double) (handGesture->boundingRect.height) / (double) (handGesture->boundingRect.width)) / 2);
-            if (handGesture->detectIsHand(binaryMat)) {
-
-                maskForInner = Mat(240, 320, CV_8UC1);
-                maskForXuong = Mat(240, 320, CV_8UC1);
-                maskForFrame = Mat(240, 320, CV_8UC1);
-                maskForInner.setTo(whiteColor);
-                maskForXuong.setTo(whiteColor);
-                maskForFrame.setTo(blackColor);
-
-                drawContours(maskForFrame, handGesture->contours, handGesture->cMaxId, whiteColor, CV_FILLED);
-                handGesture->drawInnerAndXuong(maskForInner,maskForXuong);
-                Rect rectToCrop = handGesture->boundingRect;
-                maskForFrame = maskForFrame(rectToCrop);
-                croppedFrame = frame(rectToCrop);
-                maskForInner = maskForInner(rectToCrop);
-                maskForXuong = maskForXuong(rectToCrop);
-
-                if (maskForFrame.cols > maskForFrame.rows) {
-                    squareLength = maskForFrame.cols + 10;
-                    tly = (squareLength - maskForFrame.rows) / 2;
-                    tlx =  5;
-                } else {
-                    squareLength = maskForFrame.rows + 10;
-                    tlx = (squareLength - maskForFrame.cols) / 2;
-                    tly =  5;
-                }
-                croppedHand = Mat(squareLength,squareLength,CV_8UC3);
-                croppedHand.setTo(blackColor);
-                //                croppedBinHand = Mat(squareLength,squareLength,CV_8UC1);
-                //                croppedBinHand.setTo(Scalar(255,255,255));
-                croppedInnerHand = Mat(squareLength,squareLength,CV_8UC1);
-                croppedInnerHand.setTo(whiteColor);
-                croppedXuongHand = Mat(squareLength,squareLength,CV_8UC1);
-                croppedXuongHand.setTo(whiteColor);
-                subROI = croppedHand(Rect(tlx,tly,maskForFrame.cols,maskForFrame.rows));
-                croppedFrame.copyTo(subROI,maskForFrame);
-                //                subBinROI = croppedBinHand(Rect(tlx,tly,croppedBinMat.cols,croppedBinMat.rows));
-                //                croppedBinMat.copyTo(subBinROI);
-
-                Mat src_gray;
-                cvtColor( croppedHand, src_gray, CV_BGR2GRAY );
-                blur( src_gray, src_gray, Size(3,3) );
-                adaptiveThreshold(src_gray,croppedBinHand,255,ADAPTIVE_THRESH_GAUSSIAN_C,THRESH_BINARY,9,5);
-                Mat element = getStructuringElement(MORPH_ELLIPSE,
-                                                    Size(3, 3),Point(1,1));
-                erode(croppedBinHand, croppedBinHand, element);
-
-                subInnerROI = croppedInnerHand(Rect(tlx,tly,maskForInner.cols,maskForInner.rows));
-                maskForInner.copyTo(subInnerROI);
-                subXuongROI = croppedXuongHand(Rect(tlx,tly,maskForXuong.cols,maskForXuong.rows));
-                maskForXuong.copyTo(subXuongROI);
-
-                if (croppedHand.cols > 96) {
-                    cv::resize(croppedHand, croppedHand, cropImageSize, 0, 0, CV_INTER_AREA);
-                    cv::resize(croppedBinHand, croppedBinHand, cropImageSize, 0, 0, CV_INTER_AREA);
-                    cv::resize(croppedInnerHand, croppedInnerHand, cropImageSize, 0, 0, CV_INTER_AREA);
-                    cv::resize(croppedXuongHand, croppedXuongHand, cropImageSize, 0, 0, CV_INTER_AREA);
-                } else if (croppedHand.cols < 96) {
-                    cv::resize(croppedHand, croppedHand, cropImageSize, 0, 0, CV_INTER_LINEAR);
-                    cv::resize(croppedBinHand, croppedBinHand, cropImageSize, 0, 0, CV_INTER_LINEAR);
-                    cv::resize(croppedInnerHand, croppedInnerHand, cropImageSize, 0, 0, CV_INTER_LINEAR);
-                    cv::resize(croppedXuongHand, croppedXuongHand, cropImageSize, 0, 0, CV_INTER_LINEAR);
-                }
-                int currentFeatures = -1;
-
-                //                str += handGesture->getHeightFeatures(currentFeatures) + " ";
-                //                double total =  (double) (croppedBinHand.total() - countNonZero(croppedBinHand));
-                //                str += getFeature1of3VerticalAreas(croppedBinHand,currentFeatures,total);
-                //                str += getFeature1of3HorizontalAreas(croppedBinHand,currentFeatures,total);
-                //                str += getFeatures1of2VerticalAndHorizontalAreas(croppedBinHand,currentFeatures,total);
-                //                str += getFeature4CornerAreas(croppedBinHand,currentFeatures,total);
-                //                str += getFeatures4x4(croppedBinHand,currentFeatures,total);
-                //                str += handGesture->getRadiusFeatures(currentFeatures) + " ";
-                //                str += handGesture->getAngleFeatures(currentFeatures)+ " ";
-                //                total =  (double) (croppedInnerHand.total() - countNonZero(croppedInnerHand));
-                //                str += getFeatures3x3(croppedInnerHand,currentFeatures,total);
-                //                str += handGesture->getLinesFeatures(currentFeatures) + " ";
-                //                total =  (double) (croppedXuongHand.total() - countNonZero(croppedXuongHand));
-                //                str += getFeatures4x4(croppedXuongHand,currentFeatures,total);
-
-                //                imwrite("../cropHand.jpg",croppedHand,compression_params);
-                struct svm_node nodeFeatures[NUMBER_FEATURES];
-
-                handGesture->getHeightFeatures(currentFeatures,nodeFeatures);
-
-                double total =  (double) (croppedBinHand.total() - countNonZero(croppedBinHand));
-                getFeature1of3VerticalAreas(croppedBinHand,currentFeatures,nodeFeatures,total);
-                getFeature1of3HorizontalAreas(croppedBinHand,currentFeatures,nodeFeatures,total);
-                getFeatures1of2VerticalAndHorizontalAreas(croppedBinHand,currentFeatures,nodeFeatures,total);
-                getFeature4CornerAreas(croppedBinHand,currentFeatures,nodeFeatures,total);
-                getFeatures4x4(croppedBinHand,currentFeatures,nodeFeatures,total);
-
-                handGesture->getRadiusFeatures(currentFeatures,nodeFeatures);
-                handGesture->getAngleFeatures(currentFeatures,nodeFeatures);
-
-                total =  (double) (croppedInnerHand.total() - countNonZero(croppedInnerHand));
-                getFeatures3x3(croppedInnerHand,currentFeatures,nodeFeatures,total);
-
-                handGesture->getLinesFeatures(currentFeatures,nodeFeatures);
-
-                total =  (double) (croppedXuongHand.total() - countNonZero(croppedXuongHand));
-                getFeatures4x4(croppedXuongHand,currentFeatures,nodeFeatures,total);
-                double recognitionResultNo = 0;
-                if (currentFeatures == 73) {
-                    nodeFeatures[74].index = -1;
-                    nodeFeatures[74].value = 0;
-                    recognitionResultNo = SignRecognition.getRecognitionResult(nodeFeatures);
-                    //                    recognitionResultNo =
-                }
-                if (mode == TESTING_MODE) {
-                    QMutex mutex;
+            if (mode == TESTING_MODE) {
+                mutex.lock();
+                testingResult = false;
+                mutex.unlock();
+                //                result = predictTestImage();
+                recognizeSign();
+                if (recognitionResultNumber == 1) {
+                    // If the "testing" hand sign is recognized.
+                    mode = NO_MODE;
                     mutex.lock();
-                    testingResult = false;
+                    testingResult = true;
                     mutex.unlock();
-                    //                result = predictTestImage();
-                    if (recognitionResultNo == 19) {
-                        // If the "testing" hand sign is recognized.
-                        mode = 0;
-                        QMutex mutex;
-                        mutex.lock();
-                        testingResult = true;
-                        mutex.unlock();
-                        emit sendSignalToChangeLabelTestingResult(QString::fromUtf8("Thành Công!"));
-                    }
-                } else if (mode == SELECTING_MODE) {
-                    // If the hand sign is "select"
-                    if (true) {
-                        selectPoint = handGesture->getSelectPoint();
-                        int x = selectPoint.x;
-                        int y = selectPoint.y;
-                        if (y >= 15 && y <= 50) {
-                            if (x >=80 && x <= 155) {
-                                //                                    emit sendSignalChangingBackGroundColor();
-                                //if select is !recognition, send signal changing color recognition button, select = recognition
-                            } else if (x >= 175 && x <= 250) {
-                                //if select is !learning, send signal changing color learning button, select = learning
-                            } else {
-                                //if select is recognition, send signal backing recognition button color
-                                // else if select is learning, send signal backing learning button color
+                    emit sendSignalToChangeLabelTestingResult(QString::fromUtf8("Thành Công!"));
+                }
+            } else if (mode == SELECTING_MODE) {
+                // If the hand sign is "select"
+                recognizeSign();
+                if (recognitionResultNumber == 2) {
+                    selectPoint = handGesture->getSelectPoint();
+                    int x = selectPoint.x;
+                    int y = selectPoint.y;
+                    if (y >= 15 && y <= 50) {
+                        if (x >=80 && x <= 155) {
+                            if (selectedNumber != RECOGNITION_FUCNTION) {//if select is !recognition,
+                                //send signal changing color recognition button, select = recognition
+                                selectedNumber = RECOGNITION_FUCNTION;
+                            }
+                        } else if (x >= 175 && x <= 250) {
+                            if (selectedNumber != LEARNING_FUNCTION) {//if select is !learning,
+                                // send signal changing color learning button, select = learning
+                                selectedNumber = LEARNING_FUNCTION;
                             }
                         } else {
                             //if select is recognition, send signal backing recognition button color
                             // else if select is learning, send signal backing learning button color
+                            selectedNumber = NO_FUNCTION;
                         }
-                    } else if (true) {// If the hand is "done"
-                        selectPoint = handGesture->getSelectPoint();
-                        int x = selectPoint.x;
-                        int y = selectPoint.y;
-                        if (y >= 15 && y <= 50) {
-                            if (x >=80 && x <= 155) {
-                                //                                    emit sendSignalChangingBackGroundColor();
-                                //if select is recognition, Show the recognition interface
-                                // else {
-                                // //if select is recognition, send signal backing recognition button color
-                                // else if select is learning, send signal backing learning button color }
-                            } else if (x >= 175 && x <= 250) {
-                                //if select is learning, Show the learning interface
-                                // else {
-                                // //if select is recognition, send signal backing recognition button color
-                                // else if select is learning, send signal backing learning button color }
-                            } else {
-                                // //if select is recognition, send signal backing recognition button color
-                                // else if select is learning, send signal backing learning button color }
+                    } else {
+                        //if select is recognition, send signal backing recognition button color
+                        // else if select is learning, send signal backing learning button color
+                        selectedNumber = NO_FUNCTION;
+                    }
+                } else if (recognitionResultNumber == 3) {// If the hand is "done"
+                    selectPoint = handGesture->getSelectPoint();
+                    int x = selectPoint.x;
+                    int y = selectPoint.y;
+                    if (y >= 15 && y <= 50) {
+                        if (x >=80 && x <= 155) {
+                            if (selectedNumber == RECOGNITION_FUCNTION) {//if select is recognition,
+                                // Show the recognition interface
+                                emit sendSignalSelectingRecognition();
                             }
+                            selectedNumber = NO_FUNCTION;
+                        } else if (x >= 175 && x <= 250) {
+                            if (selectedNumber == LEARNING_FUNCTION) {//if select is learning,
+                                //Show the learning interface
+                                emit sendSignalSelectingLearning();
+                            }
+                            selectedNumber = NO_FUNCTION;
                         } else {
                             // //if select is recognition, send signal backing recognition button color
                             // else if select is learning, send signal backing learning button color }
+                            electedNumber = NO_FUNCTION;
                         }
                     } else {
                         // //if select is recognition, send signal backing recognition button color
                         // else if select is learning, send signal backing learning button color }
+                        selectedNumber = NO_FUNCTION;
                     }
+                } else {
+                    // //if select is recognition, send signal backing recognition button color
+                    // else if select is learning, send signal backing learning button color }
+                    selectedNumber = NO_FUNCTION;
                 }
+            } else if (mode == RECOGNITION_MODE) {
+                 recognizeSign();
+                 // send signal edit current result
+                 emit sendSignalChangingRecognitionResult(QString::number(recognitionResultNumber));
+            } else if (mode == LEARNING_MODE) {
+
             }
-            enableToCrop = false;
         }
+        enableToCrop = false;
     }
 }
 
+
+void CroppingImage::recognizeSign() {
+    recognitionResultNumber = 0;
+    if (handGesture->detectIsHand(binaryMat)) {
+
+        maskForInner = Mat(240, 320, CV_8UC1);
+        maskForXuong = Mat(240, 320, CV_8UC1);
+        maskForFrame = Mat(240, 320, CV_8UC1);
+        maskForInner.setTo(whiteColor);
+        maskForXuong.setTo(whiteColor);
+        maskForFrame.setTo(blackColor);
+
+        drawContours(maskForFrame, handGesture->contours, handGesture->cMaxId, whiteColor, CV_FILLED);
+        handGesture->drawInnerAndXuong(maskForInner,maskForXuong);
+        Rect rectToCrop = handGesture->boundingRect;
+        maskForFrame = maskForFrame(rectToCrop);
+        croppedFrame = frame(rectToCrop);
+        maskForInner = maskForInner(rectToCrop);
+        maskForXuong = maskForXuong(rectToCrop);
+
+        if (maskForFrame.cols > maskForFrame.rows) {
+            squareLength = maskForFrame.cols + 10;
+            tly = (squareLength - maskForFrame.rows) / 2;
+            tlx =  5;
+        } else {
+            squareLength = maskForFrame.rows + 10;
+            tlx = (squareLength - maskForFrame.cols) / 2;
+            tly =  5;
+        }
+        croppedHand = Mat(squareLength,squareLength,CV_8UC3);
+        croppedHand.setTo(blackColor);
+        //                croppedBinHand = Mat(squareLength,squareLength,CV_8UC1);
+        //                croppedBinHand.setTo(Scalar(255,255,255));
+        croppedInnerHand = Mat(squareLength,squareLength,CV_8UC1);
+        croppedInnerHand.setTo(whiteColor);
+        croppedXuongHand = Mat(squareLength,squareLength,CV_8UC1);
+        croppedXuongHand.setTo(whiteColor);
+        subROI = croppedHand(Rect(tlx,tly,maskForFrame.cols,maskForFrame.rows));
+        croppedFrame.copyTo(subROI,maskForFrame);
+        //                subBinROI = croppedBinHand(Rect(tlx,tly,croppedBinMat.cols,croppedBinMat.rows));
+        //                croppedBinMat.copyTo(subBinROI);
+
+        Mat src_gray;
+        cvtColor( croppedHand, src_gray, CV_BGR2GRAY );
+        blur( src_gray, src_gray, Size(3,3) );
+        adaptiveThreshold(src_gray,croppedBinHand,255,ADAPTIVE_THRESH_GAUSSIAN_C,THRESH_BINARY,9,5);
+        Mat element = getStructuringElement(MORPH_ELLIPSE,
+                                            Size(3, 3),Point(1,1));
+        erode(croppedBinHand, croppedBinHand, element);
+
+        subInnerROI = croppedInnerHand(Rect(tlx,tly,maskForInner.cols,maskForInner.rows));
+        maskForInner.copyTo(subInnerROI);
+        subXuongROI = croppedXuongHand(Rect(tlx,tly,maskForXuong.cols,maskForXuong.rows));
+        maskForXuong.copyTo(subXuongROI);
+
+        if (croppedHand.cols > 96) {
+            cv::resize(croppedHand, croppedHand, cropImageSize, 0, 0, CV_INTER_AREA);
+            cv::resize(croppedBinHand, croppedBinHand, cropImageSize, 0, 0, CV_INTER_AREA);
+            cv::resize(croppedInnerHand, croppedInnerHand, cropImageSize, 0, 0, CV_INTER_AREA);
+            cv::resize(croppedXuongHand, croppedXuongHand, cropImageSize, 0, 0, CV_INTER_AREA);
+        } else if (croppedHand.cols < 96) {
+            cv::resize(croppedHand, croppedHand, cropImageSize, 0, 0, CV_INTER_LINEAR);
+            cv::resize(croppedBinHand, croppedBinHand, cropImageSize, 0, 0, CV_INTER_LINEAR);
+            cv::resize(croppedInnerHand, croppedInnerHand, cropImageSize, 0, 0, CV_INTER_LINEAR);
+            cv::resize(croppedXuongHand, croppedXuongHand, cropImageSize, 0, 0, CV_INTER_LINEAR);
+        }
+        int currentFeatures = -1;
+        struct svm_node nodeFeatures[NUMBER_FEATURES];
+
+        handGesture->getHeightFeatures(currentFeatures,nodeFeatures);
+
+        double total =  (double) (croppedBinHand.total() - countNonZero(croppedBinHand));
+        getFeature1of3VerticalAreas(croppedBinHand,currentFeatures,nodeFeatures,total);
+        getFeature1of3HorizontalAreas(croppedBinHand,currentFeatures,nodeFeatures,total);
+        getFeatures1of2VerticalAndHorizontalAreas(croppedBinHand,currentFeatures,nodeFeatures,total);
+        getFeature4CornerAreas(croppedBinHand,currentFeatures,nodeFeatures,total);
+        getFeatures4x4(croppedBinHand,currentFeatures,nodeFeatures,total);
+
+        handGesture->getRadiusFeatures(currentFeatures,nodeFeatures);
+        handGesture->getAngleFeatures(currentFeatures,nodeFeatures);
+
+        total =  (double) (croppedInnerHand.total() - countNonZero(croppedInnerHand));
+        getFeatures3x3(croppedInnerHand,currentFeatures,nodeFeatures,total);
+
+        handGesture->getLinesFeatures(currentFeatures,nodeFeatures);
+
+        total =  (double) (croppedXuongHand.total() - countNonZero(croppedXuongHand));
+        if (total != 0) {
+            getFeatures4x4(croppedXuongHand,currentFeatures,nodeFeatures,total);
+        } else {
+            for (int i = 0; i < 16; i++) {
+                currentFeatures++;
+                nodeFeatures[i].index = (currentFeatures + 1);
+                nodeFeatures[i].value = 0;
+            }
+        }
+
+        if (currentFeatures == 73) {
+            nodeFeatures[74].index = -1;
+            nodeFeatures[74].value = 0;
+            recognitionResultNumber = signRecogntion->getRecognitionResult(nodeFeatures);
+            //                    recognitionResultNo =
+        }
+    }
+}
 
 // get feature 1 to 3
 void CroppingImage::getFeature1of3VerticalAreas(Mat image, int &currentFeatures, struct svm_node nodeFeatures[],double total) {
@@ -304,12 +316,12 @@ void CroppingImage::getFeature4CornerAreas(Mat image, int &currentFeatures, stru
     //    cout << "total:" << total;
     for (int row = 0; row < 96; row++) {
         for (int col = 0; col < traversalWidth; col++) {
-            if (image.at<uchar>(row, col) != 255) {
+            if (image.at<uchar>(row, col) != 0) {
                 numberBlackPixels++;
             }
         }
         for (int col = 95; col >= (traversalWidth - 1); col--) {
-            if (image.at<uchar>(row, col) != 255) {
+            if (image.at<uchar>(row, col) != 0) {
                 numberBlackPixels1++;
             }
         }
@@ -331,12 +343,12 @@ void CroppingImage::getFeature4CornerAreas(Mat image, int &currentFeatures, stru
     numberBlackPixels1 = 0;
     for (int row = 0; row < 96; row++) {
         for (int col = 0; col <= traversalWidth; col++) {
-            if (image.at<uchar>(row, col) != 255) {
+            if (image.at<uchar>(row, col) != 0) {
                 numberBlackPixels++;
             }
         }
         for (int col = 95; col >= traversalWidth; col--) {
-            if (image.at<uchar>(row, col) != 255) {
+            if (image.at<uchar>(row, col) != 0) {
                 numberBlackPixels1++;
             }
         }
@@ -395,7 +407,7 @@ void CroppingImage::getFeatures4x4(Mat image, int &currentFeatures, struct svm_n
 }
 
 void CroppingImage::receiveBinaryImage(Mat frame, Mat binMat) {
-    if (!enableToCrop && mode != 0) {
+    if (!enableToCrop && mode != NO_MODE) {
         this->frame = frame;
         this->binaryMat = binMat;
         enableToCrop = true;
@@ -415,6 +427,13 @@ void CroppingImage::changeToTestingMode() {
 bool CroppingImage::getTestingResult() {
     mode = 0;
     return testingResult;
+}
+
+QString CroppingImage::getRecognitionResult() {
+    mutex.lock();
+    QString result = QString::number(recognitionResultNumber);
+    mutex.unlock();
+    return result;
 }
 
 

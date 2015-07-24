@@ -32,28 +32,28 @@ SOURCES += main.cpp\
     HandGesture.cpp \
     ImageTranslating.cpp \
     SVM.cpp \
-    HandTranslating.cpp \
     letterget.cpp \
     wordDTO.cpp \
     ShowingImageThread.cpp \
     RetrievingFrame.cpp \
     CroppingImage.cpp \
     TimerThread.cpp \
-    SignRecognition.cpp
+    SignRecognition.cpp \
+    RecognitionTimerThread.cpp
 
 
 HEADERS  += mainwindow.h \
     HandGesture.h \
     ImageTranslating.h \
     SVM.h \
-    HandTranslating.h \
     letterget.h \
     wordDTO.h \
     ShowingImageThread.h \
     RetrievingFrame.h \
     CroppingImage.h \
     TimerThread.h \
-    SignRecognition.h
+    SignRecognition.h \
+    RecognitionTimerThread.h
 
 FORMS    += mainwindow.ui
 

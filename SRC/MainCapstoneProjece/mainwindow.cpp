@@ -23,12 +23,14 @@ MainWindow::MainWindow(QWidget *parent) :
     qRegisterMetaType<Rect>("Rect");
 
     connect(retrievingFrameThread,SIGNAL(changingFrame(Mat)),showingImageThread,SLOT(onChangingImage(Mat)),Qt::DirectConnection);
-    connect(croppingThread,SIGNAL(sendSignalToChangeLabelTestingResult(QString)),this,SLOT(changeLabelTestingResult(QString)),Qt::DirectConnection);
+
     connect(showingImageThread,SIGNAL(toShow(Mat)),this,SLOT(onToShow(Mat)),Qt::DirectConnection);
     connect(showingImageThread,SIGNAL(sendImageToCrop(Mat,Mat)),croppingThread,SLOT(receiveBinaryImage(Mat,Mat)),Qt::DirectConnection);
-//    connect(croppingThread,SIGNAL(sendSignalSendingFeatures(QString)),translatingThread,SLOT(receiveFeatures(QString)),Qt::DirectConnection);
+
+    //    connect(croppingThread,SIGNAL(sendSignalSendingFeatures(QString)),translatingThread,SLOT(receiveFeatures(QString)),Qt::DirectConnection);
     connect(croppingThread,SIGNAL(sendSignalToChangeLabelTestingResult(QString)),this,SLOT(changeLabelTestingResult(QString)),Qt::DirectConnection);
-    connect(croppingThread,SIGNAL(sendSignalChangingBackGroundColor()),this,SLOT(changeBackgroundButton()),Qt::DirectConnection);
+    connect(croppingThread,SIGNAL(sendSignalToChangeLabelTestingResult(QString)),this,SLOT(changeLabelTestingResult(QString)),Qt::DirectConnection);
+
     connect(timerThread,SIGNAL(sendSignalChangingLabelNotice(QString,QString)),this,SLOT(changeLabelNotice(QString,QString)),Qt::DirectConnection);
     connect(timerThread,SIGNAL(sendSignalChangingToFrontHandMode()),this,SLOT(changeToFrontHandMode()),Qt::DirectConnection);
     connect(timerThread,SIGNAL(sendSignalChangingToBackHandMode()),this,SLOT(changeToBackHandMode()),Qt::DirectConnection);
@@ -38,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(timerThread,SIGNAL(sendSignalChangingToTestingTime()),croppingThread,SLOT(changeToTestingMode()),Qt::DirectConnection);
     connect(timerThread,SIGNAL(sendSignalGetTestingResult()),croppingThread,SLOT(getTestingResult()),Qt::DirectConnection);
     connect(timerThread,SIGNAL(sendSignalFinishingColorSubtraction(bool)),this,SLOT(onFinishingColorSubtraction(bool)),Qt::DirectConnection);
+
     connect(showingImageThread,SIGNAL(sendSignalEnableCountDown()),timerThread,SLOT(continueCountDown()),Qt::DirectConnection);
     connect(showingImageThread,SIGNAL(sendSignalChangingLabelNotify(QString)),this,SLOT(changeLabelNotice(QString)),Qt::DirectConnection);
 
@@ -66,8 +69,8 @@ void MainWindow::onToShow(Mat receivedImage) {
 }
 
 void MainWindow::changeLabelNotice(QString noticeStr, QString countDownTime) {
-    ui->lbThongbao->setText(noticeStr);
-    ui->lbCountDown->setText(countDownTime);
+    ui->lbNotify->setText(noticeStr);
+    ui->lbCountDownTime->setText(countDownTime);
 }
 
 void MainWindow::changeBackgroundButton() {
@@ -75,7 +78,7 @@ void MainWindow::changeBackgroundButton() {
 }
 
 void MainWindow::changeLabelNotice(QString noticeStr) {
-    ui->lbThongbao->setText(noticeStr);
+    ui->lbNotify->setText(noticeStr);
 }
 
 void MainWindow::changeLabelTestingResult(QString noticeStr) {
@@ -84,15 +87,10 @@ void MainWindow::changeLabelTestingResult(QString noticeStr) {
 
 
 void MainWindow::startThreads() {
-    retrievingFrameThread->start();
-    showingImageThread->start();
-    croppingThread->start();
-    timerThread->start();
-
-    timerThread->setPriority(QThread::LowPriority);
-    showingImageThread->setPriority(QThread::HighPriority);
-    croppingThread->setPriority(QThread::HighestPriority);
-    retrievingFrameThread->setPriority(QThread::NormalPriority);
+    retrievingFrameThread->start(QThread::LowPriority);
+    showingImageThread->start(QThread::HighPriority);
+    croppingThread->start(QThread::HighestPriority);
+    timerThread->start(QThread::NormalPriority);
 }
 
 
@@ -121,9 +119,11 @@ void MainWindow::onFinishingColorSubtraction(bool result) {
         ui->btnRecognition->show();
         ui->btnLearning->show();
     } else {
-        while(!timerThread->isFinished());
-        timerThread->start();
+//        while(!timerThread->isFinished());
+//        timerThread->start();
         showingImageThread->setToDefaults();
     }
 }
+
+
 
