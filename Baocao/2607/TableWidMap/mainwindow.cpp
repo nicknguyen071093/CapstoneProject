@@ -5,7 +5,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    ui->setupUi(this);    
+    ui->setupUi(this);
     FillTable();
 }
 
@@ -19,8 +19,8 @@ void MainWindow::FillTable(){
     QMapIterator<int, WordDTO> iter(wordMap);
     int count= wordMap.size();
     int r=0;
-    ui->tableWidget->setRowCount(count);
 
+    ui->tableWidget->setRowCount(count);
     while(iter.hasNext())
     {
         iter.next();
@@ -30,6 +30,11 @@ void MainWindow::FillTable(){
         ui->tableWidget->setItem(r,3,new QTableWidgetItem(iter.value().GetLink()));
         r++;
     }
+    for (int i = 0; i < wordMap.size(); i++) {
+        ui->listWidget->addItem(wordMap[i].GetLetter());
+    }
+        ui->listWidget->setCurrentRow(0);
+        ui->label->setText(QString::number(ui->listWidget->count()));
     wordDAO->closeConnection();
 }
 void MainWindow::on_pushButton_clicked()
@@ -43,4 +48,21 @@ void MainWindow::on_pushButton_clicked()
 
 
 
+}
+
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    int rowNumber = ui->listWidget->currentRow() -1;
+    if (rowNumber >= 0) {
+        ui->listWidget->setCurrentRow(rowNumber);
+    }
+}
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    int rowNumber = ui->listWidget->currentRow() + 1;
+    if (rowNumber < ui->listWidget->count()) {
+        ui->listWidget->setCurrentRow(rowNumber);
+    }
 }
