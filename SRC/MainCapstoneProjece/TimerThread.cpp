@@ -119,11 +119,10 @@ void TimerThread::run() {
         sleep(1);
 
         //wait for back first step
-        bool result = true;
         if (!STOP) {
-            emit (result = sendSignalGetTestingResult());
+            emit (testingResult = sendSignalGetTestingResult());
         }
-        if (!result) {
+        if (!testingResult) {
             if (!STOP) emit sendSignalChangingLabelNotice(QString::fromUtf8("Hệ thống lấy bàn tay của bạn đã thất bại. Vui lòng làm theo hướng dẫn lấy mẫu bàn tay trong sổ hướng dẫn. Hệ thống sẽ tự động quay lại bước lấy mẫu."),"5");
             sleep(1);
             if (!STOP) emit sendSignalChangingLabelNotice(QString::fromUtf8("Hệ thống lấy bàn tay của bạn đã thất bại. Vui lòng làm theo hướng dẫn lấy mẫu bàn tay trong sổ hướng dẫn. Hệ thống sẽ tự động quay lại bước lấy mẫu."),"4");
@@ -135,7 +134,7 @@ void TimerThread::run() {
             if (!STOP) emit sendSignalChangingLabelNotice(QString::fromUtf8("Hệ thống lấy bàn tay của bạn đã thất bại. Vui lòng làm theo hướng dẫn lấy mẫu bàn tay trong sổ hướng dẫn. Hệ thống sẽ tự động quay lại bước lấy mẫu."),"1");
             sleep(1);
         }
-        if (!STOP) emit sendSignalFinishingColorSubtraction(result);
+        if (!STOP) emit sendSignalFinishingColorSubtraction(testingResult);
     }
 }
 

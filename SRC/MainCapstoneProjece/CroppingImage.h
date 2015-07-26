@@ -5,9 +5,12 @@
 #include <QMutex>
 #include <HandGesture.h>
 #include <SignRecognition.h>
+#include <iostream>
 
 #define NUMBER_FEATURES 75
+
 using namespace cv;
+using namespace std;
 
 class CroppingImage : public QThread
 {
@@ -16,7 +19,6 @@ public:
     explicit CroppingImage(QObject *parent = 0);
     ~CroppingImage();
     bool STOP;
-    void setToDefaults();
     const static int NO_MODE = 0;
     const static int TESTING_MODE = 1;
     const static int SELECTING_MODE = 2;
@@ -26,6 +28,11 @@ public:
     const static int NO_FUNCTION = 0;
     const static int RECOGNITION_FUCNTION = 1;
     const static int LEARNING_FUNCTION = 2;
+
+    QString getRegResult();
+
+    void changeToRecognitionMode();
+    void changeToSelectingFunctionMode();
 
 private:
     void run();
@@ -73,8 +80,6 @@ private:
     void getFeatures3x3(Mat,int&,struct svm_node[],double);
 
     void recognizeSign();
-
-    QString getRecognitionResult();
 
 signals:
     void sendSignalToChangeLabelTestingResult(QString);

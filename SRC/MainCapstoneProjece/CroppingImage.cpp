@@ -41,6 +41,7 @@ void CroppingImage::run() {
                 mutex.unlock();
                 //                result = predictTestImage();
                 recognizeSign();
+                cout << recognitionResultNumber << endl;
                 if (recognitionResultNumber == 1) {
                     // If the "testing" hand sign is recognized.
                     mode = NO_MODE;
@@ -52,6 +53,7 @@ void CroppingImage::run() {
             } else if (mode == SELECTING_MODE) {
                 // If the hand sign is "select"
                 recognizeSign();
+                cout << recognitionResultNumber << endl;
                 if (recognitionResultNumber == 2) {
                     selectPoint = handGesture->getSelectPoint();
                     int x = selectPoint.x;
@@ -86,6 +88,7 @@ void CroppingImage::run() {
                             if (selectedNumber == RECOGNITION_FUCNTION) {//if select is recognition,
                                 // Show the recognition interface
                                 emit sendSignalSelectingRecognition();
+                                mode = RECOGNITION_MODE;
                             }
                             selectedNumber = NO_FUNCTION;
                         } else if (x >= 175 && x <= 250) {
@@ -97,7 +100,7 @@ void CroppingImage::run() {
                         } else {
                             // //if select is recognition, send signal backing recognition button color
                             // else if select is learning, send signal backing learning button color }
-                            electedNumber = NO_FUNCTION;
+                            selectedNumber = NO_FUNCTION;
                         }
                     } else {
                         // //if select is recognition, send signal backing recognition button color
@@ -111,6 +114,7 @@ void CroppingImage::run() {
                 }
             } else if (mode == RECOGNITION_MODE) {
                  recognizeSign();
+                 cout << recognitionResultNumber << endl;
                  // send signal edit current result
                  emit sendSignalChangingRecognitionResult(QString::number(recognitionResultNumber));
             } else if (mode == LEARNING_MODE) {
@@ -213,15 +217,17 @@ void CroppingImage::recognizeSign() {
         } else {
             for (int i = 0; i < 16; i++) {
                 currentFeatures++;
-                nodeFeatures[i].index = (currentFeatures + 1);
-                nodeFeatures[i].value = 0;
+                nodeFeatures[currentFeatures].index = (currentFeatures + 1);
+                nodeFeatures[currentFeatures].value = 0;
             }
         }
 
         if (currentFeatures == 73) {
             nodeFeatures[74].index = -1;
-            nodeFeatures[74].value = 0;
+            nodeFeatures[74].value = -1;
+            mutex.lock();
             recognitionResultNumber = signRecogntion->getRecognitionResult(nodeFeatures);
+            mutex.unlock();
             //                    recognitionResultNo =
         }
     }
@@ -414,14 +420,23 @@ void CroppingImage::receiveBinaryImage(Mat frame, Mat binMat) {
     }
 }
 
-void CroppingImage::setToDefaults() {
-    enableToCrop = false;
-    handGesture = new HandGesture();
-    STOP = false;
-}
 
 void CroppingImage::changeToTestingMode() {
+    mutex.lock();
     mode = TESTING_MODE;
+    mutex.unlock();
+}
+
+void CroppingImage::changeToRecognitionMode() {
+    mutex.lock();
+    mode = RECOGNITION_MODE;
+    mutex.unlock();
+}
+
+void CroppingImage::changeToSelectingFunctionMode() {
+//    mutex.lock();
+    mode = SELECTING_MODE;
+//    mutex.unlock();
 }
 
 bool CroppingImage::getTestingResult() {
@@ -429,7 +444,7 @@ bool CroppingImage::getTestingResult() {
     return testingResult;
 }
 
-QString CroppingImage::getRecognitionResult() {
+QString CroppingImage::getRegResult() {
     mutex.lock();
     QString result = QString::number(recognitionResultNumber);
     mutex.unlock();

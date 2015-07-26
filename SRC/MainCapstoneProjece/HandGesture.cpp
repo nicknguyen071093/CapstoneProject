@@ -144,7 +144,7 @@ void HandGesture::getHeightFeatures(int& currentFeatures, struct svm_node nodeFe
     currentFeatures++;
     double ratio = ((double) (boundingRect.height) / (double) (boundingRect.width)) / 2;
     if (ratio > 1) {
-        ratio = 1 - (ratio - 1.03);
+        ratio = 0.999999;
     }
     nodeFeatures[currentFeatures].index = (currentFeatures+1);
     nodeFeatures[currentFeatures].value = ratio;

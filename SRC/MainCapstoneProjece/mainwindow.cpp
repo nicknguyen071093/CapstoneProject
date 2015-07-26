@@ -8,16 +8,17 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->btnRecognition->hide();
-    ui->btnLearning->hide();
-
+    initiateColorSubtractionInterface();
     //
     showingImageThread = new ShowingImageThread(this);
     retrievingFrameThread = new RetrievingFrame(this);
     croppingThread = new CroppingImage(this);
+
     wordDAO = new LetterGet();
     //    wordMap = wordDAO->getLetter();
+
     timerThread = new TimerThread(this);
+    recognitionTimerThread = new RecognitionTimerThread(this);
 
     qRegisterMetaType<Mat>("Mat");
     qRegisterMetaType<Rect>("Rect");
@@ -29,7 +30,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //    connect(croppingThread,SIGNAL(sendSignalSendingFeatures(QString)),translatingThread,SLOT(receiveFeatures(QString)),Qt::DirectConnection);
     connect(croppingThread,SIGNAL(sendSignalToChangeLabelTestingResult(QString)),this,SLOT(changeLabelTestingResult(QString)),Qt::DirectConnection);
-    connect(croppingThread,SIGNAL(sendSignalToChangeLabelTestingResult(QString)),this,SLOT(changeLabelTestingResult(QString)),Qt::DirectConnection);
+    connect(croppingThread,SIGNAL(sendSignalSelectingRecognition()),this,SLOT(changeToRecognitionFunciton()),Qt::DirectConnection);
+    connect(croppingThread,SIGNAL(sendSignalChangingRecognitionResult(QString)),this,SLOT(changeRecognitionResult(QString)),Qt::DirectConnection);
 
     connect(timerThread,SIGNAL(sendSignalChangingLabelNotice(QString,QString)),this,SLOT(changeLabelNotice(QString,QString)),Qt::DirectConnection);
     connect(timerThread,SIGNAL(sendSignalChangingToFrontHandMode()),this,SLOT(changeToFrontHandMode()),Qt::DirectConnection);
@@ -40,6 +42,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(timerThread,SIGNAL(sendSignalChangingToTestingTime()),croppingThread,SLOT(changeToTestingMode()),Qt::DirectConnection);
     connect(timerThread,SIGNAL(sendSignalGetTestingResult()),croppingThread,SLOT(getTestingResult()),Qt::DirectConnection);
     connect(timerThread,SIGNAL(sendSignalFinishingColorSubtraction(bool)),this,SLOT(onFinishingColorSubtraction(bool)),Qt::DirectConnection);
+
+    connect(recognitionTimerThread,SIGNAL(sendSignalCountDownRecognitionTime(QString)),this,SLOT(countDownRecognitionTimer(QString)),Qt::DirectConnection);
+    connect(recognitionTimerThread,SIGNAL(sendSignalUpdatingContent()),this,SLOT(updateRecognitionContent()),Qt::DirectConnection);
 
     connect(showingImageThread,SIGNAL(sendSignalEnableCountDown()),timerThread,SLOT(continueCountDown()),Qt::DirectConnection);
     connect(showingImageThread,SIGNAL(sendSignalChangingLabelNotify(QString)),this,SLOT(changeLabelNotice(QString)),Qt::DirectConnection);
@@ -52,8 +57,11 @@ MainWindow::~MainWindow()
     free(retrievingFrameThread);
     free(showingImageThread);
     free(croppingThread);
+
     free(wordDAO);
+
     free(timerThread);
+    free(recognitionTimerThread);
     delete ui;
 }
 
@@ -73,10 +81,6 @@ void MainWindow::changeLabelNotice(QString noticeStr, QString countDownTime) {
     ui->lbCountDownTime->setText(countDownTime);
 }
 
-void MainWindow::changeBackgroundButton() {
-    ui->btnRecognition->setStyleSheet("background-color: rgb(176, 0, 2);");
-}
-
 void MainWindow::changeLabelNotice(QString noticeStr) {
     ui->lbNotify->setText(noticeStr);
 }
@@ -90,7 +94,8 @@ void MainWindow::startThreads() {
     retrievingFrameThread->start(QThread::LowPriority);
     showingImageThread->start(QThread::HighPriority);
     croppingThread->start(QThread::HighestPriority);
-    timerThread->start(QThread::NormalPriority);
+    timerThread->start(QThread::LowestPriority);
+    recognitionTimerThread->start(QThread::LowestPriority);
 }
 
 
@@ -116,14 +121,98 @@ void MainWindow::changeToBinaryImage() {
 
 void MainWindow::onFinishingColorSubtraction(bool result) {
     if (result) {
-        ui->btnRecognition->show();
-        ui->btnLearning->show();
+        initiateSelectingFunctionInterface();
+        croppingThread->changeToSelectingFunctionMode();
     } else {
-//        while(!timerThread->isFinished());
-//        timerThread->start();
         showingImageThread->setToDefaults();
     }
 }
 
+void MainWindow::countDownRecognitionTimer(QString time) {
+    ui->lbRecognitionTimer->setText(time);
+}
 
+void MainWindow::changeRecognitionResult(QString result) {
+    ui->lbRecognitionResult->setText(result);
+}
 
+void MainWindow::updateRecognitionContent() {
+    QString result = croppingThread->getRegResult();
+    if (result != "0") { // no detecting hand
+        //  update content
+        recognitionContent += " " + result;
+        ui->lbRecognitionContent->setText(recognitionContent);
+        if (result == "5") { // end sign
+            // speak
+            // initiate selecting interface
+            initiateSelectingFunctionInterface();
+            // stop recognition timer
+            recognitionTimerThread->enableWorking(false);
+            // change to select
+            croppingThread->changeToSelectingFunctionMode();
+        }
+    }
+}
+
+void MainWindow::changeToSelectingFunction() {
+
+}
+
+void MainWindow::changeToRecognitionFunciton() {
+    // init interface
+    initiateRecognitionInterface();
+    // init recognition content
+    recognitionContent = "";
+    ui->lbRecognitionContent->setText("");
+    // change to recognition mode
+//    croppingThread->changeToRecognitionMode();
+    // enable timer
+    recognitionTimerThread->enableWorking(true);
+}
+
+void MainWindow::changeToLearningFunction() {
+
+}
+
+void MainWindow::initiateSelectingFunctionInterface() {
+    ui->gbTestingResult->hide();
+    ui->gbCountDownTime->hide();
+
+    ui->gbRecognitionContent->hide();
+    ui->gbRecognitionNotify->hide();
+    ui->gbRecognitionResult->hide();
+    ui->gbRecognitionTimer->hide();
+
+    ui->gbNotify->show();
+    ui->lbNotify->setText("Hãy chọn chức năng mong muốn bằng cách đưa ký hiệu hình bên vào vùng chức năng đó!");
+    ui->btnLearning->show();
+    ui->btnRecognition->show();
+}
+
+void MainWindow::initiateRecognitionInterface() {
+    ui->btnRecognition->hide();
+    ui->btnLearning->hide();
+
+    ui->gbTestingResult->hide();
+    ui->gbCountDownTime->hide();
+    ui->gbNotify->hide();
+
+    ui->gbRecognitionContent->show();
+    ui->gbRecognitionNotify->show();
+    ui->gbRecognitionResult->show();
+    ui->gbRecognitionTimer->show();
+}
+
+void MainWindow::initiateLearningInterface() {
+
+}
+
+void MainWindow::initiateColorSubtractionInterface() {
+    ui->btnRecognition->hide();
+    ui->btnLearning->hide();
+
+    ui->gbRecognitionContent->hide();
+    ui->gbRecognitionNotify->hide();
+    ui->gbRecognitionResult->hide();
+    ui->gbRecognitionTimer->hide();
+}

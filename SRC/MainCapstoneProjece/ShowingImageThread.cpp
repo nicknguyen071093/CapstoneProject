@@ -664,7 +664,7 @@ void ShowingImageThread::setToDefaults() {
     //    sampleBackHand.clear();
     additionAvgBackColor.clear();
     mode = BACKGROUND_MODE;
-    STOP = false;
+//    STOP = false;
     enableToShow = false;
 }
 

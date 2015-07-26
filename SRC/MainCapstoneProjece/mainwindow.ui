@@ -51,6 +51,13 @@ color: #7b5701;
       <height>151</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>-1</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
     <property name="styleSheet">
      <string notr="true">QGroupBox { 
      border: 2px solid gray; 
@@ -72,8 +79,18 @@ color: #7b5701;
        <height>111</height>
       </rect>
      </property>
+     <property name="font">
+      <font>
+       <pointsize>15</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
      <property name="text">
-      <string>lbNotify</string>
+      <string/>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
      </property>
     </widget>
    </widget>
@@ -102,13 +119,23 @@ color: #7b5701;
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>30</y>
+       <y>40</y>
        <width>521</width>
-       <height>111</height>
+       <height>101</height>
       </rect>
      </property>
+     <property name="font">
+      <font>
+       <pointsize>50</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
      <property name="text">
-      <string>lbCountDown</string>
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </widget>
@@ -137,14 +164,14 @@ color: #7b5701;
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>30</y>
+       <y>40</y>
        <width>521</width>
-       <height>161</height>
+       <height>151</height>
       </rect>
      </property>
      <property name="font">
       <font>
-       <pointsize>30</pointsize>
+       <pointsize>45</pointsize>
        <weight>75</weight>
        <bold>true</bold>
       </font>
@@ -156,14 +183,14 @@ color: green;
 }</string>
      </property>
      <property name="text">
-      <string>testing</string>
+      <string/>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </widget>
-   <widget class="QGroupBox" name="gbNotify_2">
+   <widget class="QGroupBox" name="gbFrame">
     <property name="geometry">
      <rect>
       <x>40</x>
@@ -242,7 +269,214 @@ background-color: white;
       <cursorShape>ArrowCursor</cursorShape>
      </property>
      <property name="text">
-      <string>Nhận dạng</string>
+      <string/>
+     </property>
+    </widget>
+    <zorder>lbFrame</zorder>
+    <zorder>btnLearning</zorder>
+    <zorder>btnRecognition</zorder>
+   </widget>
+   <widget class="QGroupBox" name="gbRecognitionNotify">
+    <property name="geometry">
+     <rect>
+      <x>690</x>
+      <y>80</y>
+      <width>541</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>-1</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QGroupBox { 
+     border: 2px solid gray; 
+     border-radius: 3px; 
+    font-size: 18px;
+    font-weight: bold;
+color: #7b5701;
+ } </string>
+    </property>
+    <property name="title">
+     <string>Thông Báo</string>
+    </property>
+    <widget class="QLabel" name="lbRecognitionNotify">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>521</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>15</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Hệ thống sẽ lưu lại kết quả nhận dạng sau 3 giây!</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="gbRecognitionTimer">
+    <property name="geometry">
+     <rect>
+      <x>690</x>
+      <y>200</y>
+      <width>541</width>
+      <height>151</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QGroupBox { 
+     border: 2px solid gray; 
+     border-radius: 3px; 
+    font-size: 18px;
+    font-weight: bold;
+color: #7b5701;
+ } </string>
+    </property>
+    <property name="title">
+     <string>Thời Gian</string>
+    </property>
+    <widget class="QLabel" name="lbRecognitionTimer">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>40</y>
+       <width>521</width>
+       <height>101</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>50</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="gbRecognitionResult">
+    <property name="geometry">
+     <rect>
+      <x>690</x>
+      <y>370</y>
+      <width>541</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>-1</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QGroupBox { 
+     border: 2px solid gray; 
+     border-radius: 3px; 
+    font-size: 18px;
+    font-weight: bold;
+color: #7b5701;
+ } </string>
+    </property>
+    <property name="title">
+     <string>Kết quả nhận dạng</string>
+    </property>
+    <widget class="QLabel" name="lbRecognitionResult">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>521</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>25</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="gbRecognitionContent">
+    <property name="geometry">
+     <rect>
+      <x>690</x>
+      <y>490</y>
+      <width>541</width>
+      <height>131</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>-1</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QGroupBox { 
+     border: 2px solid gray; 
+     border-radius: 3px; 
+    font-size: 18px;
+    font-weight: bold;
+color: #7b5701;
+ } </string>
+    </property>
+    <property name="title">
+     <string>Nội dung toàn bộ</string>
+    </property>
+    <widget class="QLabel" name="lbRecognitionContent">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>521</width>
+       <height>91</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>15</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
      </property>
     </widget>
    </widget>

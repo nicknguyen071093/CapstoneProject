@@ -2,12 +2,17 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+
 #include "ImageTranslating.h"
 #include "RetrievingFrame.h"
-#include "letterget.h"
 #include "ShowingImageThread.h"
 #include "CroppingImage.h"
+
+#include "letterget.h"
+
 #include "TimerThread.h"
+#include "RecognitionTimerThread.h"
+
 #include "QDir"
 #include "QFile"
 #include <QThread>
@@ -55,10 +60,13 @@ private slots:
 
     void changeToLearningFunction();
 
+    void changeRecognitionResult(QString);
+
 private:
     Ui::MainWindow *ui;
 
     TimerThread *timerThread;
+    RecognitionTimerThread *recognitionTimerThread;
 
     RetrievingFrame *retrievingFrameThread;
     ShowingImageThread *showingImageThread;
@@ -67,11 +75,15 @@ private:
     QMap <int,QString> wordMap;
     LetterGet *wordDAO;
 
+    QString recognitionContent;
+
     void startThreads();
 
     void initiateSelectingFunctionInterface();
     void initiateRecognitionInterface();
     void initiateLearningInterface();
+    void initiateColorSubtractionInterface();
+
 };
 
 #endif // MAINWINDOW_H

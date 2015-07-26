@@ -3,7 +3,7 @@
 #include <SVM.h>
 #include <QtCore>
 
-#define modelFilePath "../Database/Main/databaseMain.model"
+#define modelFilePath "/home/nickseven/long.model"
 
 
 class SignRecognition
