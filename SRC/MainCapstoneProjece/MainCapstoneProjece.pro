@@ -11,7 +11,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = MainCapstoneProjece
 TEMPLATE = app
 
-
 INCLUDEPATH += /usr/local/include/opencv
 LIBS += -L/usr/local/lib
 LIBS += -lopencv_core

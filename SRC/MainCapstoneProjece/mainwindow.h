@@ -13,10 +13,6 @@
 #include "TimerThread.h"
 #include "RecognitionTimerThread.h"
 
-#include "QDir"
-#include "QFile"
-#include <QThread>
-
 namespace Ui {
 class MainWindow;
 }
@@ -32,35 +28,28 @@ public:
 
 private slots:
 
-    void on_MainWindow_destroyed();
-
     void onToShow(Mat);
 
     void changeLabelNotice(QString,QString);
-
     void changeLabelNotice(QString);
-
     void changeLabelTestingResult(QString);
 
-    void changeToFrontHandMode();
-
-    void changeToBackHandMode();
-
-    void changeToBinaryImage();
-
-    void onFinishingColorSubtraction(bool);
-
     void countDownRecognitionTimer(QString);
-
+    void changeRecognitionResult(QString);
     void updateRecognitionContent();
+    void changeRecognitionColor(QString);
+    void changeLearningColor(QString);
 
     void changeToSelectingFunction();
-
     void changeToRecognitionFunciton();
-
     void changeToLearningFunction();
+    void changeToFrontHandMode();
+    void changeToBackHandMode();
+    void changeToBinaryImage();
+    void onFinishingColorSubtraction(bool);
 
-    void changeRecognitionResult(QString);
+protected:
+    void closeEvent(QCloseEvent *event);
 
 private:
     Ui::MainWindow *ui;

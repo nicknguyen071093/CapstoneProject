@@ -8,6 +8,8 @@
 #include <iostream>
 
 #define NUMBER_FEATURES 75
+#define SELECTED_COLOR "white"
+#define NON_SELECTED_COLOR "rgb(179, 0, 0)"
 
 using namespace cv;
 using namespace std;
@@ -28,6 +30,8 @@ public:
     const static int NO_FUNCTION = 0;
     const static int RECOGNITION_FUCNTION = 1;
     const static int LEARNING_FUNCTION = 2;
+    const static int UP_FUCNTION = 3;
+    const static int DOWN_FUCNTION = 3;
 
     QString getRegResult();
 
@@ -37,7 +41,7 @@ public:
 private:
     void run();
     int mode;
-    int selectedNumber;
+    int selectedFunctionNumber;
     QMutex mutex;
     bool testingResult;
     // recieved binary image from ShowingImageThread
@@ -88,7 +92,9 @@ signals:
     void sendSignalSelectingLearning();
 
     void sendSignalChangingRecognitionResult(QString);
-//    void sendSignalChangingBackGroundColor();
+
+    void sendSignalChangingRecognitionColor(QString);
+    void sendSignalChangingLearningColor(QString);
 public slots:
     void changeToTestingMode();
     void receiveBinaryImage(Mat,Mat);

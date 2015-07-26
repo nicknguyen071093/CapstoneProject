@@ -32,6 +32,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(croppingThread,SIGNAL(sendSignalToChangeLabelTestingResult(QString)),this,SLOT(changeLabelTestingResult(QString)),Qt::DirectConnection);
     connect(croppingThread,SIGNAL(sendSignalSelectingRecognition()),this,SLOT(changeToRecognitionFunciton()),Qt::DirectConnection);
     connect(croppingThread,SIGNAL(sendSignalChangingRecognitionResult(QString)),this,SLOT(changeRecognitionResult(QString)),Qt::DirectConnection);
+    connect(croppingThread,SIGNAL(sendSignalChangingRecognitionColor(QString)),this,SLOT(changeRecognitionColor(QString)),Qt::DirectConnection);
+    connect(croppingThread,SIGNAL(sendSignalChangingLearningColor(QString)),this,SLOT(changeLearningColor(QString)),Qt::DirectConnection);
 
     connect(timerThread,SIGNAL(sendSignalChangingLabelNotice(QString,QString)),this,SLOT(changeLabelNotice(QString,QString)),Qt::DirectConnection);
     connect(timerThread,SIGNAL(sendSignalChangingToFrontHandMode()),this,SLOT(changeToFrontHandMode()),Qt::DirectConnection);
@@ -98,14 +100,6 @@ void MainWindow::startThreads() {
     recognitionTimerThread->start(QThread::LowestPriority);
 }
 
-
-void MainWindow::on_MainWindow_destroyed()
-{
-    retrievingFrameThread->STOP = true;
-    showingImageThread->STOP = true;
-    croppingThread->STOP = true;
-}
-
 void MainWindow::changeToFrontHandMode() {
     showingImageThread->setMode(showingImageThread->GET_AVG_BACKGROUND);
 }
@@ -154,6 +148,14 @@ void MainWindow::updateRecognitionContent() {
     }
 }
 
+void MainWindow::changeRecognitionColor(QString colorStr) {
+    ui->btnRecognition->setStyleSheet(colorStr);
+}
+
+void MainWindow::changeLearningColor(QString colorStr) {
+    ui->btnLearning->setStyleSheet(colorStr);
+}
+
 void MainWindow::changeToSelectingFunction() {
 
 }
@@ -165,7 +167,7 @@ void MainWindow::changeToRecognitionFunciton() {
     recognitionContent = "";
     ui->lbRecognitionContent->setText("");
     // change to recognition mode
-//    croppingThread->changeToRecognitionMode();
+    //    croppingThread->changeToRecognitionMode();
     // enable timer
     recognitionTimerThread->enableWorking(true);
 }
@@ -215,4 +217,19 @@ void MainWindow::initiateColorSubtractionInterface() {
     ui->gbRecognitionNotify->hide();
     ui->gbRecognitionResult->hide();
     ui->gbRecognitionTimer->hide();
+}
+
+void MainWindow::closeEvent(QCloseEvent *event) {
+    retrievingFrameThread->STOP = true;
+    while(!retrievingFrameThread->isFinished());
+    showingImageThread->STOP = true;
+    while(!showingImageThread->isFinished());
+    croppingThread->start(QThread::HighestPriority);
+    while(!croppingThread->isFinished());
+    timerThread->STOP = true;
+    timerThread->terminate();
+    while(!timerThread->isFinished());
+    recognitionTimerThread->STOP = true;
+   while(!recognitionTimerThread->isFinished());
+    QMainWindow::closeEvent(event);
 }
