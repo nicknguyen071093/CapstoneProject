@@ -8,8 +8,8 @@
 #include <iostream>
 
 #define NUMBER_FEATURES 75
-#define SELECTED_COLOR "white"
-#define NON_SELECTED_COLOR "rgb(179, 0, 0)"
+#define SELECTED_COLOR "background-color: rgb(179, 0, 0)"
+#define NON_SELECTED_COLOR "background-color: white"
 
 using namespace cv;
 using namespace std;
@@ -33,7 +33,7 @@ public:
     const static int UP_FUCNTION = 3;
     const static int DOWN_FUCNTION = 3;
 
-    QString getRegResult();
+    double getRegResult();
 
     void changeToRecognitionMode();
     void changeToSelectingFunctionMode();
@@ -86,15 +86,22 @@ private:
     void recognizeSign();
 
 signals:
-    void sendSignalToChangeLabelTestingResult(QString);
+    void sendSignalToChangeLabelTestingResult(QString,QString);
 
     void sendSignalSelectingRecognition();
     void sendSignalSelectingLearning();
-
-    void sendSignalChangingRecognitionResult(QString);
+    void sendSignalChangeToSelectingMode();
 
     void sendSignalChangingRecognitionColor(QString);
     void sendSignalChangingLearningColor(QString);
+    void sendSignalChangingRecognitionResult(double);
+
+    void sendSignalChangingUpColor(QString);
+    void sendSignalChangingDownColor(QString);
+    void sendSignalMovingToUpperWord();
+    void sendSignalMovingToLowerWord();
+    void sendSignalChangingLearningResult(double);
+
 public slots:
     void changeToTestingMode();
     void receiveBinaryImage(Mat,Mat);

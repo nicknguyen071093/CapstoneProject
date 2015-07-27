@@ -34,9 +34,6 @@ void TimerThread::run() {
             if(this->STOP) break;
             mutex.unlock();
         }
-        //        sleep(0.25);
-        //        if (!STOP) emit (isEnableToCountDown = sendSignalToCheckFirst());
-        //    }
         if (!STOP) emit sendSignalChangingLabelNotice(QString::fromUtf8("Vui lòng điều chỉnh bàn tay của bạn vào vùng bàn tay được hiển thị trên màn hình LCD."),"5");
         sleep(1);
         isEnableToCountDown = false;
@@ -123,6 +120,7 @@ void TimerThread::run() {
             emit (testingResult = sendSignalGetTestingResult());
         }
         if (!testingResult) {
+            emit sendSignalFailTesingResult(QString::fromUtf8("Thất bại"),"color: red");
             if (!STOP) emit sendSignalChangingLabelNotice(QString::fromUtf8("Hệ thống lấy bàn tay của bạn đã thất bại. Vui lòng làm theo hướng dẫn lấy mẫu bàn tay trong sổ hướng dẫn. Hệ thống sẽ tự động quay lại bước lấy mẫu."),"5");
             sleep(1);
             if (!STOP) emit sendSignalChangingLabelNotice(QString::fromUtf8("Hệ thống lấy bàn tay của bạn đã thất bại. Vui lòng làm theo hướng dẫn lấy mẫu bàn tay trong sổ hướng dẫn. Hệ thống sẽ tự động quay lại bước lấy mẫu."),"4");

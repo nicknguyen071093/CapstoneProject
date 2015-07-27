@@ -8,10 +8,10 @@
 #include "ShowingImageThread.h"
 #include "CroppingImage.h"
 
-#include "letterget.h"
-
 #include "TimerThread.h"
 #include "RecognitionTimerThread.h"
+
+#include "Words.h"
 
 namespace Ui {
 class MainWindow;
@@ -32,10 +32,10 @@ private slots:
 
     void changeLabelNotice(QString,QString);
     void changeLabelNotice(QString);
-    void changeLabelTestingResult(QString);
+    void changeLabelTestingResult(QString,QString);
 
     void countDownRecognitionTimer(QString);
-    void changeRecognitionResult(QString);
+    void changeRecognitionResult(double);
     void updateRecognitionContent();
     void changeRecognitionColor(QString);
     void changeLearningColor(QString);
@@ -47,6 +47,13 @@ private slots:
     void changeToBackHandMode();
     void changeToBinaryImage();
     void onFinishingColorSubtraction(bool);
+
+    void changeUpColor(QString);
+    void changeDownColor(QString);
+    void moveToUpperWord();
+    void moveToLowerWord();
+    void changeLearningResult(double);
+
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -61,10 +68,12 @@ private:
     ShowingImageThread *showingImageThread;
     CroppingImage *croppingThread;
 
-    QMap <int,QString> wordMap;
-    LetterGet *wordDAO;
-
     QString recognitionContent;
+
+    Words *words;
+
+    QPixmap framePixmap;
+    QPixmap learningImagePixmap;
 
     void startThreads();
 
@@ -72,6 +81,8 @@ private:
     void initiateRecognitionInterface();
     void initiateLearningInterface();
     void initiateColorSubtractionInterface();
+
+    void changeImageByWordID(int);
 
 };
 

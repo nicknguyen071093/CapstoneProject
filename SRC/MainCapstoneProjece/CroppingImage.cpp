@@ -48,11 +48,11 @@ void CroppingImage::run() {
                     mutex.lock();
                     testingResult = true;
                     mutex.unlock();
-                    emit sendSignalToChangeLabelTestingResult(QString::fromUtf8("Thành Công!"));
+                    emit sendSignalToChangeLabelTestingResult(QString::fromUtf8("Thành Công!"),"color: green");
                 }
             } else if (mode == SELECTING_MODE) {
                 recognizeSign();
-//                cout << recognitionResultNumber << endl;
+                cout << recognitionResultNumber << endl;
                 if (recognitionResultNumber == 2) {  // If the hand sign is "select"
                     selectPoint = handGesture->getSelectPoint();
                     int x = selectPoint.x;
@@ -62,34 +62,34 @@ void CroppingImage::run() {
                             if (selectedFunctionNumber != RECOGNITION_FUCNTION) {//if select is !recognition,
                                 //send signal changing color recognition button, select = recognition
                                 selectedFunctionNumber = RECOGNITION_FUCNTION;
-                                emit sendSignalChangingRecognitionColor(SELECTED_COLOR);
+//                                emit sendSignalChangingRecognitionColor(SELECTED_COLOR);
                             }
                         } else if (x >= 175 && x <= 250) {
                             if (selectedFunctionNumber != LEARNING_FUNCTION) {//if select is !learning,
                                 // send signal changing color learning button, select = learning
                                 selectedFunctionNumber = LEARNING_FUNCTION;
-                                emit sendSignalChangingLearningColor(SELECTED_COLOR);
+//                                emit sendSignalChangingLearningColor(SELECTED_COLOR);
                             }
                         } else {
                             if (selectedFunctionNumber == RECOGNITION_FUCNTION) { //if select is recognition,
                                 // send signal backing recognition button color
                                 selectedFunctionNumber = NO_FUNCTION;
-                                emit sendSignalChangingLearningColor(NON_SELECTED_COLOR);
+//                                emit sendSignalChangingLearningColor(NON_SELECTED_COLOR);
                             } else if (selectedFunctionNumber == LEARNING_FUNCTION) { // else if select is learning,
                                 // send signal backing learning button color
                                 selectedFunctionNumber = NO_FUNCTION;
-                                emit sendSignalChangingRecognitionColor(NON_SELECTED_COLOR);
+//                                emit sendSignalChangingRecognitionColor(NON_SELECTED_COLOR);
                             }
                         }
                     } else {
                         if (selectedFunctionNumber == RECOGNITION_FUCNTION) { //if select is recognition,
                             // send signal backing recognition button color
                             selectedFunctionNumber = NO_FUNCTION;
-                            emit sendSignalChangingLearningColor(NON_SELECTED_COLOR);
+//                            emit sendSignalChangingLearningColor(NON_SELECTED_COLOR);
                         } else if (selectedFunctionNumber == LEARNING_FUNCTION) { // else if select is learning,
                             // send signal backing learning button color
                             selectedFunctionNumber = NO_FUNCTION;
-                            emit sendSignalChangingRecognitionColor(NON_SELECTED_COLOR);
+//                            emit sendSignalChangingRecognitionColor(NON_SELECTED_COLOR);
                         }
                     }
                 } else if (recognitionResultNumber == 3) {// If the hand is "done"
@@ -108,47 +108,147 @@ void CroppingImage::run() {
                             if (selectedFunctionNumber == LEARNING_FUNCTION) {//if select is learning,
                                 //Show the learning interface
                                 emit sendSignalSelectingLearning();
+                                mode = LEARNING_MODE;
                             }
                             selectedFunctionNumber = NO_FUNCTION;
                         } else {
                             if (selectedFunctionNumber == RECOGNITION_FUCNTION) { //if select is recognition,
                                 // send signal backing recognition button color
                                 selectedFunctionNumber = NO_FUNCTION;
-                                emit sendSignalChangingLearningColor(NON_SELECTED_COLOR);
+//                                emit sendSignalChangingLearningColor(NON_SELECTED_COLOR);
                             } else if (selectedFunctionNumber == LEARNING_FUNCTION) { // else if select is learning,
                                 // send signal backing learning button color
                                 selectedFunctionNumber = NO_FUNCTION;
-                                emit sendSignalChangingRecognitionColor(NON_SELECTED_COLOR);
+//                                emit sendSignalChangingRecognitionColor(NON_SELECTED_COLOR);
                             }
                         }
                     } else {
                         if (selectedFunctionNumber == RECOGNITION_FUCNTION) { //if select is recognition,
                             // send signal backing recognition button color
                             selectedFunctionNumber = NO_FUNCTION;
-                            emit sendSignalChangingLearningColor(NON_SELECTED_COLOR);
+//                            emit sendSignalChangingLearningColor(NON_SELECTED_COLOR);
                         } else if (selectedFunctionNumber == LEARNING_FUNCTION) { // else if select is learning,
                             // send signal backing learning button color
                             selectedFunctionNumber = NO_FUNCTION;
-                            emit sendSignalChangingRecognitionColor(NON_SELECTED_COLOR);
+//                            emit sendSignalChangingRecognitionColor(NON_SELECTED_COLOR);
                         }
                     }
                 } else {
                     if (selectedFunctionNumber == RECOGNITION_FUCNTION) { //if select is recognition,
                         // send signal backing recognition button color
                         selectedFunctionNumber = NO_FUNCTION;
-                        emit sendSignalChangingLearningColor(NON_SELECTED_COLOR);
+//                        emit sendSignalChangingLearningColor(NON_SELECTED_COLOR);
                     } else if (selectedFunctionNumber == LEARNING_FUNCTION) { // else if select is learning,
                         // send signal backing learning button color
                         selectedFunctionNumber = NO_FUNCTION;
-                        emit sendSignalChangingRecognitionColor(NON_SELECTED_COLOR);
+//                        emit sendSignalChangingRecognitionColor(NON_SELECTED_COLOR);
                     }
                 }
             } else if (mode == RECOGNITION_MODE) {
                 recognizeSign();
                 // send signal edit current result
-                emit sendSignalChangingRecognitionResult(QString::number(recognitionResultNumber));
+                emit sendSignalChangingRecognitionResult(recognitionResultNumber);
             } else if (mode == LEARNING_MODE) {
-
+                recognizeSign();
+//                cout << recognitionResultNumber << endl;
+                if (recognitionResultNumber == 2) {  // If the hand sign is "select"
+                    selectPoint = handGesture->getSelectPoint();
+                    int x = selectPoint.x;
+                    int y = selectPoint.y;
+                    if (y >= 15 && y <= 50) {
+                        if (x >=80 && x <= 155) {
+                            if (selectedFunctionNumber != UP_FUCNTION) {//if select is !up,
+                                //send signal changing color up button, select = up
+                                selectedFunctionNumber = UP_FUCNTION;
+//                                emit sendSignalChangingUpColor(SELECTED_COLOR);
+                            }
+                        } else if (x >= 175 && x <= 250) {
+                            if (selectedFunctionNumber != DOWN_FUCNTION) {//if select is !down,
+                                // send signal changing color down button, select = down
+                                selectedFunctionNumber = DOWN_FUCNTION;
+//                                emit sendSignalChangingDownColor(SELECTED_COLOR);
+                            }
+                        } else {
+                            if (selectedFunctionNumber == UP_FUCNTION) { //if select is up,
+                                // send signal backing up button color
+                                selectedFunctionNumber = NO_FUNCTION;
+//                                emit sendSignalChangingDownColor(NON_SELECTED_COLOR);
+                            } else if (selectedFunctionNumber == DOWN_FUCNTION) { // else if select is down,
+                                // send signal backing down button color
+                                selectedFunctionNumber = NO_FUNCTION;
+//                                emit sendSignalChangingUpColor(NON_SELECTED_COLOR);
+                            }
+                        }
+                    } else {
+                        if (selectedFunctionNumber == UP_FUCNTION) { //if select is up,
+                            // send signal backing up button color
+                            selectedFunctionNumber = NO_FUNCTION;
+//                            emit sendSignalChangingDownColor(NON_SELECTED_COLOR);
+                        } else if (selectedFunctionNumber == DOWN_FUCNTION) { // else if select is down,
+                            // send signal backing down button color
+                            selectedFunctionNumber = NO_FUNCTION;
+//                            emit sendSignalChangingUpColor(NON_SELECTED_COLOR);
+                        }
+                    }
+                } else if (recognitionResultNumber == 3) {// If the hand is "done"
+                    selectPoint = handGesture->getSelectPoint();
+                    int x = selectPoint.x;
+                    int y = selectPoint.y;
+                    if (y >= 15 && y <= 50) {
+                        if (x >=80 && x <= 155) {
+                            if (selectedFunctionNumber == UP_FUCNTION) {//if select is up,
+                                // send signal change to upper word
+                                emit sendSignalMovingToUpperWord();
+                                sleep(0.3);
+                            }
+                        } else if (x >= 175 && x <= 250) {
+                            if (selectedFunctionNumber == DOWN_FUCNTION) {//if select is down,
+                                // send signal change to lower word
+                                emit sendSignalMovingToLowerWord();
+                                sleep(0.3);
+                            }
+                        } else {
+                            if (selectedFunctionNumber == UP_FUCNTION) { //if select is up,
+                                // send signal backing up button color
+                                selectedFunctionNumber = NO_FUNCTION;
+//                                emit sendSignalChangingDownColor(NON_SELECTED_COLOR);
+                            } else if (selectedFunctionNumber == DOWN_FUCNTION) { // else if select is down,
+                                // send signal backing down button color
+                                selectedFunctionNumber = NO_FUNCTION;
+//                                emit sendSignalChangingUpColor(NON_SELECTED_COLOR);
+                            }
+                        }
+                    } else {
+                        if (selectedFunctionNumber == UP_FUCNTION) { //if select is up,
+                            // send signal backing up button color
+                            selectedFunctionNumber = NO_FUNCTION;
+//                            emit sendSignalChangingDownColor(NON_SELECTED_COLOR);
+                        } else if (selectedFunctionNumber == DOWN_FUCNTION) { // else if select is down,
+                            // send signal backing down button color
+                            selectedFunctionNumber = NO_FUNCTION;
+//                            emit sendSignalChangingUpColor(NON_SELECTED_COLOR);
+                        }
+                    }
+                } else if (recognitionResultNumber == 5) { // hand sign is end sign
+                    // send signal change to selecting mode
+                    emit sendSignalChangeToSelectingMode();
+                    // selected is no function
+                    selectedFunctionNumber = NO_FUNCTION;
+                    // change to selecting mode
+                    mode = SELECTING_MODE;
+                } else {
+                    if (selectedFunctionNumber == UP_FUCNTION) { //if select is up,
+                        // send signal backing up button color
+                        selectedFunctionNumber = NO_FUNCTION;
+//                        emit sendSignalChangingDownColor(NON_SELECTED_COLOR);
+                    } else if (selectedFunctionNumber == DOWN_FUCNTION) { // else if select is down,
+                        // send signal backing down button color
+                        selectedFunctionNumber = NO_FUNCTION;
+//                        emit sendSignalChangingUpColor(NON_SELECTED_COLOR);
+                    }
+                    // send signal changing learning result
+                    emit sendSignalChangingLearningResult(recognitionResultNumber);
+                }
             }
         }
         enableToCrop = false;
@@ -470,13 +570,13 @@ void CroppingImage::changeToSelectingFunctionMode() {
 }
 
 bool CroppingImage::getTestingResult() {
-    mode = 0;
+    mode = NO_MODE;
     return testingResult;
 }
 
-QString CroppingImage::getRegResult() {
+double CroppingImage::getRegResult() {
     mutex.lock();
-    QString result = QString::number(recognitionResultNumber);
+    double result = recognitionResultNumber;
     mutex.unlock();
     return result;
 }

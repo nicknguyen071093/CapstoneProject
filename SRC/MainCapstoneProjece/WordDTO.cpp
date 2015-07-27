@@ -1,4 +1,4 @@
-#include "wordDTO.h"
+#include "WordDTO.h"
 
 WordDTO::WordDTO()
 {

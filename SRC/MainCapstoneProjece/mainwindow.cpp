@@ -3,37 +3,49 @@
 
 Q_DECLARE_METATYPE(Mat)
 Q_DECLARE_METATYPE(Rect)
+Q_DECLARE_METATYPE(WordDTO)
+Q_DECLARE_METATYPE(QItemSelection)
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    //
+    words = new Words();
+    ui->lwWord->addItems(words->getWords());
+    //
     initiateColorSubtractionInterface();
     //
     showingImageThread = new ShowingImageThread(this);
     retrievingFrameThread = new RetrievingFrame(this);
     croppingThread = new CroppingImage(this);
 
-    wordDAO = new LetterGet();
-    //    wordMap = wordDAO->getLetter();
 
     timerThread = new TimerThread(this);
     recognitionTimerThread = new RecognitionTimerThread(this);
 
     qRegisterMetaType<Mat>("Mat");
     qRegisterMetaType<Rect>("Rect");
-
+    qRegisterMetaType<WordDTO>("WordDTO");
+    qRegisterMetaType<QItemSelection>("QItemSelection");
     connect(retrievingFrameThread,SIGNAL(changingFrame(Mat)),showingImageThread,SLOT(onChangingImage(Mat)),Qt::DirectConnection);
 
     connect(showingImageThread,SIGNAL(toShow(Mat)),this,SLOT(onToShow(Mat)),Qt::DirectConnection);
     connect(showingImageThread,SIGNAL(sendImageToCrop(Mat,Mat)),croppingThread,SLOT(receiveBinaryImage(Mat,Mat)),Qt::DirectConnection);
 
     //    connect(croppingThread,SIGNAL(sendSignalSendingFeatures(QString)),translatingThread,SLOT(receiveFeatures(QString)),Qt::DirectConnection);
-    connect(croppingThread,SIGNAL(sendSignalToChangeLabelTestingResult(QString)),this,SLOT(changeLabelTestingResult(QString)),Qt::DirectConnection);
+    connect(croppingThread,SIGNAL(sendSignalToChangeLabelTestingResult(QString,QString)),this,SLOT(changeLabelTestingResult(QString,QString)),Qt::DirectConnection);
     connect(croppingThread,SIGNAL(sendSignalSelectingRecognition()),this,SLOT(changeToRecognitionFunciton()),Qt::DirectConnection);
-    connect(croppingThread,SIGNAL(sendSignalChangingRecognitionResult(QString)),this,SLOT(changeRecognitionResult(QString)),Qt::DirectConnection);
+    connect(croppingThread,SIGNAL(sendSignalSelectingLearning()),this,SLOT(changeToLearningFunction()),Qt::DirectConnection);
+    connect(croppingThread,SIGNAL(sendSignalChangingRecognitionResult(double)),this,SLOT(changeRecognitionResult(double)),Qt::DirectConnection);
     connect(croppingThread,SIGNAL(sendSignalChangingRecognitionColor(QString)),this,SLOT(changeRecognitionColor(QString)),Qt::DirectConnection);
     connect(croppingThread,SIGNAL(sendSignalChangingLearningColor(QString)),this,SLOT(changeLearningColor(QString)),Qt::DirectConnection);
+    connect(croppingThread,SIGNAL(sendSignalChangingUpColor(QString)),this,SLOT(changeUpColor(QString)),Qt::DirectConnection);
+    connect(croppingThread,SIGNAL(sendSignalChangingDownColor(QString)),this,SLOT(changeDownColor(QString)),Qt::DirectConnection);
+    connect(croppingThread,SIGNAL(sendSignalMovingToUpperWord()),this,SLOT(moveToUpperWord()),Qt::DirectConnection);
+    connect(croppingThread,SIGNAL(sendSignalMovingToLowerWord()),this,SLOT(moveToLowerWord()),Qt::DirectConnection);
+    connect(croppingThread,SIGNAL(sendSignalChangeToSelectingMode()),this,SLOT(changeToSelectingFunction()),Qt::DirectConnection);
+    connect(croppingThread,SIGNAL(sendSignalChangingLearningResult(double)),this,SLOT(changeLearningResult(double)),Qt::DirectConnection);
 
     connect(timerThread,SIGNAL(sendSignalChangingLabelNotice(QString,QString)),this,SLOT(changeLabelNotice(QString,QString)),Qt::DirectConnection);
     connect(timerThread,SIGNAL(sendSignalChangingToFrontHandMode()),this,SLOT(changeToFrontHandMode()),Qt::DirectConnection);
@@ -43,6 +55,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(timerThread,SIGNAL(sendSignalCheckingBackHand()),showingImageThread,SLOT(moveToCheckBackHand()),Qt::DirectConnection);
     connect(timerThread,SIGNAL(sendSignalChangingToTestingTime()),croppingThread,SLOT(changeToTestingMode()),Qt::DirectConnection);
     connect(timerThread,SIGNAL(sendSignalGetTestingResult()),croppingThread,SLOT(getTestingResult()),Qt::DirectConnection);
+    connect(timerThread,SIGNAL(sendSignalFailTesingResult(QString,QString)),this,SLOT(changeLabelTestingResult(QString,QString)),Qt::DirectConnection);
     connect(timerThread,SIGNAL(sendSignalFinishingColorSubtraction(bool)),this,SLOT(onFinishingColorSubtraction(bool)),Qt::DirectConnection);
 
     connect(recognitionTimerThread,SIGNAL(sendSignalCountDownRecognitionTime(QString)),this,SLOT(countDownRecognitionTimer(QString)),Qt::DirectConnection);
@@ -60,7 +73,7 @@ MainWindow::~MainWindow()
     free(showingImageThread);
     free(croppingThread);
 
-    free(wordDAO);
+    free(words);
 
     free(timerThread);
     free(recognitionTimerThread);
@@ -71,9 +84,9 @@ void MainWindow::onToShow(Mat receivedImage) {
     cv::resize(receivedImage, receivedImage, Size(480,360), 0, 0, CV_INTER_LINEAR);
     QImage handImage = cvMatToQImage(receivedImage);
     if (!handImage.isNull()) {
-        QPixmap pixmapObject = QPixmap::fromImage(handImage);
-        if (!pixmapObject.isNull()) {
-            ui->lbFrame->setPixmap(pixmapObject);
+        framePixmap = QPixmap::fromImage(handImage);
+        if (!framePixmap.isNull()) {
+            ui->lbFrame->setPixmap(framePixmap);
         }
     }
 }
@@ -87,7 +100,8 @@ void MainWindow::changeLabelNotice(QString noticeStr) {
     ui->lbNotify->setText(noticeStr);
 }
 
-void MainWindow::changeLabelTestingResult(QString noticeStr) {
+void MainWindow::changeLabelTestingResult(QString noticeStr, QString colorStr) {
+    ui->lbTestingResult->setStyleSheet(colorStr);
     ui->lbTestingResult->setText(noticeStr);
 }
 
@@ -118,6 +132,8 @@ void MainWindow::onFinishingColorSubtraction(bool result) {
         initiateSelectingFunctionInterface();
         croppingThread->changeToSelectingFunctionMode();
     } else {
+        ui->lbTestingResult->setText(QString::fromUtf8("Đang Tiến Hành!"));
+        ui->lbTestingResult->setStyleSheet("color: black");
         showingImageThread->setToDefaults();
     }
 }
@@ -126,17 +142,24 @@ void MainWindow::countDownRecognitionTimer(QString time) {
     ui->lbRecognitionTimer->setText(time);
 }
 
-void MainWindow::changeRecognitionResult(QString result) {
-    ui->lbRecognitionResult->setText(result);
+void MainWindow::changeRecognitionResult(double result) {
+    QString resultStr = words->getMeanByID(result);
+    ui->lbRecognitionResult->setText(resultStr);
+}
+
+void MainWindow::changeLearningResult(double result) {
+    QString resultStr = words->getMeanByID(result);
+    ui->lbLearningResult->setText(resultStr);
 }
 
 void MainWindow::updateRecognitionContent() {
-    QString result = croppingThread->getRegResult();
-    if (result != "0") { // no detecting hand
+    double result = croppingThread->getRegResult();
+    if (result != 0) { // no detecting hand
         //  update content
-        recognitionContent += " " + result;
+        QString resultStr = words->getMeanByID(result);
+        recognitionContent += " " + resultStr;
         ui->lbRecognitionContent->setText(recognitionContent);
-        if (result == "5") { // end sign
+        if (result == 5) { // end sign
             // speak
             // initiate selecting interface
             initiateSelectingFunctionInterface();
@@ -156,8 +179,32 @@ void MainWindow::changeLearningColor(QString colorStr) {
     ui->btnLearning->setStyleSheet(colorStr);
 }
 
-void MainWindow::changeToSelectingFunction() {
+void MainWindow::changeUpColor(QString colorStr) {
+    ui->btnUp->setStyleSheet(colorStr);
+}
 
+void MainWindow::changeDownColor(QString colorStr) {
+    ui->btnDown->setStyleSheet(colorStr);
+}
+
+void MainWindow::moveToLowerWord() {
+    int rowNumber = ui->lwWord->currentRow() + 1;
+    if (rowNumber < ui->lwWord->count()) {
+        ui->lwWord->setCurrentRow(rowNumber);
+    }
+    changeImageByWordID(rowNumber);
+}
+
+void MainWindow::moveToUpperWord() {
+    int rowNumber = ui->lwWord->currentRow() -1;
+    if (rowNumber >= 0) {
+        ui->lwWord->setCurrentRow(rowNumber);
+    }
+    changeImageByWordID(rowNumber);
+}
+
+void MainWindow::changeToSelectingFunction() {
+    initiateSelectingFunctionInterface();
 }
 
 void MainWindow::changeToRecognitionFunciton() {
@@ -173,7 +220,7 @@ void MainWindow::changeToRecognitionFunciton() {
 }
 
 void MainWindow::changeToLearningFunction() {
-
+    initiateLearningInterface();
 }
 
 void MainWindow::initiateSelectingFunctionInterface() {
@@ -185,19 +232,28 @@ void MainWindow::initiateSelectingFunctionInterface() {
     ui->gbRecognitionResult->hide();
     ui->gbRecognitionTimer->hide();
 
+    ui->btnDown->hide();
+    ui->btnUp->hide();
+    ui->gbLearningNotify->hide();
+    ui->gbLearningResult->hide();
+    ui->gbListWord->hide();
+
+
     ui->gbNotify->show();
     ui->lbNotify->setText("Hãy chọn chức năng mong muốn bằng cách đưa ký hiệu hình bên vào vùng chức năng đó!");
     ui->btnLearning->show();
     ui->btnRecognition->show();
+
+    ui->gbTutorial->show();
 }
 
 void MainWindow::initiateRecognitionInterface() {
     ui->btnRecognition->hide();
     ui->btnLearning->hide();
-
     ui->gbTestingResult->hide();
     ui->gbCountDownTime->hide();
     ui->gbNotify->hide();
+    ui->gbTutorial->hide();
 
     ui->gbRecognitionContent->show();
     ui->gbRecognitionNotify->show();
@@ -206,17 +262,49 @@ void MainWindow::initiateRecognitionInterface() {
 }
 
 void MainWindow::initiateLearningInterface() {
+    ui->btnRecognition->hide();
+    ui->btnLearning->hide();
+    ui->gbTestingResult->hide();
+    ui->gbCountDownTime->hide();
+    ui->gbNotify->hide();
+    ui->gbTutorial->hide();
+    \
+    ui->btnDown->show();
+    ui->btnUp->show();
+    ui->gbLearningNotify->show();
+    ui->gbLearningResult->show();
 
+    ui->lwWord->setCurrentRow(0);
+    changeImageByWordID(0);
+    ui->gbListWord->show();
+}
+
+void MainWindow::changeImageByWordID(int wordID) {
+    QString linkImage = words->getLinkByID(wordID);
+    learningImagePixmap = QPixmap(linkImage);
+    if (!learningImagePixmap.isNull()) {
+        ui->lbLearningImage->setPixmap(learningImagePixmap);
+    }
 }
 
 void MainWindow::initiateColorSubtractionInterface() {
     ui->btnRecognition->hide();
     ui->btnLearning->hide();
+    ui->gbTutorial->hide();
 
     ui->gbRecognitionContent->hide();
     ui->gbRecognitionNotify->hide();
     ui->gbRecognitionResult->hide();
     ui->gbRecognitionTimer->hide();
+
+    ui->btnDown->hide();
+    ui->btnUp->hide();
+    ui->gbLearningNotify->hide();
+    ui->gbLearningResult->hide();
+    ui->gbListWord->hide();
+
+    ui->lbTestingResult->setText(QString::fromUtf8("Đang Tiến Hành!"));
+    ui->lbTestingResult->setStyleSheet("color: black");
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
@@ -224,12 +312,12 @@ void MainWindow::closeEvent(QCloseEvent *event) {
     while(!retrievingFrameThread->isFinished());
     showingImageThread->STOP = true;
     while(!showingImageThread->isFinished());
-    croppingThread->start(QThread::HighestPriority);
+    croppingThread->STOP = true;
     while(!croppingThread->isFinished());
     timerThread->STOP = true;
     timerThread->terminate();
     while(!timerThread->isFinished());
     recognitionTimerThread->STOP = true;
-   while(!recognitionTimerThread->isFinished());
+    while(!recognitionTimerThread->isFinished());
     QMainWindow::closeEvent(event);
 }

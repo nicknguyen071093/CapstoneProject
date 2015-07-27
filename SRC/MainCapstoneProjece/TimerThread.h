@@ -19,15 +19,19 @@ private:
     //    int countDownAnalyzingBackgroundNumber;
 signals:
     void sendSignalChangingToFrontHandMode();
-    bool sendSignalToCheckFirst();
     void sendSignalChangingToBackHandMode();
     void sendSignalChangingToBinaryImage();
+     void sendSignalChangingToTestingTime();
+     void sendSignalFinishingColorSubtraction(bool);
+
     void sendSignalCheckingFrontHand();
-    void sendSignalChangingToTestingTime();
-    bool sendSignalGetTestingResult();
-    void sendSignalFinishingColorSubtraction(bool);
     void sendSignalCheckingBackHand();
+
+    bool sendSignalGetTestingResult();
+
     void sendSignalChangingLabelNotice(QString,QString);
+    void sendSignalFailTesingResult(QString,QString);
+
 public slots:
     void continueCountDown();
 
