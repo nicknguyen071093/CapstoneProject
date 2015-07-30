@@ -119,7 +119,18 @@ void CroppingImage::run() {
                 str += getFeatures3x3(croppedInnerHand,currentFeatures,total);
                 str += handGesture->getLinesFeatures(currentFeatures) + " ";
                 total =  (double) (croppedXuongHand.total() - countNonZero(croppedXuongHand));
-                str += getFeatures4x4(croppedXuongHand,currentFeatures,total);
+                if (total != 0) {
+                    str += getFeatures4x4(croppedXuongHand,currentFeatures,total);
+                } else {
+                    for (int i = 0; i < 16; ++i) {
+                        currentFeatures++;
+                        if (currentFeatures != 73) {
+                            str += QString::number(currentFeatures + 1) + ":0 ";
+                        } else {
+                            str += QString::number(currentFeatures + 1) + ":0";
+                        }
+                    }
+                }
                 emit sendingCroppedImage(croppedHand.clone(),croppedBinHand.clone(),croppedInnerHand.clone(),croppedXuongHand.clone(),str);
             }
             enableToCrop = false;
@@ -142,7 +153,7 @@ QString CroppingImage::getFeature1of3VerticalAreas(Mat image, int &currentFeatur
         double feature = (double) (subMat.total()-countNonZero(subMat))
                 / total;
         currentFeatures++;
-        str += QString::number(currentFeatures) + ":" + QString::number(feature) + " ";
+        str += QString::number(currentFeatures + 1) + ":" + QString::number(feature) + " ";
     }
     return str;
 }
@@ -162,7 +173,7 @@ QString CroppingImage::getFeature1of3HorizontalAreas(Mat image, int &currentFeat
         double feature = (double) (subMat.total()-countNonZero(subMat))
                 / total;
         currentFeatures++;
-        str += QString::number(currentFeatures) + ":" + QString::number(feature) + " ";
+        str += QString::number(currentFeatures + 1) + ":" + QString::number(feature) + " ";
     }
     return str;
 }
@@ -181,22 +192,22 @@ QString CroppingImage::getFeatures1of2VerticalAndHorizontalAreas(Mat image, int 
     double feature = (double) (subImage.total()-countNonZero(subImage))
             / total;
     currentFeatures++;
-    str += QString::number(currentFeatures) + ":" + QString::number(feature) + " ";
+    str += QString::number(currentFeatures + 1) + ":" + QString::number(feature) + " ";
     Rect rect2(halfWidth, 0, halfWidth, halfHeight);
     subImage = image(rect2);
     feature = (double) (subImage.total()-countNonZero(subImage)) / total;
     currentFeatures++;
-    str += QString::number(currentFeatures) + ":" + QString::number(feature) + " ";
+    str += QString::number(currentFeatures + 1) + ":" + QString::number(feature) + " ";
     Rect rect3(0, halfHeight, halfWidth, halfHeight);
     subImage = image(rect3);
     feature = (double) (subImage.total()-countNonZero(subImage))  / total;
     currentFeatures++;
-    str += QString::number(currentFeatures) + ":" + QString::number(feature) + " ";
+    str += QString::number(currentFeatures + 1) + ":" + QString::number(feature) + " ";
     Rect rect4(halfWidth, halfHeight, halfWidth, halfHeight);
     subImage = image(rect4);
     feature = (double) (subImage.total()-countNonZero(subImage)) / total;
     currentFeatures++;
-    str += QString::number(currentFeatures) + ":" + QString::number(feature) + " ";
+    str += QString::number(currentFeatures + 1) + ":" + QString::number(feature) + " ";
     return str;
 }
 
@@ -213,12 +224,12 @@ QString CroppingImage::getFeature4CornerAreas(Mat image, int &currentFeatures, d
     //    cout << "total:" << total;
     for (int row = 0; row < 96; row++) {
         for (int col = 0; col < traversalWidth; col++) {
-            if (image.at<uchar>(row, col) != 255) {
+            if (image.at<uchar>(row, col) != 0) {
                 numberBlackPixels++;
             }
         }
         for (int col = 95; col >= (traversalWidth - 1); col--) {
-            if (image.at<uchar>(row, col) != 255) {
+            if (image.at<uchar>(row, col) != 0) {
                 numberBlackPixels1++;
             }
         }
@@ -226,22 +237,22 @@ QString CroppingImage::getFeature4CornerAreas(Mat image, int &currentFeatures, d
     }
     double feature = (TOTAL_CORNER_PIXELS - numberBlackPixels) / total;
     currentFeatures ++;
-    str += QString::number(currentFeatures) + ":" + QString::number(feature) + " ";
+    str += QString::number(currentFeatures + 1) + ":" + QString::number(feature) + " ";
     feature = (TOTAL_CORNER_PIXELS - numberBlackPixels1) / total;
     currentFeatures ++;
-    str += QString::number(currentFeatures) + ":" + QString::number(feature) + " ";
+    str += QString::number(currentFeatures + 1) + ":" + QString::number(feature) + " ";
     // -- ---
     traversalWidth = 0;
     numberBlackPixels = 0;
     numberBlackPixels1 = 0;
     for (int row = 0; row < 96; row++) {
         for (int col = 0; col <= traversalWidth; col++) {
-            if (image.at<uchar>(row, col) != 255) {
+            if (image.at<uchar>(row, col) != 0) {
                 numberBlackPixels++;
             }
         }
         for (int col = 95; col >= traversalWidth; col--) {
-            if (image.at<uchar>(row, col) != 255) {
+            if (image.at<uchar>(row, col) != 0) {
                 numberBlackPixels1++;
             }
         }
@@ -249,10 +260,10 @@ QString CroppingImage::getFeature4CornerAreas(Mat image, int &currentFeatures, d
     }
     feature = (TOTAL_CORNER_PIXELS - numberBlackPixels)  / total;
     currentFeatures ++;
-    str += QString::number(currentFeatures) + ":" + QString::number(feature) + " ";
+    str += QString::number(currentFeatures + 1) + ":" + QString::number(feature) + " ";
     feature =  (TOTAL_CORNER_PIXELS - numberBlackPixels1) / total;
     currentFeatures ++;
-    str += QString::number(currentFeatures) + ":" + QString::number(feature) + " ";
+    str += QString::number(currentFeatures + 1) + ":" + QString::number(feature) + " ";
     return str;
 }
 
@@ -271,7 +282,7 @@ QString CroppingImage::getFeatures3x3(Mat image, int& currentFeatures, double to
             currentFeatures++;
             //            nodeTest[currentFeatures-1].index = currentFeatures;
             //            nodeTest[currentFeatures-1].value = feature;
-            str += QString::number(currentFeatures) + ":" + QString::number(feature) + " ";
+            str += QString::number(currentFeatures + 1) + ":" + QString::number(feature) + " ";
         }
     }
     return str;
@@ -292,7 +303,11 @@ QString CroppingImage::getFeatures4x4(Mat image, int &currentFeatures, double to
             currentFeatures++;
             //            nodeTest[currentFeatures-1].index = currentFeatures;
             //            nodeTest[currentFeatures-1].value = feature;
-            str += QString::number(currentFeatures) + ":" + QString::number(feature) + " ";
+            if (currentFeatures != 73) {
+                str += QString::number(currentFeatures + 1) + ":" + QString::number(feature) + " ";
+            } else {
+                str += QString::number(currentFeatures + 1) + ":" + QString::number(feature);
+            }
         }
     }
     return str;

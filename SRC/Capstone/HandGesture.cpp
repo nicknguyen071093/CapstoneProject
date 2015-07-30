@@ -41,7 +41,7 @@ bool HandGesture::detectIsHand(Mat binaryMat) {
         boundingRect = cv::boundingRect(contours[cMaxId]);
         if (boundingRect.area() == 0) {
             isHand = false;
-        } else if (boundingRect.height < 70 || boundingRect.width < 70) {
+        } else if (boundingRect.height < 50 || boundingRect.width < 50) {
             isHand = false;
         } else {
             ratioHeightAndWidth = (double) boundingRect.height / (double) boundingRect.width;
@@ -142,9 +142,9 @@ QString HandGesture::getHeightFeatures(int& currentFeatures) {
     currentFeatures++;
     double ratio = ((double) (boundingRect.height) / (double) (boundingRect.width)) / 2;
     if (ratio > 1) {
-        ratio = 1 - (ratio - 1.03);
+        ratio = 0.999999;
     }
-    return QString::number(currentFeatures) + ":" + QString::number(ratio);
+    return QString::number(currentFeatures + 1) + ":" + QString::number(ratio);
 }
 
 QString HandGesture::getRadiusFeatures(int& currentFeatures) {
@@ -155,13 +155,13 @@ QString HandGesture::getRadiusFeatures(int& currentFeatures) {
     } else {
         ratio = (double)inCircleRadius / ((double)boundingRect.width/2);
     }
-    return QString::number(currentFeatures) + ":" + QString::number(ratio);
+    return QString::number(currentFeatures + 1) + ":" + QString::number(ratio);
 }
 
 QString HandGesture::getAngleFeatures(int& currentFeatures) {
     currentFeatures++;
     double ratio = ((double)correctDefects.size() / 3) / 5;
-    return QString::number(currentFeatures) + ":" + QString::number(ratio);
+    return QString::number(currentFeatures + 1) + ":" + QString::number(ratio);
 }
 
 QString HandGesture::getLinesFeatures(int& currentFeatures) {
@@ -169,39 +169,39 @@ QString HandGesture::getLinesFeatures(int& currentFeatures) {
     double totalLen = totalLenLine;
     QString str = "";
     if (total > 0) {
-        str += QString::number(++currentFeatures) + ":" + QString::number(n0To45Line / total) + " ";
-        str += QString::number(++currentFeatures) + ":" + QString::number(totalLen0To45Line / totalLen) + " ";
-        str += QString::number(++currentFeatures) + ":" + QString::number(n46To90Line / total) + " ";
-        str += QString::number(++currentFeatures) + ":" + QString::number(totalLen46To90Line / totalLen) + " ";
-        str += QString::number(++currentFeatures) + ":" + QString::number(n91To135Line / total) + " ";
-        str += QString::number(++currentFeatures) + ":" + QString::number(totalLen91To135Line / totalLen) + " ";
-        str += QString::number(++currentFeatures) + ":" + QString::number(n136To180Line / total) + " ";
-        str += QString::number(++currentFeatures) + ":" + QString::number(totalLen136To180Line / totalLen) + " ";
-        str += QString::number(++currentFeatures) + ":" + QString::number(nN1ToN45Line / total) + " ";
-        str += QString::number(++currentFeatures) + ":" + QString::number(totalLenN1ToN45Line / totalLen) + " ";
-        str += QString::number(++currentFeatures) + ":" + QString::number(nN46ToN90Line / total) + " ";
-        str += QString::number(++currentFeatures) + ":" + QString::number(totalLenN46ToN90Line / totalLen) + " ";
-        str += QString::number(++currentFeatures) + ":" + QString::number(nN91ToN135Line / total) + " ";
-        str += QString::number(++currentFeatures) + ":" + QString::number(totalLenN91ToN135Line / totalLen) + " ";
-        str += QString::number(++currentFeatures) + ":" + QString::number(nN136ToN179Line / total) + " ";
-        str += QString::number(++currentFeatures) + ":" + QString::number(totalLenN136ToN179Line / totalLen);
+        str += QString::number((++currentFeatures) + 1) + ":" + QString::number(n0To45Line / total) + " ";
+        str += QString::number((++currentFeatures) + 1) + ":" + QString::number(totalLen0To45Line / totalLen) + " ";
+        str += QString::number((++currentFeatures) + 1) + ":" + QString::number(n46To90Line / total) + " ";
+        str += QString::number((++currentFeatures) + 1) + ":" + QString::number(totalLen46To90Line / totalLen) + " ";
+        str += QString::number((++currentFeatures) + 1) + ":" + QString::number(n91To135Line / total) + " ";
+        str += QString::number((++currentFeatures) + 1) + ":" + QString::number(totalLen91To135Line / totalLen) + " ";
+        str += QString::number((++currentFeatures) + 1) + ":" + QString::number(n136To180Line / total) + " ";
+        str += QString::number((++currentFeatures) + 1) + ":" + QString::number(totalLen136To180Line / totalLen) + " ";
+        str += QString::number((++currentFeatures) + 1) + ":" + QString::number(nN1ToN45Line / total) + " ";
+        str += QString::number((++currentFeatures) + 1) + ":" + QString::number(totalLenN1ToN45Line / totalLen) + " ";
+        str += QString::number((++currentFeatures) + 1) + ":" + QString::number(nN46ToN90Line / total) + " ";
+        str += QString::number((++currentFeatures) + 1) + ":" + QString::number(totalLenN46ToN90Line / totalLen) + " ";
+        str += QString::number((++currentFeatures) + 1) + ":" + QString::number(nN91ToN135Line / total) + " ";
+        str += QString::number((++currentFeatures) + 1) + ":" + QString::number(totalLenN91ToN135Line / totalLen) + " ";
+        str += QString::number((++currentFeatures) + 1) + ":" + QString::number(nN136ToN179Line / total) + " ";
+        str += QString::number((++currentFeatures) + 1) + ":" + QString::number(totalLenN136ToN179Line / totalLen);
     } else {
-        str += QString::number(++currentFeatures) + ":0 ";
-        str += QString::number(++currentFeatures) + ":0 ";
-        str += QString::number(++currentFeatures) + ":0 ";
-        str += QString::number(++currentFeatures) + ":0 ";
-        str += QString::number(++currentFeatures) + ":0 ";
-        str += QString::number(++currentFeatures) + ":0 ";
-        str += QString::number(++currentFeatures) + ":0 ";
-        str += QString::number(++currentFeatures) + ":0 ";
-        str += QString::number(++currentFeatures) + ":0 ";
-        str += QString::number(++currentFeatures) + ":0 ";
-        str += QString::number(++currentFeatures) + ":0 ";
-        str += QString::number(++currentFeatures) + ":0 ";
-        str += QString::number(++currentFeatures) + ":0 ";
-        str += QString::number(++currentFeatures) + ":0 ";
-        str += QString::number(++currentFeatures) + ":0 ";
-        str += QString::number(++currentFeatures) + ":0";
+        str += QString::number((++currentFeatures) + 1) + ":0 ";
+        str += QString::number((++currentFeatures) + 1) + ":0 ";
+        str += QString::number((++currentFeatures) + 1) + ":0 ";
+        str += QString::number((++currentFeatures) + 1) + ":0 ";
+        str += QString::number((++currentFeatures) + 1) + ":0 ";
+        str += QString::number((++currentFeatures) + 1) + ":0 ";
+        str += QString::number((++currentFeatures) + 1) + ":0 ";
+        str += QString::number((++currentFeatures) + 1) + ":0 ";
+        str += QString::number((++currentFeatures) + 1) + ":0 ";
+        str += QString::number((++currentFeatures) + 1) + ":0 ";
+        str += QString::number((++currentFeatures) + 1) + ":0 ";
+        str += QString::number((++currentFeatures) + 1) + ":0 ";
+        str += QString::number((++currentFeatures) + 1) + ":0 ";
+        str += QString::number((++currentFeatures) + 1) + ":0 ";
+        str += QString::number((++currentFeatures) + 1) + ":0 ";
+        str += QString::number((++currentFeatures) + 1) + ":0";
     }
     return str;
 }

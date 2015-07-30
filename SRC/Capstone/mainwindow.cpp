@@ -193,7 +193,6 @@ void MainWindow::on_btnTakepic_clicked()
 }
 
 
-
 void MainWindow::on_pushButton_6_clicked()
 {
     file->close();
@@ -208,7 +207,8 @@ void MainWindow::on_pushButton_6_clicked()
 
 
 void MainWindow::changeToFrontHandMode() {
-    showingImageThread->setMode(showingImageThread->GET_AVG_BACKGROUND);
+//    showingImageThread->setMode(showingImageThread->GET_AVG_BACKGROUND);
+    showingImageThread->setMode(showingImageThread->GETTING_BACKGROUND_MODE);
 }
 
 void MainWindow::changeToBackHandMode() {

@@ -13,13 +13,20 @@ ShowingImageThread::ShowingImageThread(QObject *parent) :
     green = Scalar(0,255,0);
     white = Scalar(255,255,255);
     black = Scalar(0,0,0);
-    initCLowerUpper(30, 30, 7, 7, 7, 7);
+    initCLowerUpper(40, 40, 10, 10, 10, 10);
     initCBackLowerUpper(50, 50, 3, 3, 3, 3);
     initBackPoints();
     initHandPoints();
+    // moi them
+    binMat = Mat(240,320,CV_8UC1);
+    showMat = Mat(240,320,CV_8UC3);
+    //
 }
 
 void ShowingImageThread::run() {
+    vector<int> compression_params;
+    compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
+    compression_params.push_back(100);
     while(true) {
         QMutex mutex;
         mutex.lock();
@@ -27,13 +34,100 @@ void ShowingImageThread::run() {
         mutex.unlock();
         if (enableToShow) {
             flip(frame,frame,1);
-            if (mode == DETECTION_MODE) {
-//                binaryMat = imread("/home/nickseven/Laine/bin.jpg",CV_LOAD_IMAGE_GRAYSCALE);
-                frame = imread("/home/nickseven/Laine/frame.jpg");
+            if (mode == HAND_DETECTION_MODE) {
+                binMat.setTo(Scalar(0));
+                showMat.setTo(Scalar(0));
+                GaussianBlur(frame, blurMat, Size(7, 7), 3);
+                cvtColor(blurMat, labMat, COLOR_BGR2Lab);
+                bool in;
+                double valueLight, valueWarn, valueCool;
+                Vec3b intensityFrame;
+                for (int i = 0; i < 320; i++) {
+                    for (int j = 0; j < 240; j++) {
+                        in = false;
+                        intensityFrame = labMat.at<Vec3b>(j,i);
+                        valueLight =(double) intensityFrame.val[0];
+                        valueWarn =(double) intensityFrame.val[1];
+                        valueCool =(double) intensityFrame.val[2];
+                        if (valueLight >= lowerBoundArray[i][j].val[0] && valueLight <= upperBoundArray[i][j].val[0]) {
+                            if (valueWarn >= lowerBoundArray[i][j].val[1] && valueWarn <= upperBoundArray[i][j].val[1]) {
+                                if (valueCool >= lowerBoundArray[i][j].val[2] && valueCool <= upperBoundArray[i][j].val[2]) {
+                                    in = true;
+                                }
+                            }
+                        }
+                        if (!in) {
+                            if (valueLight >= 60 && valueLight <= 160 && valueWarn >= 112 && valueWarn <= 132 && valueCool >= 97 && valueCool <= 117) {
+
+                            } else {
+                                binMat.at<unsigned char>(j,i) = 255;
+                            }
+                        }
+                    }
+                }
+                Mat element = getStructuringElement(MORPH_ELLIPSE, Size( 2*3 + 1, 2*3 + 1 ), Point( 3, 3 ));
+
+                /// Apply the specified morphology operation
+                morphologyEx(binMat, binMat, CV_MOP_OPEN, element );
+                emit sendImageToCrop(frame.clone(),binMat.clone());
+                frame.copyTo(showMat,binMat);
+            } else if (mode == GETTING_BACKGROUND_MODE) {
+                GaussianBlur(frame, blurMat, Size(7, 7), 3);
+                cvtColor(blurMat, labMat, COLOR_BGR2Lab);
+                double valueLight, valueWarn, valueCool;
+                Vec3b intensity;
+                for (int i = 0; i < 320; i++) {
+                    for (int j = 0; j < 240; j++) {
+                        intensity = labMat.at<Vec3b>(j,i);
+                        valueLight =(double) intensity.val[0];
+                        valueWarn =(double) intensity.val[1];
+                        valueCool =(double) intensity.val[2];
+                        if (valueLight - 60 < 0) {
+                            lowerBoundArray[i][j].val[0] = 0;
+                        } else {
+                            lowerBoundArray[i][j].val[0] = valueLight - 60;
+                        }
+                        if (valueLight + 60 > 255) {
+                            upperBoundArray[i][j].val[0] = 255;
+                        } else {
+                            upperBoundArray[i][j].val[0] =  valueLight + 60;
+                        }
+                        //            cout << "light:" << valueLight << " uper:" << upperBound[i][j].val[0] << " lower:" << lowerBound[i][j].val[0] << endl;
+                        if (valueWarn - 5 < 0) {
+                            lowerBoundArray[i][j].val[1] = 0;
+                        } else {
+                            lowerBoundArray[i][j].val[1] = valueWarn - 5;
+                        }
+                        if (valueWarn + 5 > 255) {
+                            upperBoundArray[i][j].val[1] = 255;
+                        } else {
+                            upperBoundArray[i][j].val[1] =  valueWarn + 5;
+                        }
+
+                        if (valueCool - 5 < 0) {
+                            lowerBoundArray[i][j].val[2] = 0;
+                        } else {
+                            lowerBoundArray[i][j].val[2] = valueCool - 5;
+                        }
+                        if (valueCool + 5 > 255) {
+                            upperBoundArray[i][j].val[2] = 255;
+                        } else {
+                            upperBoundArray[i][j].val[2] =  valueCool + 5;
+                        }
+                    }
+                }
+                mode = HAND_DETECTION_MODE;
+            }else if (mode == DETECTION_MODE) {
+                //                imwrite("../frame.jpg",frame,compression_params);
+                //                frame = imread("../frame.jpg");
+                //                binaryMat = imread("/home/nickseven/Laine/bin.jpg",CV_LOAD_IMAGE_GRAYSCALE);
+                //                frame = imread("/home/nickseven/Laine/frame.jpg");
                 GaussianBlur(frame, blurMat, Size(9, 9), 4);
                 cvtColor(blurMat, labMat, COLOR_BGR2Lab);
-                showMat = produceBinImg();
-                emit sendImageToCrop(frame.clone(),showMat.clone());
+                binMat = produceBinImg();
+                emit sendImageToCrop(frame.clone(),binMat.clone());
+                showMat.setTo(Scalar(black));
+                frame.copyTo(showMat,binMat);
             } else if (mode == BACKGROUND_MODE) {
                 showMat = preSampleBack(frame.clone());
                 //                imwrite("../xulyanh/sample-background.jpg",showMat);
@@ -44,7 +138,9 @@ void ShowingImageThread::run() {
                 showMat = preSampleBackHand(frame.clone());
                 //                imwrite("../xulyanh/sample-backhand.jpg",showMat);
             }  else if (mode == GET_AVG_BACKGROUND) {
-                frame = imread("/home/nickseven/Laine/getavg.jpg");
+                //                frame = imread("/home/nickseven/Laine/getavg.jpg");
+                //                imwrite("../getavg.jpg",frame,compression_params);
+                //                 frame = imread("../getavg.jpg");
                 GaussianBlur(frame, blurMat, Size(9, 9), 4);
                 //                imwrite("../xulyanh/sample-background-blur.jpg",blurMat);
                 cvtColor(blurMat, labMat, COLOR_BGR2Lab);
@@ -58,6 +154,7 @@ void ShowingImageThread::run() {
                 cvtColor(blurMat, labMat, COLOR_BGR2Lab);
                 //                imwrite("../xulyanh/sample-background-lab-mat.jpg",labMat);
                 getRangeForCheckingFrontHand();
+                getRangeForCheckingBackHand();
                 mode = SAMPLE_FRONT_HAND_MODE;
                 //                isGettingFirstFinished = true;
                 emit sendSignalEnableCountDown();
@@ -69,6 +166,8 @@ void ShowingImageThread::run() {
                 if (!checkCurrentAvgFrontHandIsInRange()) {
                     mode = SAMPLE_FRONT_HAND_MODE;
                     emit sendSignalEnableCountDown();
+                } else {
+                    emit sendSignalChangingLabelNotify(QString::fromUtf8("Hệ thống không tìm thấy được bàn tay của bạn trên khung hình tay!"));
                 }
                 showMat = preSampleFrontHand(frame.clone());
             } else if (mode == GETTING_FIRST_AVG_BACK_HAND) {
@@ -89,24 +188,31 @@ void ShowingImageThread::run() {
                 if (!checkCurrentAvgBackHandIsInRange()) {
                     mode = SAMPLE_BACK_HAND_MODE;
                     emit sendSignalEnableCountDown();
+                } else {
+                    emit sendSignalChangingLabelNotify(QString::fromUtf8("Hệ thống không tìm thấy được bàn tay của bạn trên khung hình tay!"));
                 }
                 showMat = preSampleBackHand(frame.clone());
             } else if (mode == GET_AVG_FRONT_HAND) {
-                frame = imread("/home/nickseven/Laine/getavgfh.jpg");
+                //                frame = imread("/home/nickseven/Laine/getavgfh.jpg");
+                //                imwrite("../getavgfh.jpg",frame,compression_params);
+                //                frame = imread("../getavgfh.jpg");
                 GaussianBlur(frame, blurMat, Size(9, 9), 4);
                 //                imwrite("../xulyanh/sample-fronthand-blur.jpg",blurMat);
                 cvtColor(blurMat, labMat, COLOR_BGR2Lab);
                 //                imwrite("../xulyanh/sample-fronthand-lab.jpg",labMat);
                 getSampleHand();
-                mode = GETTING_FIRST_AVG_BACK_HAND;
+                //                mode = GETTING_FIRST_AVG_BACK_HAND;
+                mode = SAMPLE_BACK_HAND_MODE;
             } else if (mode == GET_AVG_BACK_HAND) {
-                frame = imread("/home/nickseven/Laine/getavgbh.jpg");
+                //                frame = imread("/home/nickseven/Laine/getavgbh.jpg");
+                //                imwrite("../getavgbh.jpg",frame,compression_params);
+                //                frame = imread("../getavgbh.jpg");
                 GaussianBlur(frame, blurMat, Size(9, 9), 4);
                 //                imwrite("../xulyanh/sample-backhand-blur.jpg",blurMat);
                 cvtColor(blurMat, labMat, COLOR_BGR2Lab);
                 //                imwrite("../xulyanh/sample-backhand-lab.jpg",labMat);
                 getSampleBackHand();
-                boundariesCorrection();
+                //                boundariesCorrection();
                 mode = DETECTION_MODE;
             }
             emit (toShow(showMat.clone()));
@@ -208,7 +314,7 @@ void ShowingImageThread::getRangeForCheckingFrontHand() {
         intensity = labMat.at<Vec3b>((int) (sampleHandPoints[i].y),(int) (sampleHandPoints[i].x));
         for (int j = 0; j < 3; j++) {
             double value = (double) intensity.val[j];
-            avgColor[i][j] = value;
+            avgCheckingFrontHandColor[i][j] = value;
             //            cout << "I:" << i << " J:" << j << " VA:" << avgColor[i][j] << " cuV:" << value << endl;
             if (value - chekingRangeFrontHandLower[i][j] < 0) {
                 chekingRangeFrontHandLower[i][j] = value;
@@ -224,25 +330,25 @@ void ShowingImageThread::getRangeForCheckingFrontHand() {
 
 void ShowingImageThread::getRangeForCheckingBackHand() {
     for (int i = 0; i < SAMPLE_HAND_NUM; i++) {
-        chekingRangeFrontHandLower[i][0] = 50;
-        chekingRangeFrontHandUpper[i][0] = 50;
-        chekingRangeFrontHandLower[i][1] = 3;
-        chekingRangeFrontHandUpper[i][1] = 3;
-        chekingRangeFrontHandLower[i][2] = 3;
-        chekingRangeFrontHandUpper[i][2] = 3;
+        chekingRangeBackHandLower[i][0] = 50;
+        chekingRangeBackHandUpper[i][0] = 50;
+        chekingRangeBackHandLower[i][1] = 3;
+        chekingRangeBackHandUpper[i][1] = 3;
+        chekingRangeBackHandLower[i][2] = 3;
+        chekingRangeBackHandUpper[i][2] = 3;
     }
     Vec3b intensity;
     for (int i = 0; i < SAMPLE_HAND_NUM; i++) {
         intensity = labMat.at<Vec3b>((int) (sampleBackHandPoints[i].y),(int) (sampleBackHandPoints[i].x));
         for (int j = 0; j < 3; j++) {
             double value = (double) intensity.val[j];
-            avgBackHandColor[i][j] = value;
+            avgCheckingBackHandColor[i][j] = value;
             //            cout << "I:" << i << " J:" << j << " VA:" << avgColor[i][j] << " cuV:" << value << endl;
-            if (value - chekingRangeFrontHandLower[i][j] < 0) {
-                chekingRangeFrontHandLower[i][j] = value;
+            if (value - chekingRangeBackHandLower[i][j] < 0) {
+                chekingRangeBackHandLower[i][j] = value;
             }
-            if ((double) intensity.val[j] + chekingRangeFrontHandUpper[i][j] > 255) {
-                chekingRangeFrontHandUpper[i][j] = 255 - value;
+            if ((double) intensity.val[j] + chekingRangeBackHandUpper[i][j] > 255) {
+                chekingRangeBackHandUpper[i][j] = 255 - value;
             }
             //            cout << "I:" << i << " J:" << j << " VA:" << avgColor[i][j] << endl;
         }
@@ -257,13 +363,13 @@ bool ShowingImageThread::checkCurrentAvgFrontHandIsInRange() {
         //        for (int j = 0; j < 3; j++) {
         //            double lowerValue = avgColor[i][j] - chekingRangeFrontHandLower[i][j];
         //            double uperValue = avgColor[i][j] + chekingRangeFrontHandUpper[i][j];
-        lowerBound.val[0] = avgColor[i][0] - chekingRangeFrontHandLower[i][0];
-        lowerBound.val[1] = avgColor[i][1] - chekingRangeFrontHandLower[i][1];
-        lowerBound.val[2] = avgColor[i][2] - chekingRangeFrontHandLower[i][2];
+        lowerBound.val[0] = avgCheckingFrontHandColor[i][0] - chekingRangeFrontHandLower[i][0];
+        lowerBound.val[1] = avgCheckingFrontHandColor[i][1] - chekingRangeFrontHandLower[i][1];
+        lowerBound.val[2] = avgCheckingFrontHandColor[i][2] - chekingRangeFrontHandLower[i][2];
 
-        upperBound.val[0] = avgColor[i][0] + chekingRangeFrontHandUpper[i][0];
-        upperBound.val[1] = avgColor[i][1] + chekingRangeFrontHandUpper[i][1];
-        upperBound.val[2] = avgColor[i][2] + chekingRangeFrontHandUpper[i][2];
+        upperBound.val[0] = avgCheckingFrontHandColor[i][0] + chekingRangeFrontHandUpper[i][0];
+        upperBound.val[1] = avgCheckingFrontHandColor[i][1] + chekingRangeFrontHandUpper[i][1];
+        upperBound.val[2] = avgCheckingFrontHandColor[i][2] + chekingRangeFrontHandUpper[i][2];
         if (intensity.val[0] >= lowerBound.val[0] && intensity.val[0] <= upperBound.val[0]) {
             if (intensity.val[1] >= lowerBound.val[1] && intensity.val[1] <= upperBound.val[1]) {
                 if (intensity.val[2] >= lowerBound.val[2] && intensity.val[2] <= upperBound.val[2]) {
@@ -287,13 +393,13 @@ bool ShowingImageThread::checkCurrentAvgBackHandIsInRange() {
         //        for (int j = 0; j < 3; j++) {
         //            double lowerValue = avgColor[i][j] - chekingRangeFrontHandLower[i][j];
         //            double uperValue = avgColor[i][j] + chekingRangeFrontHandUpper[i][j];
-        lowerBound.val[0] = avgBackHandColor[i][0] - chekingRangeFrontHandLower[i][0];
-        lowerBound.val[1] = avgBackHandColor[i][1] - chekingRangeFrontHandLower[i][1];
-        lowerBound.val[2] = avgBackHandColor[i][2] - chekingRangeFrontHandLower[i][2];
+        lowerBound.val[0] = avgCheckingBackHandColor[i][0] - chekingRangeBackHandLower[i][0];
+        lowerBound.val[1] = avgCheckingBackHandColor[i][1] - chekingRangeBackHandLower[i][1];
+        lowerBound.val[2] = avgCheckingBackHandColor[i][2] - chekingRangeBackHandLower[i][2];
 
-        upperBound.val[0] = avgBackHandColor[i][0] + chekingRangeFrontHandUpper[i][0];
-        upperBound.val[1] = avgBackHandColor[i][1] + chekingRangeFrontHandUpper[i][1];
-        upperBound.val[2] = avgBackHandColor[i][2] + chekingRangeFrontHandUpper[i][2];
+        upperBound.val[0] = avgCheckingBackHandColor[i][0] + chekingRangeBackHandUpper[i][0];
+        upperBound.val[1] = avgCheckingBackHandColor[i][1] + chekingRangeBackHandUpper[i][1];
+        upperBound.val[2] = avgCheckingBackHandColor[i][2] + chekingRangeBackHandUpper[i][2];
         if (intensity.val[0] >= lowerBound.val[0] && intensity.val[0] <= upperBound.val[0]) {
             if (intensity.val[1] >= lowerBound.val[1] && intensity.val[1] <= upperBound.val[1]) {
                 if (intensity.val[2] >= lowerBound.val[2] && intensity.val[2] <= upperBound.val[2]) {
@@ -322,11 +428,11 @@ void ShowingImageThread::getSampleBackHand() {
 
 Mat ShowingImageThread::produceBinImg() {
     //  int boxExtension = 0;
-    //    boundariesCorrection();
+    boundariesCorrection();
     produceBinHandImg();
     produceBinBackImg();
     bitwise_and(binTmpMat, binTmpMat2, binTmpMat);
-    imwrite("../xulyanh/subtracted-binary-image.jpg",binTmpMat);
+    //    imwrite("../xulyanh/subtracted-binary-image.jpg",binTmpMat);
     binTmpMat.copyTo(tmpMat);
     binTmpMat.copyTo(binMat);
     //    Rect roiRect = makeBoundingBox(tmpMat);
@@ -641,11 +747,11 @@ void ShowingImageThread::setMode(int mode) {
 void ShowingImageThread::setToDefaults() {
     initCLowerUpper(30, 30, 7, 7, 7, 7);
     initCBackLowerUpper(50, 50, 3, 3, 3, 3);
-//    sampleFrontHand.clear();
-//    sampleBackHand.clear();
+    //    sampleFrontHand.clear();
+    //    sampleBackHand.clear();
     additionAvgBackColor.clear();
     mode = BACKGROUND_MODE;
-    STOP = false;
+    //    STOP = false;
     enableToShow = false;
 }
 

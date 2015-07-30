@@ -41,6 +41,10 @@ public:
     const static int CHECKING_CHANGING_AVG_FRONT_HAND = 9;
     //
     const static int CHECKING_CHANGING_AVG_BACK_HAND = 11;
+    //
+    const static int GETTING_BACKGROUND_MODE = 12;
+    //
+    const static int HAND_DETECTION_MODE = 13;
     void setMode(int);
     void setToDefaults();
 
@@ -86,6 +90,9 @@ private:
     // array to store the frond hand's feature range
     double chekingRangeFrontHandLower[SAMPLE_HAND_NUM][3];
     double chekingRangeFrontHandUpper[SAMPLE_HAND_NUM][3];
+    double chekingRangeBackHandLower[SAMPLE_HAND_NUM][3];
+    double chekingRangeBackHandUpper[SAMPLE_HAND_NUM][3];
+
     // array to store the back hand's feature range
     double cBackHandLower[SAMPLE_HAND_NUM][3];
     double cBackHandUpper[SAMPLE_HAND_NUM][3];
@@ -113,8 +120,12 @@ private:
     vector<Vec3b> additionAvgBackColor;
     // array to store resampling colors of the front hand
     double avgColor[SAMPLE_HAND_NUM][3];
+    //
+    double avgCheckingFrontHandColor[SAMPLE_HAND_NUM][3];
     // array to store resampling colors of the back hand
     double avgBackHandColor[SAMPLE_HAND_NUM][3];
+    //
+    double avgCheckingBackHandColor[SAMPLE_HAND_NUM][3];
     // array of Mats which stores points in range of hand.
     Mat sampleMats[SAMPLE_HAND_NUM];
     // array of Mats which stores points in range of background.
@@ -123,6 +134,18 @@ private:
     Scalar lowerBound;
     // to store upper value of range of a specific sample
     Scalar upperBound;
+
+
+    //
+
+    // to store lower value of range of a specific sample
+    Scalar lowerBoundArray[320][240];
+    // to store upper value of range of a specific sample
+    Scalar upperBoundArray[320][240];
+
+
+    //
+
     // initiate range of sample color of hand
     void initCLowerUpper(double , double , double , double ,
                          double , double );
@@ -170,6 +193,7 @@ signals:
     void toShow(Mat);
     void sendImageToCrop(Mat,Mat);
     void sendSignalEnableCountDown();
+    void sendSignalChangingLabelNotify(QString);
 public slots:
     void onChangingImage(Mat);
     void moveToCheckFrontHand();
