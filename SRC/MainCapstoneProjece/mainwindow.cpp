@@ -30,10 +30,9 @@ MainWindow::MainWindow(QWidget *parent) :
     qRegisterMetaType<QItemSelection>("QItemSelection");
     connect(retrievingFrameThread,SIGNAL(changingFrame(Mat)),showingImageThread,SLOT(onChangingImage(Mat)),Qt::DirectConnection);
 
-    connect(showingImageThread,SIGNAL(toShow(Mat)),this,SLOT(onToShow(Mat)),Qt::DirectConnection);
+    connect(showingImageThread,SIGNAL(toShow(Mat)),this,SLOT(onToShow(Mat)));
     connect(showingImageThread,SIGNAL(sendImageToCrop(Mat,Mat)),croppingThread,SLOT(receiveBinaryImage(Mat,Mat)),Qt::DirectConnection);
 
-    //    connect(croppingThread,SIGNAL(sendSignalSendingFeatures(QString)),translatingThread,SLOT(receiveFeatures(QString)),Qt::DirectConnection);
     connect(croppingThread,SIGNAL(sendSignalToChangeLabelTestingResult(QString,QString)),this,SLOT(changeLabelTestingResult(QString,QString)),Qt::DirectConnection);
     connect(croppingThread,SIGNAL(sendSignalSelectingRecognition()),this,SLOT(changeToRecognitionFunciton()),Qt::DirectConnection);
     connect(croppingThread,SIGNAL(sendSignalSelectingLearning()),this,SLOT(changeToLearningFunction()),Qt::DirectConnection);
@@ -81,7 +80,7 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::onToShow(Mat receivedImage) {
-    cv::resize(receivedImage, receivedImage, Size(480,360), 0, 0, CV_INTER_LINEAR);
+//    cv::resize(receivedImage, receivedImage, Size(480,360), 0, 0, CV_INTER_LINEAR);
     QImage handImage = cvMatToQImage(receivedImage);
     if (!handImage.isNull()) {
         framePixmap = QPixmap::fromImage(handImage);
@@ -191,16 +190,16 @@ void MainWindow::moveToLowerWord() {
     int rowNumber = ui->lwWord->currentRow() + 1;
     if (rowNumber < ui->lwWord->count()) {
         ui->lwWord->setCurrentRow(rowNumber);
+        changeImageByWordID(rowNumber);
     }
-    changeImageByWordID(rowNumber);
 }
 
 void MainWindow::moveToUpperWord() {
     int rowNumber = ui->lwWord->currentRow() -1;
     if (rowNumber >= 0) {
         ui->lwWord->setCurrentRow(rowNumber);
+        changeImageByWordID(rowNumber);
     }
-    changeImageByWordID(rowNumber);
 }
 
 void MainWindow::changeToSelectingFunction() {
@@ -279,8 +278,8 @@ void MainWindow::initiateLearningInterface() {
     ui->gbListWord->show();
 }
 
-void MainWindow::changeImageByWordID(int wordID) {
-    QString linkImage = words->getLinkByID(wordID);
+void MainWindow::changeImageByWordID(int index) {
+    QString linkImage = words->getLinkBySelectedIndex(index);
     learningImagePixmap = QPixmap(linkImage);
     if (!learningImagePixmap.isNull()) {
         ui->lbLearningImage->setPixmap(learningImagePixmap);
@@ -314,9 +313,9 @@ void MainWindow::closeEvent(QCloseEvent *event) {
     while(!showingImageThread->isFinished());
     croppingThread->STOP = true;
     while(!croppingThread->isFinished());
-    timerThread->STOP = true;
-    timerThread->terminate();
-    while(!timerThread->isFinished());
+//    timerThread->STOP = true;
+//    timerThread->terminate();
+//    while(!timerThread->isFinished());
     recognitionTimerThread->STOP = true;
     while(!recognitionTimerThread->isFinished());
     QMainWindow::closeEvent(event);

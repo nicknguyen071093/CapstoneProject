@@ -11,7 +11,7 @@ class Words
 public:
     Words();
     QStringList getWords();
-    QString getLinkByID(int);
+    QString getLinkBySelectedIndex(int);
     QString getMeanByID(int);
 private:
     QMap<int, WordDTO> wordsMap;

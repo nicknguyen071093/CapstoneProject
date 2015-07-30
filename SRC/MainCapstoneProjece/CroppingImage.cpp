@@ -57,14 +57,14 @@ void CroppingImage::run() {
                     selectPoint = handGesture->getSelectPoint();
                     int x = selectPoint.x;
                     int y = selectPoint.y;
-                    if (y >= 15 && y <= 50) {
-                        if (x >=80 && x <= 155) {
+                    if (y >= 20 && y <= 70) {
+                        if (x >= 20 && x <= 150) {
                             if (selectedFunctionNumber != RECOGNITION_FUCNTION) {//if select is !recognition,
                                 //send signal changing color recognition button, select = recognition
                                 selectedFunctionNumber = RECOGNITION_FUCNTION;
 //                                emit sendSignalChangingRecognitionColor(SELECTED_COLOR);
                             }
-                        } else if (x >= 175 && x <= 250) {
+                        } else if (x >= 170 && x <= 300) {
                             if (selectedFunctionNumber != LEARNING_FUNCTION) {//if select is !learning,
                                 // send signal changing color learning button, select = learning
                                 selectedFunctionNumber = LEARNING_FUNCTION;
@@ -96,15 +96,15 @@ void CroppingImage::run() {
                     selectPoint = handGesture->getSelectPoint();
                     int x = selectPoint.x;
                     int y = selectPoint.y;
-                    if (y >= 15 && y <= 50) {
-                        if (x >=80 && x <= 155) {
+                    if (y >= 20 && y <= 70) {
+                        if (x >= 20 && x <= 150) {
                             if (selectedFunctionNumber == RECOGNITION_FUCNTION) {//if select is recognition,
                                 // Show the recognition interface
                                 emit sendSignalSelectingRecognition();
                                 mode = RECOGNITION_MODE;
                             }
                             selectedFunctionNumber = NO_FUNCTION;
-                        } else if (x >= 175 && x <= 250) {
+                        } else if (x >= 170 && x <= 300) {
                             if (selectedFunctionNumber == LEARNING_FUNCTION) {//if select is learning,
                                 //Show the learning interface
                                 emit sendSignalSelectingLearning();
@@ -155,14 +155,14 @@ void CroppingImage::run() {
                     selectPoint = handGesture->getSelectPoint();
                     int x = selectPoint.x;
                     int y = selectPoint.y;
-                    if (y >= 15 && y <= 50) {
-                        if (x >=80 && x <= 155) {
+                    if (y >= 20 && y <= 70) {
+                        if (x >= 20 && x <= 150) {
                             if (selectedFunctionNumber != UP_FUCNTION) {//if select is !up,
                                 //send signal changing color up button, select = up
                                 selectedFunctionNumber = UP_FUCNTION;
 //                                emit sendSignalChangingUpColor(SELECTED_COLOR);
                             }
-                        } else if (x >= 175 && x <= 250) {
+                        } else if (x >= 170 && x <= 300) {
                             if (selectedFunctionNumber != DOWN_FUCNTION) {//if select is !down,
                                 // send signal changing color down button, select = down
                                 selectedFunctionNumber = DOWN_FUCNTION;
@@ -194,18 +194,18 @@ void CroppingImage::run() {
                     selectPoint = handGesture->getSelectPoint();
                     int x = selectPoint.x;
                     int y = selectPoint.y;
-                    if (y >= 15 && y <= 50) {
-                        if (x >=80 && x <= 155) {
+                    if (y >= 20 && y <= 70) {
+                        if (x >= 20 && x <= 150) {
                             if (selectedFunctionNumber == UP_FUCNTION) {//if select is up,
                                 // send signal change to upper word
                                 emit sendSignalMovingToUpperWord();
-                                sleep(0.3);
+                                sleep(0.7);
                             }
-                        } else if (x >= 175 && x <= 250) {
+                        } else if (x >= 170 && x <= 300) {
                             if (selectedFunctionNumber == DOWN_FUCNTION) {//if select is down,
                                 // send signal change to lower word
                                 emit sendSignalMovingToLowerWord();
-                                sleep(0.3);
+                                sleep(0.7);
                             }
                         } else {
                             if (selectedFunctionNumber == UP_FUCNTION) { //if select is up,

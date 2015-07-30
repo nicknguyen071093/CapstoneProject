@@ -28,10 +28,14 @@ QStringList Words::getWords() {
     return words;
 }
 
-QString Words::getLinkByID(int wordID) {
-    return wordsMap[wordID].GetLink();
+QString Words::getLinkBySelectedIndex(int index) {
+    return wordsMap.values()[index].GetLink();
 }
 
 QString Words::getMeanByID(int wordID) {
     return wordsMap.value(wordID).GetLetter();
 }
+
+
+
+

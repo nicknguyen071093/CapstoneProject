@@ -166,10 +166,10 @@ color: #7b5701;
     <widget class="QPushButton" name="btnLearning">
      <property name="geometry">
       <rect>
-       <x>310</x>
-       <y>60</y>
-       <width>141</width>
-       <height>71</height>
+       <x>320</x>
+       <y>90</y>
+       <width>130</width>
+       <height>50</height>
       </rect>
      </property>
      <property name="font">
@@ -189,10 +189,10 @@ background-color: white;
     <widget class="QPushButton" name="btnRecognition">
      <property name="geometry">
       <rect>
-       <x>160</x>
-       <y>60</y>
-       <width>141</width>
-       <height>71</height>
+       <x>170</x>
+       <y>90</y>
+       <width>130</width>
+       <height>50</height>
       </rect>
      </property>
      <property name="font">
@@ -212,10 +212,10 @@ background-color: white;
     <widget class="QLabel" name="lbFrame">
      <property name="geometry">
       <rect>
-       <x>60</x>
-       <y>40</y>
-       <width>480</width>
-       <height>360</height>
+       <x>150</x>
+       <y>70</y>
+       <width>320</width>
+       <height>240</height>
       </rect>
      </property>
      <property name="cursor">
@@ -228,10 +228,10 @@ background-color: white;
     <widget class="QPushButton" name="btnUp">
      <property name="geometry">
       <rect>
-       <x>160</x>
-       <y>60</y>
-       <width>141</width>
-       <height>71</height>
+       <x>170</x>
+       <y>90</y>
+       <width>130</width>
+       <height>50</height>
       </rect>
      </property>
      <property name="font">
@@ -251,10 +251,10 @@ background-color: white;
     <widget class="QPushButton" name="btnDown">
      <property name="geometry">
       <rect>
-       <x>310</x>
-       <y>60</y>
-       <width>141</width>
-       <height>71</height>
+       <x>320</x>
+       <y>90</y>
+       <width>130</width>
+       <height>50</height>
       </rect>
      </property>
      <property name="font">

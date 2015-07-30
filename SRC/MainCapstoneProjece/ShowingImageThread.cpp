@@ -15,6 +15,7 @@ ShowingImageThread::ShowingImageThread(QObject *parent) :
     black = Scalar(0,0,0);
     initCLowerUpper(30, 30, 7, 7, 7, 7);
     initCBackLowerUpper(50, 50, 3, 3, 3, 3);
+//    camera.set(CV_CAP_PROP_SATURATION,0.7);
     initBackPoints();
     initHandPoints();
 }
