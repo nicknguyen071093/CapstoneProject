@@ -17,7 +17,7 @@
       </counter>
       <counter>
         <item-type stereotype="" type="UmlUseCase" />
-        <value>22</value>
+        <value>23</value>
       </counter>
     </entity-names>
     <entity-ids>
@@ -31,11 +31,11 @@
       </counter>
       <counter>
         <item-type stereotype="" type="UmlUseCase" />
-        <value>23</value>
+        <value>24</value>
       </counter>
       <counter>
         <item-type stereotype="" type="UmlAssociation" />
-        <value>22</value>
+        <value>23</value>
       </counter>
       <counter>
         <item-type stereotype="" type="UmlGeneralization" />
@@ -51,11 +51,11 @@
       </counter>
       <counter>
         <item-type stereotype="" type="UmlComment" />
-        <value>7</value>
+        <value>8</value>
       </counter>
       <counter>
         <item-type stereotype="" type="UmlCommentConnector" />
-        <value>6</value>
+        <value>7</value>
       </counter>
       <counter>
         <item-type stereotype="" type="UmlConstraint" />
@@ -63,7 +63,7 @@
       </counter>
       <counter>
         <item-type stereotype="" type="AbstractElementGroup" />
-        <value>32</value>
+        <value>108</value>
       </counter>
     </entity-ids>
     <diagrams>
@@ -106,12 +106,11 @@
       <owned-items />
       <style class="default" />
     </item>
-    <item id="di346589640575414597" cid="UC017" type="use-case" name="Notify Battery Capacity" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="07/21/2015 13:00:44">
+    <item id="di869334471218618557" cid="CN005" type="comment-connector" name="" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="08/11/2015 19:04:08">
       <stereotypes />
       <associated-diagrams />
       <owned-items />
       <style class="default" />
-      <use-case />
     </item>
     <item id="di547477172418481833" cid="UC021" type="use-case" name="UseCase21" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="07/26/2015 10:54:31">
       <stereotypes />
@@ -129,41 +128,13 @@
       <style class="default" />
       <extend extension-point="" />
     </item>
-    <item id="di524489090258721544" cid="UC003" type="use-case" name="Learn hand sign language" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creator="P0e57719f1b0548d7830d0bcd76ee8230" creation-date="05/31/2015 10:36:46">
+    <item id="di616216778358341845" cid="CN004" type="comment-connector" name="" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="08/11/2015 18:53:00">
       <stereotypes />
       <associated-diagrams />
       <owned-items />
       <style class="default" />
-      <use-case />
     </item>
-    <item id="di988595115920029556" cid="UC015" type="use-case" name="Charge battery" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="07/16/2015 18:08:23">
-      <stereotypes />
-      <associated-diagrams />
-      <owned-items />
-      <style class="default" />
-      <use-case />
-    </item>
-    <item id="di773853288775212486" cid="REL016" type="relationship" name="" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="07/21/2015 13:02:21">
-      <stereotypes />
-      <associated-diagrams />
-      <owned-items />
-      <style class="default" />
-      <relation from="di346589640575414597" to="di292766178119174576">
-        <start-role id="" name="" navigability="" association-type="association" visibility="private" />
-        <end-role id="" name="" navigability="" association-type="association" visibility="private" />
-      </relation>
-    </item>
-    <item id="di796841370934972775" cid="REL017" type="relationship" name="" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="07/21/2015 13:45:31">
-      <stereotypes />
-      <associated-diagrams />
-      <owned-items />
-      <style class="default" />
-      <relation from="di562152976778824218" to="di988595115920029556">
-        <start-role id="" name="" navigability="" association-type="association" visibility="private" />
-        <end-role id="" name="" navigability="" association-type="association" visibility="private" />
-      </relation>
-    </item>
-    <item id="di800795941480634253" cid="EX013" type="extend" name="" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="08/02/2015 17:10:43">
+    <item id="di946752050610169947" cid="EX008" type="extend" name="" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="07/26/2015 10:37:31">
       <stereotypes>
         <stereotype name="extend" />
       </stereotypes>
@@ -192,13 +163,14 @@
       <associated-diagrams />
       <owned-items />
       <style class="default" />
-      <extend extension-point="Learning Hand Sign" />
+      <extend extension-point="Hand Sign Recognition" />
     </item>
-    <item id="di292766178119174576" cid="AC002" type="actor" name="System" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="07/21/2015 13:00:31">
+    <item id="di854340256199758335" cid="CMT007" type="comment" name="Comment" style-class="" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="08/13/2015 23:07:44">
       <stereotypes />
       <associated-diagrams />
       <owned-items />
       <style class="default" />
+      <comment />
     </item>
     <item id="di236283726470402142" cid="CMT004" type="comment" name="Comment" style-class="" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="08/11/2015 18:53:00">
       <stereotypes />
@@ -239,7 +211,7 @@
       <comment>Condition: {Actor move "select" hand sign into "Học" button}
 Extension point: Hand Sign Recognition</comment>
     </item>
-    <item id="di946752050610169947" cid="EX008" type="extend" name="" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="07/26/2015 10:37:31">
+    <item id="di800795941480634253" cid="EX013" type="extend" name="" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="08/02/2015 17:10:43">
       <stereotypes>
         <stereotype name="extend" />
       </stereotypes>
@@ -268,13 +240,37 @@ Extension point: Hand Sign Recognition</comment>
       <associated-diagrams />
       <owned-items />
       <style class="default" />
-      <extend extension-point="Hand Sign Recognition" />
+      <extend extension-point="Learning Hand Sign" />
     </item>
-    <item id="di616216778358341845" cid="CN004" type="comment-connector" name="" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="08/11/2015 18:53:00">
+    <item id="di707460407710277915" cid="CN006" type="comment-connector" name="" style-class="" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="08/13/2015 23:07:44">
       <stereotypes />
       <associated-diagrams />
       <owned-items />
       <style class="default" />
+    </item>
+    <item id="di524489090258721544" cid="UC003" type="use-case" name="Learn hand sign language" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creator="P0e57719f1b0548d7830d0bcd76ee8230" creation-date="05/31/2015 10:36:46">
+      <stereotypes />
+      <associated-diagrams />
+      <owned-items />
+      <style class="default" />
+      <use-case />
+    </item>
+    <item id="di796841370934972775" cid="REL017" type="relationship" name="" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="07/21/2015 13:45:31">
+      <stereotypes />
+      <associated-diagrams />
+      <owned-items />
+      <style class="default" />
+      <relation from="di562152976778824218" to="di988595115920029556">
+        <start-role id="" name="" navigability="" association-type="association" visibility="private" />
+        <end-role id="" name="" navigability="" association-type="association" visibility="private" />
+      </relation>
+    </item>
+    <item id="di346589640575414597" cid="UC017" type="use-case" name="Notify Battery Capacity" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="07/21/2015 13:00:44">
+      <stereotypes />
+      <associated-diagrams />
+      <owned-items />
+      <style class="default" />
+      <use-case />
     </item>
     <item id="di170784021992129239" cid="CMT001" type="comment" name="Comment" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="08/02/2015 17:10:20">
       <stereotypes />
@@ -315,17 +311,24 @@ Extension point: Hand Sign Recognition</comment>
       <owned-items />
       <style class="default" />
     </item>
-    <item id="di528648523485203312" cid="REL007" type="relationship" name="" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creator="P0e57719f1b0548d7830d0bcd76ee8230" creation-date="05/31/2015 11:00:18">
+    <item id="di773853288775212486" cid="REL016" type="relationship" name="" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="07/21/2015 13:02:21">
       <stereotypes />
       <associated-diagrams />
       <owned-items />
       <style class="default" />
-      <relation from="di562152976778824218" to="di368100539912925556">
+      <relation from="di346589640575414597" to="di292766178119174576">
         <start-role id="" name="" navigability="" association-type="association" visibility="private" />
         <end-role id="" name="" navigability="" association-type="association" visibility="private" />
       </relation>
     </item>
-    <item id="di368100539912925556" cid="UC001" type="use-case" name="Recognize hand sign language" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="05/31/2015 10:34:35">
+    <item id="di988595115920029556" cid="UC015" type="use-case" name="Charge battery" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="07/16/2015 18:08:23">
+      <stereotypes />
+      <associated-diagrams />
+      <owned-items />
+      <style class="default" />
+      <use-case />
+    </item>
+    <item id="di876603934725617662" cid="UC020" type="use-case" name="Background Color Subtraction" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="07/26/2015 09:59:13">
       <stereotypes />
       <documentation>
         <text>
@@ -339,7 +342,7 @@ Extension point: Hand Sign Recognition</comment>
           <content>
             <paragraph>
               <p s="S1">
-                <t />
+                <t>fdsfds</t>
               </p>
             </paragraph>
           </content>
@@ -393,11 +396,50 @@ Extension point: Hand Sign Recognition</comment>
       <comment>Condition: {Actor move "select" hand sign into "Học" button} 
 Extension point: Hand Sign Recognition</comment>
     </item>
-    <item id="di869334471218618557" cid="CN005" type="comment-connector" name="" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="08/11/2015 19:04:08">
+    <item id="di292766178119174576" cid="AC002" type="actor" name="System" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="07/21/2015 13:00:31">
       <stereotypes />
       <associated-diagrams />
       <owned-items />
       <style class="default" />
+    </item>
+    <item id="di368100539912925556" cid="UC001" type="use-case" name="Recognize hand sign language" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="05/31/2015 10:34:35">
+      <stereotypes />
+      <documentation>
+        <text>
+          <styles>
+            <style name="S1" font-name="Verdana" font-size="12" font-bold="false" font-italic="false" font-underline="false" font-strikeout="false">
+              <text>
+                <solid-brush color="#FF000000" />
+              </text>
+            </style>
+          </styles>
+          <content>
+            <paragraph>
+              <p s="S1">
+                <t />
+              </p>
+            </paragraph>
+          </content>
+        </text>
+      </documentation>
+      <cooperation>
+        <participants />
+        <comments />
+      </cooperation>
+      <associated-diagrams />
+      <owned-items />
+      <style class="default" />
+      <use-case />
+    </item>
+    <item id="di148856664758223019" cid="REL021" type="relationship" name="" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="07/26/2015 10:08:41">
+      <stereotypes />
+      <associated-diagrams />
+      <owned-items />
+      <style class="default" />
+      <relation from="di562152976778824218" to="di876603934725617662">
+        <start-role id="" name="" navigability="" association-type="association" visibility="private" />
+        <end-role id="" name="" navigability="" association-type="association" visibility="private" />
+      </relation>
     </item>
     <item id="di785750473512029972" cid="REL008" type="relationship" name="" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creator="P0e57719f1b0548d7830d0bcd76ee8230" creation-date="05/31/2015 11:00:30">
       <stereotypes />
@@ -405,6 +447,16 @@ Extension point: Hand Sign Recognition</comment>
       <owned-items />
       <style class="default" />
       <relation from="di562152976778824218" to="di524489090258721544">
+        <start-role id="" name="" navigability="" association-type="association" visibility="private" />
+        <end-role id="" name="" navigability="" association-type="association" visibility="private" />
+      </relation>
+    </item>
+    <item id="di528648523485203312" cid="REL007" type="relationship" name="" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creator="P0e57719f1b0548d7830d0bcd76ee8230" creation-date="05/31/2015 11:00:18">
+      <stereotypes />
+      <associated-diagrams />
+      <owned-items />
+      <style class="default" />
+      <relation from="di562152976778824218" to="di368100539912925556">
         <start-role id="" name="" navigability="" association-type="association" visibility="private" />
         <end-role id="" name="" navigability="" association-type="association" visibility="private" />
       </relation>
@@ -436,7 +488,7 @@ Extension point: Hand Sign Recognition</comment>
           </authors>
           <description />
           <creation-date>05/31/2015 09:18:18</creation-date>
-          <change-date>08/11/2015 19:29:39</change-date>
+          <change-date>08/13/2015 23:07:44</change-date>
           <revision-count>0</revision-count>
           <version />
         </meta>
@@ -446,35 +498,6 @@ Extension point: Hand Sign Recognition</comment>
             <associated-diagrams />
             <owned-items />
             <style class="default" />
-          </item>
-          <item id="di876603934725617662" cid="UC020" type="use-case" name="Background Color Subtraction" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="07/26/2015 09:59:13">
-            <stereotypes />
-            <documentation>
-              <text>
-                <styles>
-                  <style name="S1" font-name="Verdana" font-size="12" font-bold="false" font-italic="false" font-underline="false" font-strikeout="false">
-                    <text>
-                      <solid-brush color="#FF000000" />
-                    </text>
-                  </style>
-                </styles>
-                <content>
-                  <paragraph>
-                    <p s="S1">
-                      <t>fdsfds</t>
-                    </p>
-                  </paragraph>
-                </content>
-              </text>
-            </documentation>
-            <cooperation>
-              <participants />
-              <comments />
-            </cooperation>
-            <associated-diagrams />
-            <owned-items />
-            <style class="default" />
-            <use-case />
           </item>
           <item id="di699040511172168782" cid="REL010" type="relationship" name="" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creator="P0e57719f1b0548d7830d0bcd76ee8230" creation-date="05/31/2015 11:08:48">
             <stereotypes />
@@ -562,12 +585,19 @@ Extension point: Hand Sign Recognition</comment>
             <owned-items />
             <style class="default" />
           </item>
-          <item id="di148856664758223019" cid="REL021" type="relationship" name="" style-class="default" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="07/26/2015 10:08:41">
+          <item id="di519864655672179585" cid="UC023" type="use-case" name="Turn off application" style-class="" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="08/13/2015 23:06:34">
             <stereotypes />
             <associated-diagrams />
             <owned-items />
             <style class="default" />
-            <relation from="di562152976778824218" to="di876603934725617662">
+            <use-case />
+          </item>
+          <item id="di538893050143531020" cid="REL022" type="relationship" name="" style-class="" is-abstract="false" is-root="false" is-leaf="false" is-active="false" creation-date="08/13/2015 23:06:53">
+            <stereotypes />
+            <associated-diagrams />
+            <owned-items />
+            <style class="default" />
+            <relation from="di562152976778824218" to="di519864655672179585">
               <start-role id="" name="" navigability="" association-type="association" visibility="private" />
               <end-role id="" name="" navigability="" association-type="association" visibility="private" />
             </relation>
@@ -627,12 +657,12 @@ Extension point: Hand Sign Recognition</comment>
             <relation from="di524489090258721544" from-iid="67f6bb8d05cb46e1a9670a92a5b35f8d" to="di876603934725617662" to-iid="a53d08237bb14f3482b3cdf4a80cef3b" />
           </item>
           <item id="di217008790272844430" iid="9e49b9bab5d341f1bcc52707f7a05acc" creation-date="05/31/2015 10:33:04" order-index="0" type="entity">
-            <layout ax="45" ay="-29.5" awidth="703" aheight="570" x="45" y="-29.5" width="703" height="570" angle="0" />
+            <layout ax="45" ay="-29.5" awidth="703" aheight="649" x="45" y="-29.5" width="703" height="649" angle="0" />
           </item>
           <item id="di869334471218618557" iid="6bf3a8682825421bb92e4dc2cebc458c" creation-date="08/11/2015 19:04:08" order-index="58" type="comment-connector">
-            <layout line-style="oblique" lock-start-point="false" lock-end-point="false" lock-to-fields="false" name-position="10,-10" auto-path="" x1="444" y1="294" x2="341" y2="282" start-border-pos="0.806550598144531" end-border-pos="0.732183291652814">
+            <layout line-style="oblique" lock-start-point="false" lock-end-point="false" lock-to-fields="false" name-position="10,-10" auto-path="" x1="444" y1="295" x2="341" y2="282" start-border-pos="0.800385538736979" end-border-pos="0.732183291652814">
               <points>
-                <point x="444" y="294" />
+                <point x="444" y="295" />
                 <point x="341" y="282" />
               </points>
             </layout>
@@ -641,13 +671,6 @@ Extension point: Hand Sign Recognition</comment>
           <item id="di876603934725617662" iid="a53d08237bb14f3482b3cdf4a80cef3b" container="di217008790272844430" container-iid="9e49b9bab5d341f1bcc52707f7a05acc" creation-date="07/26/2015 09:59:13" order-index="49" type="entity">
             <layout ax="234.75" ay="129" awidth="208.25" aheight="130" x="234.75" y="129" width="208.25" height="130" angle="0" />
             <use-case show-extension-points="true" />
-          </item>
-          <item id="di580339401120270537" iid="aab0915d51f64803867aa57d3f47e6fd" container="di217008790272844430" container-iid="9e49b9bab5d341f1bcc52707f7a05acc" creation-date="08/11/2015 19:04:08" order-index="57" type="entity">
-            <layout ax="444" ay="259" awidth="288" aheight="45" x="444" y="259" width="288" height="45" angle="0" />
-          </item>
-          <item id="di524489090258721544" iid="67f6bb8d05cb46e1a9670a92a5b35f8d" container="di217008790272844430" container-iid="9e49b9bab5d341f1bcc52707f7a05acc" creation-date="05/31/2015 10:36:46" order-index="4" type="entity">
-            <layout ax="133.25" ay="304" awidth="140.5" aheight="88" x="133.25" y="304" width="140.5" height="88" angle="0" />
-            <use-case show-extension-points="false" />
           </item>
           <item id="di785750473512029972" iid="8a8cc7a636a446caaf137c28e733bb8f" creation-date="05/31/2015 11:00:30" order-index="17" type="relation">
             <layout line-style="oblique" lock-start-point="true" lock-end-point="true" lock-to-fields="false" name-position="10,-10" auto-path="" x1="7" y1="247" x2="133" y2="347" start-border-pos="0.377083333333333" end-border-pos="0.876420454545455">
@@ -659,30 +682,12 @@ Extension point: Hand Sign Recognition</comment>
             <relation from="di562152976778824218" from-iid="ce90d29c202f49f181cd6191a48c0141" to="di524489090258721544" to-iid="67f6bb8d05cb46e1a9670a92a5b35f8d" />
             <role-positions start-role="25,15" end-role="25,-15" start-multiplicity="25,-15" end-multiplicity="25,15" />
           </item>
-          <item id="di796841370934972775" iid="28712ad241d143278fcf1b8d359c9f60" creation-date="07/21/2015 13:45:31" order-index="48" type="relation">
-            <layout line-style="oblique" lock-start-point="true" lock-end-point="true" lock-to-fields="false" name-position="10,-10" auto-path="" x1="-6" y1="306" x2="117" y2="438" start-border-pos="0.554166666666667" end-border-pos="0.053125">
-              <points>
-                <point x="-6" y="306" />
-                <point x="117" y="438" />
-              </points>
-            </layout>
-            <relation from="di562152976778824218" from-iid="ce90d29c202f49f181cd6191a48c0141" to="di988595115920029556" to-iid="c4ee8a2e20224624befa48d7c8b8218e" />
-            <role-positions start-role="25,15" end-role="25,-15" start-multiplicity="25,-15" end-multiplicity="25,15" />
-          </item>
           <item id="di368100539912925556" iid="a3d981daa7694e8c990005fb747fb764" container="di217008790272844430" container-iid="9e49b9bab5d341f1bcc52707f7a05acc" creation-date="05/31/2015 10:34:35" order-index="2" type="entity">
             <layout ax="133.25" ay="15.5" awidth="140.5" aheight="88" x="133.25" y="15.5" width="140.5" height="88" angle="0" />
             <use-case show-extension-points="false" />
           </item>
-          <item id="di988595115920029556" iid="c4ee8a2e20224624befa48d7c8b8218e" container="di217008790272844430" container-iid="9e49b9bab5d341f1bcc52707f7a05acc" creation-date="07/16/2015 18:08:23" order-index="31" type="entity">
-            <layout ax="94.25" ay="426" awidth="140.5" aheight="88" x="94.25" y="426" width="140.5" height="88" angle="0" />
-            <use-case show-extension-points="true" />
-          </item>
           <item id="di236283726470402142" iid="5eddb64a3841451fb3e48ae04ad10683" container="di217008790272844430" container-iid="9e49b9bab5d341f1bcc52707f7a05acc" creation-date="08/11/2015 18:53:00" order-index="55" type="entity">
             <layout ax="444" ay="86" awidth="288" aheight="43" x="444" y="86" width="288" height="43" angle="0" />
-          </item>
-          <item id="di346589640575414597" iid="670d211f584e4b859b5c0824c98a783f" container="di217008790272844430" container-iid="9e49b9bab5d341f1bcc52707f7a05acc" creation-date="07/21/2015 13:00:44" order-index="38" type="entity">
-            <layout ax="472" ay="392" awidth="131" aheight="82" x="472" y="392" width="131" height="82" angle="0" />
-            <use-case show-extension-points="true" />
           </item>
           <item id="di773853288775212486" iid="3e968f9d704b4442ac5b3d7aef344139" creation-date="07/21/2015 13:02:21" order-index="43" type="relation">
             <layout line-style="oblique" lock-start-point="true" lock-end-point="true" lock-to-fields="false" name-position="10,-10" auto-path="" x1="603" y1="432" x2="758" y2="435" start-border-pos="0.36890243902439" end-border-pos="0.875">
@@ -696,6 +701,45 @@ Extension point: Hand Sign Recognition</comment>
           </item>
           <item id="di292766178119174576" iid="4f7fadccb0e14da4aa9534d5cc3ee13f" creation-date="07/21/2015 13:00:31" order-index="37" type="entity">
             <layout ax="758" ay="375" awidth="70" aheight="120" x="758" y="375" width="70" height="120" angle="0" />
+          </item>
+          <item id="di519864655672179585" iid="899392173e674ea3a9eefab2c87dfb09" container="di217008790272844430" container-iid="9e49b9bab5d341f1bcc52707f7a05acc" creation-date="08/13/2015 23:06:34" order-index="59" type="entity">
+            <layout ax="90" ay="510" awidth="120" aheight="75" x="90" y="510" width="120" height="75" angle="0" />
+            <use-case show-extension-points="true" />
+          </item>
+          <item id="di538893050143531020" iid="30d13131157b4997a89fef6b3fc81767" creation-date="08/13/2015 23:06:53" order-index="60" type="relation">
+            <layout line-style="oblique" lock-start-point="true" lock-end-point="true" lock-to-fields="false" name-position="10,-10" auto-path="" x1="-24" y1="306" x2="119" y2="516" start-border-pos="0.329166666666667" end-border-pos="0.873333333333333">
+              <points>
+                <point x="-24" y="306" />
+                <point x="119" y="516" />
+              </points>
+            </layout>
+            <relation from="di562152976778824218" from-iid="ce90d29c202f49f181cd6191a48c0141" to="di519864655672179585" to-iid="899392173e674ea3a9eefab2c87dfb09" />
+            <role-positions start-role="25,15" end-role="25,-15" start-multiplicity="25,-15" end-multiplicity="25,15" />
+          </item>
+          <item id="di580339401120270537" iid="aab0915d51f64803867aa57d3f47e6fd" container="di217008790272844430" container-iid="9e49b9bab5d341f1bcc52707f7a05acc" creation-date="08/11/2015 19:04:08" order-index="57" type="entity">
+            <layout ax="444" ay="259" awidth="288" aheight="45" x="444" y="259" width="288" height="45" angle="0" />
+          </item>
+          <item id="di524489090258721544" iid="67f6bb8d05cb46e1a9670a92a5b35f8d" container="di217008790272844430" container-iid="9e49b9bab5d341f1bcc52707f7a05acc" creation-date="05/31/2015 10:36:46" order-index="4" type="entity">
+            <layout ax="133.25" ay="304" awidth="140.5" aheight="88" x="133.25" y="304" width="140.5" height="88" angle="0" />
+            <use-case show-extension-points="false" />
+          </item>
+          <item id="di796841370934972775" iid="28712ad241d143278fcf1b8d359c9f60" creation-date="07/21/2015 13:45:31" order-index="48" type="relation">
+            <layout line-style="oblique" lock-start-point="true" lock-end-point="true" lock-to-fields="false" name-position="10,-10" auto-path="" x1="7" y1="304" x2="235" y2="474" start-border-pos="0.495833333333333" end-border-pos="0.875">
+              <points>
+                <point x="7" y="304" />
+                <point x="235" y="474" />
+              </points>
+            </layout>
+            <relation from="di562152976778824218" from-iid="ce90d29c202f49f181cd6191a48c0141" to="di988595115920029556" to-iid="c4ee8a2e20224624befa48d7c8b8218e" />
+            <role-positions start-role="25,15" end-role="25,-15" start-multiplicity="25,-15" end-multiplicity="25,15" />
+          </item>
+          <item id="di346589640575414597" iid="670d211f584e4b859b5c0824c98a783f" container="di217008790272844430" container-iid="9e49b9bab5d341f1bcc52707f7a05acc" creation-date="07/21/2015 13:00:44" order-index="38" type="entity">
+            <layout ax="472" ay="392" awidth="131" aheight="82" x="472" y="392" width="131" height="82" angle="0" />
+            <use-case show-extension-points="true" />
+          </item>
+          <item id="di988595115920029556" iid="c4ee8a2e20224624befa48d7c8b8218e" container="di217008790272844430" container-iid="9e49b9bab5d341f1bcc52707f7a05acc" creation-date="07/16/2015 18:08:23" order-index="31" type="entity">
+            <layout ax="234.75" ay="438" awidth="115.5" aheight="72" x="234.75" y="438" width="115.5" height="72" angle="0" />
+            <use-case show-extension-points="true" />
           </item>
         </layer>
       </diagram>
